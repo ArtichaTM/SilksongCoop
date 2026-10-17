@@ -1,0 +1,46 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{csproj,props,targets,slnx,xml,json,yml,yaml}]
+indent_size = 2
+
+# Readability rules. The build enforces 1 and 3; RCS0056 skips comments, so Directory.Build.targets
+# measures those, and verify's width step covers the files no project compiles.
+# 1. 110 columns.
+# 2. Name before you wrap: a long line gets a property, method, local or constant whose name says what the
+#    piece is. Wrap only what naming can't shorten: a long parameter or argument list, a long message.
+# 3. An expression body only when its expression fits on one line; otherwise a block body.
+# 4. No throw inside a ternary that spans lines: a named condition plus `if (...) throw`.
+# 5. A wrapped LINQ chain puts one call per line.
+[*.{cs,csproj,props,slnx}]
+max_line_length = 110
+
+[*.cs]
+roslynator_max_line_length = 110
+dotnet_diagnostic.RCS0056.severity = error
+
+# Rule 3 in both directions. Only Roslynator turns a multi-line expression body into a block body;
+# the IDE rules below only turn a block body that fits on one line into an expression body.
+roslynator_analyzers.enabled_by_default = false
+roslynator_body_style = expression
+roslynator_use_block_body_when_expression_spans_over_multiple_lines = true
+roslynator_use_block_body_when_declaration_spans_over_multiple_lines = false
+dotnet_diagnostic.RCS1016.severity = error
+csharp_style_expression_bodied_methods = when_on_single_line
+csharp_style_expression_bodied_properties = when_on_single_line
+csharp_style_expression_bodied_accessors = when_on_single_line
+csharp_style_expression_bodied_operators = when_on_single_line
+csharp_style_expression_bodied_constructors = when_on_single_line
+csharp_style_expression_bodied_local_functions = when_on_single_line
+dotnet_diagnostic.IDE0022.severity = error
+dotnet_diagnostic.IDE0025.severity = error
+dotnet_diagnostic.IDE0027.severity = error
+dotnet_diagnostic.IDE0053.severity = error
+dotnet_diagnostic.IDE0061.severity = error

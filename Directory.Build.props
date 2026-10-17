@@ -1,0 +1,25 @@
+<Project>
+
+  <!-- Code style from .editorconfig is checked on every build; verify's build step relaxes it. -->
+  <PropertyGroup>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+  <!-- Game install the plugin compiles against; override with -p:GameDir=... -->
+  <PropertyGroup>
+    <SteamCommon>$(HOME)/.local/share/Steam/steamapps/common</SteamCommon>
+    <GameDir Condition="'$(GameDir)' == ''">$(SteamCommon)/Hollow Knight Silksong</GameDir>
+    <GameManaged>$(GameDir)/Hollow Knight Silksong_Data/Managed</GameManaged>
+    <BepInExCore>$(GameDir)/BepInEx/core</BepInExCore>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Formatting.Analyzers" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,64 @@
+<Project>
+
+  <!--
+    Rule 1 of .editorconfig, on every build. RCS0056 measures code only, so a long line inside a comment
+    would pass unseen; this measures every compiled line, comments included.
+  -->
+  <PropertyGroup>
+    <CheckLineWidth Condition="'$(CheckLineWidth)' == ''">true</CheckLineWidth>
+    <MaxLineWidth Condition="'$(MaxLineWidth)' == ''">110</MaxLineWidth>
+  </PropertyGroup>
+
+  <UsingTask TaskName="MeasureLineWidth" TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Files ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <Root ParameterType="System.String" Required="true" />
+      <MaxWidth ParameterType="System.Int32" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        foreach (Microsoft.Build.Framework.ITaskItem file in Files)
+        {
+            string path = file.GetMetadata("FullPath");
+            if (!path.StartsWith(Root, System.StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            string relative = path.Substring(Root.Length).Replace('\\', '/');
+            if (relative.Contains("/obj/") || relative.Contains("/bin/") || !System.IO.File.Exists(path))
+            {
+                continue;
+            }
+
+            string[] lines = System.IO.File.ReadAllLines(path);
+            for (int index = 0; index < lines.Length; index++)
+            {
+                int width = lines[index].Length;
+                if (width > MaxWidth)
+                {
+                    Log.LogError(
+                        null, "SCOOP0056", null, path, index + 1, MaxWidth + 1, index + 1, width,
+                        "Line is {0} characters, over the {1}-column limit. Name the piece, don't wrap it.",
+                        width, MaxWidth
+                    );
+                }
+            }
+        }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="CheckLineWidth" BeforeTargets="CoreCompile" Condition="'$(CheckLineWidth)' == 'true'">
+    <ItemGroup>
+      <_MeasuredLine Include="@(Compile)" />
+      <_MeasuredLine Include="$(MSBuildProjectFullPath)" />
+    </ItemGroup>
+    <MeasureLineWidth Files="@(_MeasuredLine)" Root="$(MSBuildThisFileDirectory)"
+                      MaxWidth="$(MaxLineWidth)" />
+  </Target>
+
+</Project>

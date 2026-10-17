@@ -1,0 +1,11 @@
+# Build output
+bin/
+obj/
+*.nupkg
+
+# IDE / user-local
+.vs/
+.idea/
+*.user
+*.suo
+*.DotSettings.user
