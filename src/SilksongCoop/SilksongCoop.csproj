@@ -5,7 +5,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>SilksongCoop</RootNamespace>
     <!-- Where `make install` copies the plugin; empty disables the copy. -->
-    <PluginDir Condition="'$(PluginDir)' == ''">$(GameDir)/BepInEx/plugins/SilksongCoop</PluginDir>
+    <PluginDir Condition="'$(PluginDir)' == ''">$(InstallRoot)/SilksongCoop</PluginDir>
   </PropertyGroup>
 
   <!-- Compile-time only: the game and BepInEx provide these at runtime. -->

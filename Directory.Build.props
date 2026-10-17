@@ -15,6 +15,9 @@
     <GameDir Condition="'$(GameDir)' == ''">$(SteamCommon)/Hollow Knight Silksong</GameDir>
     <GameManaged>$(GameDir)/Hollow Knight Silksong_Data/Managed</GameManaged>
     <BepInExCore>$(GameDir)/BepInEx/core</BepInExCore>
+    <!-- -p:DevInstall=true installs into ScriptEngine's folder, which hot-reloads on change. -->
+    <InstallRoot Condition="'$(DevInstall)' == 'true'">$(GameDir)/BepInEx/scripts</InstallRoot>
+    <InstallRoot Condition="'$(DevInstall)' != 'true'">$(GameDir)/BepInEx/plugins</InstallRoot>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Throwaway recon plugin (design D38): dumps and traces PlayMaker FSMs. Not part of the solution. -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>FsmDump</RootNamespace>
+    <PluginDir Condition="'$(PluginDir)' == ''">$(InstallRoot)/FsmDump</PluginDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="$(BepInExCore)/BepInEx.dll" Private="false" />
+    <Reference Include="$(BepInExCore)/0Harmony.dll" Private="false" />
+    <Reference Include="$(GameManaged)/Assembly-CSharp.dll" Private="false" />
+    <Reference Include="$(GameManaged)/PlayMaker.dll" Private="false" />
+    <Reference Include="$(GameManaged)/UnityEngine.dll" Private="false" />
+    <Reference Include="$(GameManaged)/UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)/UnityEngine.InputLegacyModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)/UnityEngine.IMGUIModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)/UnityEngine.TextRenderingModule.dll" Private="false" />
+  </ItemGroup>
+
+  <Target Name="InstallPlugin" Condition="'$(PluginDir)' != ''">
+    <!-- ScriptEngine aborts the whole reload when a DLL has no symbols next to it. -->
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(PluginDir)" />
+    <Message Importance="high" Text="installed into $(PluginDir)" />
+  </Target>
+
+</Project>
