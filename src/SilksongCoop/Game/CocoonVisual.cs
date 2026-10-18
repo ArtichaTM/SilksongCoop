@@ -19,6 +19,7 @@ internal static class CocoonVisual
             GameObject copy = Object.Instantiate(prefab!, holder.transform, false);
             copy.transform.localPosition = Vector3.zero;
             StripLogic(copy);
+            KeepNormalAppearance(copy);
         }
         else
         {
@@ -49,6 +50,21 @@ internal static class CocoonVisual
         foreach (AudioSource audio in copy.GetComponentsInChildren<AudioSource>(true))
         {
             Remove(audio);
+        }
+    }
+
+    // The prefab ships Appearances off with every child on; the stripped corpse logic turned one on.
+    private static void KeepNormalAppearance(GameObject copy)
+    {
+        copy.transform.Find("Core")?.gameObject.SetActive(false);
+        if (copy.transform.Find("Appearances") is not { } appearances)
+        {
+            return;
+        }
+        appearances.gameObject.SetActive(true);
+        foreach (Transform look in appearances)
+        {
+            look.gameObject.SetActive(look.name == "Normal");
         }
     }
 

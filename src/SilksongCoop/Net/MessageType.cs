@@ -5,6 +5,7 @@ internal enum MessageType : byte
     // Unreliable: the next one replaces a lost one.
     Heartbeat,
     HeroFrame,
+    HeroParts,
     EnemyFrame,
 
     // Reliable and ordered.
@@ -32,6 +33,7 @@ internal enum MessageType : byte
     DialogueSkip,
     FsmEventRelay,
     CocoonBroken,
+    ToolThrown,
 }
 
 /// <summary>First byte after the magic: how the rest of the datagram is framed.</summary>

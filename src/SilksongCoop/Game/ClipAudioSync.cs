@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using GlobalEnums;
 using HutongGames.PlayMaker;
 using SilksongCoop.Net;
@@ -22,6 +24,8 @@ internal sealed class ClipAudioSync(Coop coop) : Module(coop)
     private readonly HashSet<AudioSource> _movementSources = [];
     private readonly List<AudioSource> _voices = [];
     private HeroController? _movementOwner;
+    private HeroController? _tablesOf;
+    private readonly HashSet<RandomAudioClipTable> _heroTables = [];
     private GameObject? _speaker;
     private int _nextVoice;
     private float _lastScan = -RescanCooldown;
@@ -55,13 +59,62 @@ internal sealed class ClipAudioSync(Coop coop) : Module(coop)
             .Float(pitch));
     }
 
-    private bool IsOwn(AudioSource source)
+    /// <summary>Inside a play of one of the hero's own sound tables (rage attacks, voice lines).</summary>
+    public static bool HeroTablePlaying { get; set; }
+
+    /// <summary>
+    /// Sound tables the hero's components hold: the hero plays these from code (Beast crest rage) on pooled
+    /// sources that are neither its children nor run by its FSMs.
+    /// </summary>
+    public bool IsHeroTable(RandomAudioClipTable table)
     {
-        if (GameRefs.Hero is not { } hero || IsMovement(hero, source))
+        if (GameRefs.Hero is not { } hero)
         {
             return false;
         }
-        if (source.transform.IsChildOf(hero.transform) || IsTool(source.gameObject))
+        if (_tablesOf != hero)
+        {
+            _tablesOf = hero;
+            _heroTables.Clear();
+            foreach (MonoBehaviour behaviour in hero.GetComponentsInChildren<MonoBehaviour>(true))
+            {
+                CollectTables(behaviour);
+            }
+        }
+        return _heroTables.Contains(table);
+    }
+
+    private void CollectTables(MonoBehaviour behaviour)
+    {
+        if (!behaviour)
+        {
+            return;
+        }
+        const BindingFlags Fields = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        foreach (FieldInfo field in behaviour.GetType().GetFields(Fields))
+        {
+            switch (field.GetValue(behaviour))
+            {
+                case RandomAudioClipTable table when table:
+                    _heroTables.Add(table);
+                    break;
+                case RandomAudioClipTable[] tables:
+                    _heroTables.UnionWith(tables.Where(table => table));
+                    break;
+            }
+        }
+    }
+
+    private bool IsOwn(AudioSource source)
+    {
+        // Thrown tools play their own sounds on the partner's copy.
+        bool ownTool = ToolReplicas.IsOwnTool(source.gameObject)
+            || ToolReplicas.IsOwnTool(FsmExecutionStack.ExecutingFsm?.GameObject);
+        if (ownTool || GameRefs.Hero is not { } hero || IsMovement(hero, source))
+        {
+            return false;
+        }
+        if (HeroTablePlaying || source.transform.IsChildOf(hero.transform) || IsTool(source.gameObject))
         {
             return true;
         }

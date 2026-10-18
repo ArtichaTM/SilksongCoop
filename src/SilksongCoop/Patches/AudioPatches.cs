@@ -82,3 +82,40 @@ internal static class ClipPatches
     private static void PlayOneShot(AudioSource source, AudioClip clip, float volumeScale) =>
         Sync?.OnPlayed(source, clip, volumeScale);
 }
+
+/// <summary>Marks plays of the hero's own sound tables, which the hero triggers from plain code.</summary>
+[HarmonyPatch]
+internal static class TablePatches
+{
+    private static bool Mark(RandomAudioClipTable table, out bool previous)
+    {
+        previous = ClipAudioSync.HeroTablePlaying;
+        if (Coop.Current is { InCoop: true } coop && table && coop.ClipAudio.IsHeroTable(table))
+        {
+            ClipAudioSync.HeroTablePlaying = true;
+        }
+        return true;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(
+        typeof(RandomAudioClipTableExtensions),
+        nameof(RandomAudioClipTableExtensions.SpawnAndPlayOneShot),
+        [
+            typeof(RandomAudioClipTable), typeof(AudioSource), typeof(Vector3), typeof(bool), typeof(float),
+            typeof(System.Action),
+        ]
+    )]
+    private static bool Spawned(RandomAudioClipTable table, out bool __state) => Mark(table, out __state);
+
+    [HarmonyFinalizer]
+    [HarmonyPatch(
+        typeof(RandomAudioClipTableExtensions),
+        nameof(RandomAudioClipTableExtensions.SpawnAndPlayOneShot),
+        [
+            typeof(RandomAudioClipTable), typeof(AudioSource), typeof(Vector3), typeof(bool), typeof(float),
+            typeof(System.Action),
+        ]
+    )]
+    private static void SpawnedEnd(bool __state) => ClipAudioSync.HeroTablePlaying = __state;
+}

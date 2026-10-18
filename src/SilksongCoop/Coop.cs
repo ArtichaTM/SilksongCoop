@@ -16,6 +16,7 @@ namespace SilksongCoop;
 internal sealed class Coop : IDisposable
 {
     private readonly List<Module> _modules;
+    private readonly HashSet<MessageType> _oversized = [];
     private bool _hostedOnStart;
 
     public Coop(BaseUnityPlugin plugin, CoopConfig config, ManualLogSource log)
@@ -34,9 +35,12 @@ internal sealed class Coop : IDisposable
         HeroAudio = new HeroAudioSync(this);
         ClipAudio = new ClipAudioSync(this);
         Dialogue = new DialogueSync(this);
+        Preload = new AssetPreload(this);
+        Tools = new ToolReplicas(this);
         _modules =
         [
-            Joining, Rooms, World, Heroes, HeroAudio, ClipAudio, Dialogue, Enemies, Downed, Pulls, Pause,
+            Joining, Rooms, World, Preload, Heroes, Tools, HeroAudio, ClipAudio, Dialogue, Enemies, Downed,
+            Pulls, Pause,
         ];
         Current = this;
     }
@@ -74,6 +78,10 @@ internal sealed class Coop : IDisposable
     public ClipAudioSync ClipAudio { get; }
 
     public DialogueSync Dialogue { get; }
+
+    public AssetPreload Preload { get; }
+
+    public ToolReplicas Tools { get; }
 
     public Session? Session { get; private set; }
 
@@ -169,6 +177,11 @@ internal sealed class Coop : IDisposable
 
     public void Dispose()
     {
+        if (IsFriend)
+        {
+            // The reloaded plugin won't know this is the host's save and would let the game save it.
+            Joining.HostGone("coop plugin reloaded");
+        }
         EndSession("plugin unloaded");
         foreach (Module module in _modules)
         {
@@ -189,6 +202,13 @@ internal sealed class Coop : IDisposable
     {
         session.Joined += OnJoined;
         session.Left += OnLeft;
+        session.Oversized += (type, size) =>
+        {
+            if (_oversized.Add(type))
+            {
+                Log.LogWarning($"{type} sent as one {size}-byte datagram; routers may drop it");
+            }
+        };
         foreach (Module module in _modules)
         {
             module.Register(session);
@@ -224,7 +244,15 @@ internal sealed class Coop : IDisposable
     {
         foreach (Module module in _modules)
         {
-            module.OnLeft();
+            try
+            {
+                module.OnLeft();
+            }
+            catch (System.Exception exception)
+            {
+                // One module's cleanup must not stop the rest, or the friend never returns to the menu.
+                Log.LogError($"{module.GetType().Name} partner cleanup failed: {exception}");
+            }
         }
         Partner.Reset();
     }

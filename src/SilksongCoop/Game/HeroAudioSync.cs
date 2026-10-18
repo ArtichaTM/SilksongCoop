@@ -135,7 +135,7 @@ internal sealed class HeroAudioSync(Coop coop) : Module(coop)
     {
         foreach (KeyValuePair<HeroSounds, (AudioSource Source, float Volume)> voice in _voices)
         {
-            if (sound is null || voice.Key == sound)
+            if ((sound is null || voice.Key == sound) && voice.Value.Source)
             {
                 voice.Value.Source.Stop();
             }

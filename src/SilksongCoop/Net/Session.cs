@@ -20,6 +20,7 @@ internal sealed class Session : IDisposable
     private const byte Magic1 = (byte)'C';
     private const double RejectedLinger = 3;
     private const double AnswerWait = 10;
+    private const int SafeDatagram = 1400;
 
     private readonly UdpTransport _transport;
     private readonly Timer _heartbeat;
@@ -50,6 +51,9 @@ internal sealed class Session : IDisposable
 
     /// <summary>The partner is gone; the argument says why.</summary>
     public event Action<string>? Left;
+
+    /// <summary>A datagram over <see cref="SafeDatagram"/> bytes: routers may drop it whole.</summary>
+    public event Action<MessageType, int>? Oversized;
 
     public static Session Host(int port, Credentials credentials, string name) =>
         new(true, port, credentials, name);
@@ -165,6 +169,10 @@ internal sealed class Session : IDisposable
         frame[2] = (byte)framing;
         head.CopyTo(frame, 3);
         payload.CopyTo(frame, 3 + head.Length);
+        if (frame.Length > SafeDatagram && payload.Length > 0)
+        {
+            Oversized?.Invoke((MessageType)payload[0], frame.Length);
+        }
         _transport.Send(to, frame);
     }
 

@@ -18,6 +18,8 @@ internal sealed class Puppet
     private readonly Dictionary<int, SpriteRenderer> _flatTools = [];
     private readonly HashSet<int> _seen = [];
     private Color _tint;
+    private bool _effectsShown;
+    private float _z;
     private int _sortingLayer;
     private int _sortingOrder;
 
@@ -47,20 +49,33 @@ internal sealed class Puppet
 
     public void Hide() => _root.SetActive(false);
 
-    /// <summary>Draws one received frame; the body stays hidden while the partner's is.</summary>
-    public void Show(bool bodyShown, SpriteFrame body, List<SpriteFrame> effects, List<SpriteFrame> tools)
+    /// <summary>Draws the body of one received frame; it stays hidden while the partner's is.</summary>
+    public void ShowBody(bool bodyShown, bool effectsShown, SpriteFrame body)
     {
         _root.SetActive(true);
         CopySorting();
-        float z = GameRefs.Hero is { } hero ? hero.transform.position.z + 0.001f : 0f;
-        _root.transform.position = new Vector3(body.Position.x, body.Position.y, z);
+        _effectsShown = effectsShown;
+        _z = GameRefs.Hero is { } hero ? hero.transform.position.z + 0.001f : 0f;
+        _root.transform.position = new Vector3(body.Position.x, body.Position.y, _z);
         // A pose from a collection not loaded here keeps the last known pose rather than vanishing.
-        bool drawn = body.ApplyTo(_body, z) || _body.Collection;
+        bool drawn = body.ApplyTo(_body, _z, _tint) || _body.Collection;
         _body.gameObject.SetActive(bodyShown && drawn);
-        _tag.position = new Vector3(body.Position.x, body.Position.y + TagHeight, z);
-        Sync(_effects, effects, bodyShown, z, _sortingOrder + 1);
-        Sync(_tools, tools.FindAll(frame => !frame.IsFlat), true, z, _sortingOrder + 1);
-        SyncFlat(tools.FindAll(frame => frame.IsFlat), z);
+        _tag.position = new Vector3(body.Position.x, body.Position.y + TagHeight, _z);
+    }
+
+    /// <summary>The effects and tools of the frame whose body was drawn last.</summary>
+    public void ShowExtras(List<SpriteFrame> effects, List<SpriteFrame> tools)
+    {
+        // The tint marks the body and tk2d attacks; plain sprites (glows, lights, tools) keep their colours.
+        int order = _sortingOrder + 1;
+        Sync(_effects, effects.FindAll(frame => !frame.IsFlat), _effectsShown, _tint, order);
+        Sync(_tools, tools.FindAll(frame => !frame.IsFlat), true, Color.white, order, report: true);
+        List<SpriteFrame> flat = tools.FindAll(frame => frame.IsFlat);
+        if (_effectsShown)
+        {
+            flat.AddRange(effects.FindAll(frame => frame.IsFlat));
+        }
+        SyncFlat(flat);
     }
 
     public void Destroy() => Object.Destroy(_root);
@@ -69,8 +84,9 @@ internal sealed class Puppet
         Dictionary<int, tk2dSprite> shown,
         List<SpriteFrame> frames,
         bool enabled,
-        float z,
-        int order
+        Color tint,
+        int order,
+        bool report = false
     )
     {
         _seen.Clear();
@@ -83,7 +99,11 @@ internal sealed class Puppet
                 shown[frame.Key] = sprite;
             }
             sprite.GetComponent<MeshRenderer>().sortingOrder = order;
-            sprite.gameObject.SetActive(enabled && frame.ApplyTo(sprite, z));
+            sprite.gameObject.SetActive(enabled && frame.ApplyTo(sprite, _z, tint));
+            if (report && sprite.gameObject.activeSelf)
+            {
+                SpriteCollections.ReportDrawn(frame, sprite);
+            }
         }
         foreach (KeyValuePair<int, tk2dSprite> entry in shown)
         {
@@ -94,7 +114,7 @@ internal sealed class Puppet
         }
     }
 
-    private void SyncFlat(List<SpriteFrame> frames, float z)
+    private void SyncFlat(List<SpriteFrame> frames)
     {
         _seen.Clear();
         foreach (SpriteFrame frame in frames)
@@ -109,7 +129,7 @@ internal sealed class Puppet
             }
             renderer.sortingLayerID = _sortingLayer;
             renderer.sortingOrder = _sortingOrder + 1;
-            renderer.gameObject.SetActive(frame.ApplyTo(renderer, z));
+            renderer.gameObject.SetActive(frame.ApplyTo(renderer, _z, Color.white));
         }
         foreach (KeyValuePair<int, SpriteRenderer> entry in _flatTools)
         {

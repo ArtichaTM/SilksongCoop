@@ -1,6 +1,7 @@
 using System.Linq;
 using HutongGames.PlayMaker;
 using SilksongCoop.Net;
+using UnityEngine;
 
 namespace SilksongCoop.Game;
 
@@ -44,14 +45,15 @@ internal sealed class DialogueSync(Coop coop) : Module(coop)
         }
     }
 
-    /// <summary>A lock the partner's conversation would put on our hero; logged so missed ones show.</summary>
+    /// <summary>A lock the partner's conversation would put on our hero; logged when kept off.</summary>
     public bool BlocksLock(NPCControlBase? npc, string what)
     {
         if (npc is null || !npc || npc == _localNpc || !Coop.Rooms.PartnerHere)
         {
             return false;
         }
-        bool synced = npc.GetComponents<PlayMakerFSM>().Any(fsm => Coop.Enemies.ModeOf(fsm.Fsm) != FsmMode.None);
+        EnemySync rooms = Coop.Enemies;
+        bool synced = npc.GetComponents<PlayMakerFSM>().Any(fsm => rooms.ModeOf(fsm.Fsm) != FsmMode.None);
         if (synced)
         {
             Coop.Log.LogInfo($"kept the hero free during the partner's talk: {what} from {npc.name}");
