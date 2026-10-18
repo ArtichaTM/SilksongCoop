@@ -52,7 +52,9 @@
     </Task>
   </UsingTask>
 
-  <Target Name="CheckLineWidth" BeforeTargets="CoreCompile" Condition="'$(CheckLineWidth)' == 'true'">
+  <!-- Skipped in IDE design-time builds, where errors would fail the project load. -->
+  <Target Name="CheckLineWidth" BeforeTargets="CoreCompile"
+          Condition="'$(CheckLineWidth)' == 'true' and '$(DesignTimeBuild)' != 'true'">
     <ItemGroup>
       <_MeasuredLine Include="@(Compile)" />
       <_MeasuredLine Include="$(MSBuildProjectFullPath)" />

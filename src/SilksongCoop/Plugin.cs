@@ -11,13 +11,27 @@ public sealed class Plugin : BaseUnityPlugin
     public const string Version = "0.1.0";
 
     private Harmony? _harmony;
+    private Coop? _coop;
 
     private void Awake()
     {
+        _coop = new Coop(this, new CoopConfig(Config), Logger);
         _harmony = new Harmony(Guid);
         _harmony.PatchAll(typeof(Plugin).Assembly);
         Logger.LogInfo($"{Name} {Version} loaded, protocol {Handshake.ProtocolVersion}");
     }
 
-    private void OnDestroy() => _harmony?.UnpatchSelf();
+    private void Update() => _coop?.Update();
+
+    private void LateUpdate() => _coop?.LateUpdate();
+
+    private void OnGUI() => _coop?.OnGUI();
+
+    /// <summary>C2: hot reload must leave nothing behind.</summary>
+    private void OnDestroy()
+    {
+        _harmony?.UnpatchSelf();
+        _coop?.Dispose();
+        _coop = null;
+    }
 }

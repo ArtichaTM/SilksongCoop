@@ -8,15 +8,27 @@
     <PluginDir Condition="'$(PluginDir)' == ''">$(InstallRoot)/SilksongCoop</PluginDir>
   </PropertyGroup>
 
+  <!-- Publicized game assemblies let patches touch private members without reflection. -->
+  <ItemGroup>
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" PrivateAssets="all" />
+  </ItemGroup>
+
   <!-- Compile-time only: the game and BepInEx provide these at runtime. -->
   <ItemGroup>
     <Reference Include="$(BepInExCore)/BepInEx.dll" Private="false" />
     <Reference Include="$(BepInExCore)/0Harmony.dll" Private="false" />
-    <Reference Include="$(GameManaged)/Assembly-CSharp.dll" Private="false" />
-    <Reference Include="$(GameManaged)/PlayMaker.dll" Private="false" />
+    <Reference Include="$(GameManaged)/Assembly-CSharp.dll" Private="false" Publicize="true" />
+    <Reference Include="$(GameManaged)/PlayMaker.dll" Private="false" Publicize="true" />
+    <Reference Include="$(GameManaged)/TeamCherry.TK2D.dll" Private="false" Publicize="true" />
+    <Reference Include="$(GameManaged)/TeamCherry.SharedUtils.dll" Private="false" />
+    <Reference Include="$(GameManaged)/Newtonsoft.Json.dll" Private="false" />
     <Reference Include="$(GameManaged)/UnityEngine.dll" Private="false" />
     <Reference Include="$(GameManaged)/UnityEngine.CoreModule.dll" Private="false" />
     <Reference Include="$(GameManaged)/UnityEngine.Physics2DModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)/UnityEngine.AudioModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)/UnityEngine.InputLegacyModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)/UnityEngine.IMGUIModule.dll" Private="false" />
+    <Reference Include="$(GameManaged)/UnityEngine.TextRenderingModule.dll" Private="false" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +36,7 @@
   </ItemGroup>
 
   <Target Name="InstallPlugin" Condition="'$(PluginDir)' != ''">
+    <!-- ScriptEngine aborts the whole reload when a DLL has no symbols next to it. -->
     <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(PluginDir)" />
     <Message Importance="high" Text="installed into $(PluginDir)" />
   </Target>
