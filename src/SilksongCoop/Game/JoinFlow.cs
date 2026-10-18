@@ -170,8 +170,15 @@ internal sealed class JoinFlow(Coop coop) : Module(coop)
             packed.Write(chunk, 0, chunk.Length);
         }
         SaveGameData data = SaveDataUtility.DeserializeSaveData<SaveGameData>(Decompress(packed.ToArray()));
-        bool restored = _loadoutFile is not null && LoadoutStore.Restore(_loadoutFile, data.playerData);
-        Coop.Log.LogInfo(restored ? "restored own loadout" : "first join: using the host's loadout");
+        string? mismatch = null;
+        bool restored = _loadoutFile is not null
+            && LoadoutStore.Restore(_loadoutFile, data.playerData, out mismatch);
+        if (mismatch is not null)
+        {
+            Coop.Log.LogWarning($"stored loadout reset, {mismatch} in the host's save");
+            Coop.Hints.Show("Your loadout was reset: it doesn't match the host's save", 8f);
+        }
+        Coop.Log.LogInfo(restored ? "restored own loadout" : "using the host's loadout");
         _loading = true;
         GameRefs.Manager?.LoadGameFromUI(NoSlot, data);
     }
