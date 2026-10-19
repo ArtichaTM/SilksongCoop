@@ -63,7 +63,9 @@ public sealed class FsmDumpPlugin : BaseUnityPlugin
         {
             string path = Path.Combine(OutputDir, $"dump_{SceneTag()}.txt");
             int count = FsmWriter.DumpAll(path);
-            Flash($"DUMPED {count} FSMs -> {Path.GetFileName(path)}");
+            string objects = Path.Combine(OutputDir, $"objects_{SceneTag()}.txt");
+            int objectCount = ObjectWriter.DumpScene(objects);
+            Flash($"DUMPED {count} FSMs, {objectCount} objects -> {Path.GetFileName(path)}");
         }
     }
 

@@ -28,8 +28,9 @@ internal static class JsonLeaves
     /// <summary>Removals first, deepest first; then additions and edits, shallowest first.</summary>
     public static List<LeafChange> Diff(Dictionary<string, JToken> before, Dictionary<string, JToken> after)
     {
+        // An empty list gaining its first entry turns from a leaf into a container; it is not removed.
         IEnumerable<LeafChange> removed = before
-            .Where(pair => !after.ContainsKey(pair.Key))
+            .Where(pair => !after.ContainsKey(pair.Key) && !HasChildren(after, pair.Key))
             .OrderByDescending(pair => Depth(pair.Key))
             .Select(pair => new LeafChange(pair.Key, pair.Value, null));
         IEnumerable<LeafChange> changed = after
@@ -47,6 +48,12 @@ internal static class JsonLeaves
     {
         Patch patch = new(change.Path.Split(Separator), change, additive);
         return patch.SetAt(root, 1);
+    }
+
+    private static bool HasChildren(Dictionary<string, JToken> leaves, string path)
+    {
+        string prefix = path + Separator;
+        return leaves.Keys.Any(key => key.StartsWith(prefix, System.StringComparison.Ordinal));
     }
 
     private static bool Kept(Dictionary<string, JToken> before, string key, JToken now)

@@ -30,15 +30,15 @@ internal sealed class PauseSync(Coop coop) : Module(coop)
         }
         else if (!paused && FreezeBoth && _partnerPaused)
         {
-            gm.SetTimeScale(0f);
+            Freeze(gm, true);
         }
     }
 
     public override void OnLeft()
     {
-        if (_partnerPaused && !_paused && GameRefs.Manager is { } gm)
+        if (_partnerPaused && !_paused && FreezeBoth && GameRefs.Manager is { } gm)
         {
-            gm.SetTimeScale(1f);
+            Freeze(gm, false);
         }
         _partnerPaused = false;
     }
@@ -48,7 +48,23 @@ internal sealed class PauseSync(Coop coop) : Module(coop)
         _partnerPaused = reader.Bool();
         if (FreezeBoth && !_paused && GameRefs.Manager is { } gm)
         {
-            gm.SetTimeScale(_partnerPaused ? 0f : 1f);
+            Freeze(gm, _partnerPaused);
+        }
+    }
+
+    /// <summary>The game's own pause minus its menu: time stops and actors and music go quiet.</summary>
+    private static void Freeze(GameManager gm, bool frozen)
+    {
+        gm.SetTimeScale(frozen ? 0f : 1f);
+        if (frozen)
+        {
+            gm.actorSnapshotPaused.TransitionToSafe(0f);
+            gm.ui.AudioGoToPauseMenu(0.2f);
+        }
+        else
+        {
+            gm.actorSnapshotUnpaused.TransitionToSafe(0f);
+            gm.ui.AudioGoToGameplay(0.2f);
         }
     }
 }

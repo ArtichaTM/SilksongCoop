@@ -55,6 +55,9 @@ internal sealed class Session : IDisposable
     /// <summary>A datagram over <see cref="SafeDatagram"/> bytes: routers may drop it whole.</summary>
     public event Action<MessageType, int>? Oversized;
 
+    /// <summary>A message handler threw; the messages after it are still delivered.</summary>
+    public event Action<MessageType, Exception>? HandlerFailed;
+
     public static Session Host(int port, Credentials credentials, string name) =>
         new(true, port, credentials, name);
 
@@ -267,9 +270,18 @@ internal sealed class Session : IDisposable
                 return;
         }
         bool open = peer.Accepted && peer.ClosingAt is null;
-        if (open && _handlers.TryGetValue(type, out Action<PacketReader>? handler))
+        if (!open || !_handlers.TryGetValue(type, out Action<PacketReader>? handler))
+        {
+            return;
+        }
+        try
         {
             handler(body);
+        }
+        catch (Exception exception)
+        {
+            // A reliable delivery may carry several messages; one failing must not lose the rest.
+            HandlerFailed?.Invoke(type, exception);
         }
     }
 

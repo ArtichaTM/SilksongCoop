@@ -69,4 +69,13 @@ public class RulesTests
         Assert.True(reader.Bool());
         Assert.True(reader.AtEnd);
     }
+
+    [Theory]
+    [InlineData("RelinquishControl", true)]
+    [InlineData("RegainControl", true)]
+    [InlineData("StartAnimationControlToIdle", true)]
+    [InlineData("FlipSprite", false)]
+    [InlineData(null, false)]
+    public void CutscenesAreKnownByHeroControlCalls(string? method, bool expected) =>
+        Assert.Equal(expected, HeroControl.IsControlCall(method));
 }

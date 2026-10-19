@@ -39,7 +39,16 @@ internal static class FieldRules
         "dreamReturnScene", "bossReturnEntryGate",
     ];
 
+    /// <summary>What the players carry; the host checks the friend's copy and corrects drift.</summary>
+    private static readonly HashSet<string> InventoryFields =
+    [
+        "geo", "ShellShards", "Tools", "ToolLiquids", "Collectables", "Relics", "MementosDeposited",
+        "MateriumCollected", "QuestCompletionData",
+    ];
+
     public static IReadOnlyCollection<string> Loadout => LoadoutFields;
+
+    public static IReadOnlyCollection<string> Inventory => InventoryFields;
 
     public static FieldScope Of(string field)
     {

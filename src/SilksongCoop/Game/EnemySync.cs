@@ -61,6 +61,9 @@ internal sealed class EnemySync : Module
     /// <summary>Inside a death the partner reported.</summary>
     public static bool RemoteDeath { get; private set; }
 
+    /// <summary>A state the partner sent was forced into this FSM.</summary>
+    public event System.Action<Fsm>? RemoteStateApplied;
+
     private bool Mirroring => !Coop.Rooms.LocalOwns;
 
     public override void Register(Session session)
@@ -126,7 +129,10 @@ internal sealed class EnemySync : Module
             return mode;
         }
         mode = Classify(fsm);
-        _modes[fsm] = mode;
+        if (fsm.Initialized)
+        {
+            _modes[fsm] = mode;
+        }
         if (mode != FsmMode.None)
         {
             _objects[IdOf(fsm.GameObject)] = fsm.GameObject;
@@ -288,7 +294,8 @@ internal sealed class EnemySync : Module
         }
         bool persistent = go.GetComponent<PersistentBoolItem>() || go.GetComponent<PersistentIntItem>();
         bool named = fsm.Name == "BG Control" || SharedKeywords.Any(word => fsm.Name.Contains(word));
-        return persistent || named ? FsmMode.Shared : FsmMode.None;
+        // A synced hero cutscene (Tut_01 Weakness Scene) has both games resetting each other.
+        return (persistent || named) && !HeroCutscenes.Drives(fsm) ? FsmMode.Shared : FsmMode.None;
     }
 
     private static bool InBossArena(Transform transform)
@@ -577,6 +584,7 @@ internal sealed class EnemySync : Module
         {
             Applying = false;
         }
+        RemoteStateApplied?.Invoke(component.Fsm);
     }
 
     private static void DieQuietly(HealthManager health, float? direction, AttackTypes attack)

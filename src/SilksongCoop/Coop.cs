@@ -5,6 +5,7 @@ using BepInEx;
 using BepInEx.Logging;
 using SilksongCoop.Game;
 using SilksongCoop.Net;
+using SilksongCoop.Dev;
 using UnityEngine;
 
 namespace SilksongCoop;
@@ -37,10 +38,12 @@ internal sealed class Coop : IDisposable
         Dialogue = new DialogueSync(this);
         Preload = new AssetPreload(this);
         Tools = new ToolReplicas(this);
+        Pickups = new PickupSync(this);
+        Dev = new DevTools(this);
         _modules =
         [
             Joining, Rooms, World, Preload, Heroes, Tools, HeroAudio, ClipAudio, Dialogue, Enemies, Downed,
-            Pulls, Pause,
+            Pulls, Pause, Pickups, Dev,
         ];
         Current = this;
     }
@@ -82,6 +85,10 @@ internal sealed class Coop : IDisposable
     public AssetPreload Preload { get; }
 
     public ToolReplicas Tools { get; }
+
+    public PickupSync Pickups { get; }
+
+    public DevTools Dev { get; }
 
     public Session? Session { get; private set; }
 
@@ -209,6 +216,7 @@ internal sealed class Coop : IDisposable
                 Log.LogWarning($"{type} sent as one {size}-byte datagram; routers may drop it");
             }
         };
+        session.HandlerFailed += (type, exception) => Log.LogError($"{type} handler failed: {exception}");
         foreach (Module module in _modules)
         {
             module.Register(session);

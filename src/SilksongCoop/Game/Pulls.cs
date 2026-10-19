@@ -66,6 +66,16 @@ internal sealed class Pulls : Module
     /// <summary>D31: once the friend can move (e.g. got up from the bench), it walks to the host.</summary>
     public void JoinPartnerWhenFree() => _joinPending = true;
 
+    /// <summary>Dev tool: the partner comes to where this hero stands, from this room or any other.</summary>
+    public void BringPartner()
+    {
+        if (Coop.Rooms.Current is { } scene)
+        {
+            // No gate: the partner enters by its usual door, then snaps to this hero.
+            Session?.Send(MessageType.Pull, w => w.String(scene).String("").Bool(true));
+        }
+    }
+
     private void JoinPartner()
     {
         Partner partner = Coop.Partner;
@@ -91,7 +101,10 @@ internal sealed class Pulls : Module
             return true;
         }
         TetherVerdict verdict = Tether.Check(scene, point.targetScene, Coop.Partner.TetherRoom);
-        if (verdict == TetherVerdict.Allowed)
+        // Each game randomizes its own maze doors, so the partner's door list says nothing here.
+        MazeController? maze = MazeController.NewestInstance;
+        bool inMaze = maze && maze!.gameObject.scene.name == scene;
+        if (verdict == TetherVerdict.Allowed || inMaze)
         {
             return true;
         }

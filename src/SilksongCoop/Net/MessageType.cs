@@ -34,6 +34,9 @@ internal enum MessageType : byte
     FsmEventRelay,
     CocoonBroken,
     ToolThrown,
+    DevMode,
+    InventoryCheck,
+    PickupTaken,
 }
 
 /// <summary>First byte after the magic: how the rest of the datagram is framed.</summary>

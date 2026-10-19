@@ -39,6 +39,14 @@ internal sealed class CoopConfig
         CameraKey = file.Bind("Revive", "CameraKey", KeyCode.V, "While down: watch cocoon or partner");
 
         PauseFreezesBoth = file.Bind("Pause", "PauseFreezesBoth", false, "Pausing freezes both games (D29)");
+
+        DevEnabled = file.Bind("Dev", "Enabled", false, "Dev tools; a save they ran on is deleted on exit");
+        DevInvulnerable = file.Bind("Dev", "Invulnerable", false, "No hero damage in dev mode");
+        DevKey = file.Bind("Dev", "DevModeKey", KeyCode.F1, "Dev mode on or off: one-hit kills, bug report");
+        BringKey = file.Bind("Dev", "BringPartnerKey", KeyCode.F2, "Bring the partner to where you stand");
+        FlyKey = file.Bind("Dev", "FlyKey", KeyCode.F3, "Toggle free fly in dev mode");
+        GiveAllKey = file.Bind("Dev", "GiveAllKey", KeyCode.F4, "With Shift: give all skills, tools, crests");
+        FlySpeed = file.Bind("Dev", "FlySpeed", 20f, "Free fly speed; Dash held flies 2.5 times faster");
     }
 
     public ConfigEntry<string> PlayerName { get; }
@@ -76,4 +84,18 @@ internal sealed class CoopConfig
     public ConfigEntry<KeyCode> CameraKey { get; }
 
     public ConfigEntry<bool> PauseFreezesBoth { get; }
+
+    public ConfigEntry<bool> DevEnabled { get; }
+
+    public ConfigEntry<bool> DevInvulnerable { get; }
+
+    public ConfigEntry<KeyCode> DevKey { get; }
+
+    public ConfigEntry<KeyCode> BringKey { get; }
+
+    public ConfigEntry<KeyCode> FlyKey { get; }
+
+    public ConfigEntry<KeyCode> GiveAllKey { get; }
+
+    public ConfigEntry<float> FlySpeed { get; }
 }

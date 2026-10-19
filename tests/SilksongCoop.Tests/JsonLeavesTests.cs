@@ -68,6 +68,20 @@ public class JsonLeavesTests
     }
 
     [Fact]
+    public void FirstEntryNeverDropsTheList()
+    {
+        // The game's named lists break on a missing savedData (first quest, first journal kill).
+        JObject before = new() { ["savedData"] = new JArray() };
+        JToken patched = before.DeepClone();
+        foreach (LeafChange change in Diff(before, Tools(5, 3)))
+        {
+            patched = JsonLeaves.Apply(patched, change, additive: false)!;
+            Assert.IsType<JArray>(patched["savedData"]);
+        }
+        Assert.True(JToken.DeepEquals(Tools(5, 3), patched));
+    }
+
+    [Fact]
     public void ScalarRootsAreOneLeaf()
     {
         LeafChange change = Assert.Single(JsonLeaves.Diff(

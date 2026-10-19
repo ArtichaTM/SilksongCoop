@@ -21,12 +21,15 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
 {
     private const float Interval = 0.5f;
     private const int FloodLimit = 200;
+    private const float InventoryCheckInterval = 5f;
 
     private readonly Dictionary<string, FieldInfo> _fields = SyncedFields();
     private readonly Dictionary<string, Dictionary<string, JToken>> _baseline = [];
     private readonly Dictionary<SceneKey, SceneValue> _sceneBaseline = [];
     private readonly Queue<Action> _early = new();
+    private readonly HashSet<string> _inventoryMismatch = [];
     private float _next;
+    private float _nextInventoryCheck;
     private PlayerData? _playerData;
     private SceneData? _sceneData;
     private int _friendChangesThisTick;
@@ -55,6 +58,7 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
     {
         session.On(MessageType.FieldChange, OnFieldChange);
         session.On(MessageType.SceneDataChange, OnSceneDataChange);
+        session.On(MessageType.InventoryCheck, OnInventoryCheck);
     }
 
     /// <summary>Takes the current save as the common starting point: the host at the save hand-off, the
@@ -104,6 +108,59 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
             SendFieldChanges(name);
         }
         SendSceneChanges();
+        if (!Coop.IsHost && Time.unscaledTime >= _nextInventoryCheck)
+        {
+            _nextInventoryCheck = Time.unscaledTime + InventoryCheckInterval;
+            SendInventoryCheck();
+        }
+    }
+
+    /// <summary>Friend side: hashes of what it carries, so the host can catch a copy that drifted.</summary>
+    private void SendInventoryCheck()
+    {
+        List<string> names = FieldRules.Inventory.Where(_fields.ContainsKey).ToList();
+        Session?.Send(MessageType.InventoryCheck, w =>
+        {
+            w.Int(names.Count);
+            foreach (string name in names)
+            {
+                w.String(name).Int(InventoryHash(name));
+            }
+        });
+    }
+
+    /// <summary>
+    /// Host side: a field that differs on two checks in a row is not an edit still in flight; the host
+    /// sends its whole value and the friend adopts it.
+    /// </summary>
+    private void OnInventoryCheck(PacketReader reader)
+    {
+        int count = reader.Int();
+        for (int i = 0; i < count; i++)
+        {
+            string name = reader.String();
+            int friendHash = reader.Int();
+            bool differs = Running && _fields.ContainsKey(name) && InventoryHash(name) != friendHash;
+            if (!differs)
+            {
+                _inventoryMismatch.Remove(name);
+            }
+            else if (!_inventoryMismatch.Add(name))
+            {
+                _inventoryMismatch.Remove(name);
+                Coop.Log.LogWarning($"friend's {name} drifted from the host's; resending it whole");
+                string whole = InventoryJson(name);
+                Session?.Send(MessageType.FieldChange, w => w.String(name).String("").String(whole));
+            }
+        }
+    }
+
+    private int InventoryHash(string name) => Fnv.Hash(InventoryJson(name));
+
+    private string InventoryJson(string name)
+    {
+        object? value = _fields[name].GetValue(PlayerData.instance);
+        return value is null ? "" : JToken.FromObject(value, Json).ToString(Formatting.None);
     }
 
     public override void OnLeft()
