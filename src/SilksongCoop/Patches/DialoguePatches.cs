@@ -3,7 +3,7 @@ using SilksongCoop.Game;
 
 namespace SilksongCoop.Patches;
 
-/// <summary>Dialogue in coop: skips go to the partner, and the partner's talk never holds our hero.</summary>
+/// <summary>Dialogue in coop: cutscene skips go to the partner; a player's own NPC talk is tracked.</summary>
 [HarmonyPatch]
 internal static class DialoguePatches
 {
@@ -20,16 +20,4 @@ internal static class DialoguePatches
     [HarmonyPostfix]
     [HarmonyPatch(typeof(NPCControlBase), nameof(NPCControlBase.EndDialogue))]
     private static void Ended(NPCControlBase __instance) => Sync?.OnDialogueEnded(__instance);
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(HeroTalkAnimation), nameof(HeroTalkAnimation.EnterConversation))]
-    private static bool TalkPose(NPCControlBase sourceNpc) => Sync?.BlocksLock(sourceNpc, "talk") != true;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(HeroController), nameof(HeroController.RelinquishControl))]
-    private static bool Relinquish() => Sync?.BlocksLock(DialogueSync.RunningNpc(), "relinquish") != true;
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(HeroController), nameof(HeroController.AddInputBlocker))]
-    private static bool InputBlock() => Sync?.BlocksLock(DialogueSync.RunningNpc(), "input block") != true;
 }

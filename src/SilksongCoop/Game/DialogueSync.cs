@@ -1,13 +1,10 @@
-using System.Linq;
-using HutongGames.PlayMaker;
 using SilksongCoop.Net;
-using UnityEngine;
 
 namespace SilksongCoop.Game;
 
 /// <summary>
-/// A conversation both players see moves together: a skip on either side speeds up the partner's text or
-/// turns its page. Only the player who started the talk is held in place (11.1 a).
+/// A cutscene conversation both players see moves together: a skip on either side speeds up the partner's
+/// text or turns its page. A talk a player starts with an NPC is theirs alone (D30) and is never synced.
 /// </summary>
 internal sealed class DialogueSync(Coop coop) : Module(coop)
 {
@@ -35,6 +32,9 @@ internal sealed class DialogueSync(Coop coop) : Module(coop)
 
     public override void OnLeft() => _pendingPages = 0;
 
+    /// <summary>The running conversation is one this player started with an NPC.</summary>
+    private bool InOwnTalk => _localNpc && _localNpc!.isActiveAndEnabled;
+
     public void OnLocalInteract(NPCControlBase npc) => _localNpc = npc;
 
     public void OnDialogueEnded(NPCControlBase npc)
@@ -45,33 +45,10 @@ internal sealed class DialogueSync(Coop coop) : Module(coop)
         }
     }
 
-    /// <summary>A lock the partner's conversation would put on our hero; logged when kept off.</summary>
-    public bool BlocksLock(NPCControlBase? npc, string what)
-    {
-        if (npc is null || !npc || npc == _localNpc || !Coop.Rooms.PartnerHere)
-        {
-            return false;
-        }
-        EnemySync rooms = Coop.Enemies;
-        bool synced = npc.GetComponents<PlayMakerFSM>().Any(fsm => rooms.ModeOf(fsm.Fsm) != FsmMode.None);
-        if (synced)
-        {
-            Coop.Log.LogInfo($"kept the hero free during the partner's talk: {what} from {npc.name}");
-        }
-        return synced;
-    }
-
-    /// <summary>The NPC whose FSM is running right now, if any.</summary>
-    public static NPCControlBase? RunningNpc()
-    {
-        GameObject? running = FsmExecutionStack.ExecutingFsm?.GameObject;
-        return running ? running!.GetComponentInParent<NPCControlBase>() : null;
-    }
-
     /// <summary>Called before the local box advances on a skip press.</summary>
     public void OnLocalSkip(DialogueBox box)
     {
-        if (!Applying && Coop.Rooms.PartnerHere)
+        if (!Applying && !InOwnTalk && Coop.Rooms.PartnerHere)
         {
             bool nextPage = box.waitingToAdvance;
             Session?.Send(MessageType.DialogueSkip, w => w.Bool(nextPage));
@@ -82,6 +59,10 @@ internal sealed class DialogueSync(Coop coop) : Module(coop)
     {
         bool nextPage = reader.Bool();
         if (!Coop.Rooms.PartnerHere || DialogueBox._instance is not { } box || !box || !box.isDialogueRunning)
+        {
+            return;
+        }
+        if (InOwnTalk)
         {
             return;
         }

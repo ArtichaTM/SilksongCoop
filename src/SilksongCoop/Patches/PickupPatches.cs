@@ -35,3 +35,10 @@ internal static class PickupPatches
         }
     }
 }
+
+/// <summary>A purchase closes the partner's open shop (3.4 a).</summary>
+[HarmonyPatch(typeof(ShopItem), nameof(ShopItem.SetPurchased))]
+internal static class ShopPatches
+{
+    private static void Postfix() => Coop.Current?.Shops.OnLocalPurchase();
+}

@@ -51,8 +51,15 @@ public class RulesTests
     public void OnlyTheHostSendsHostOwnedFields()
     {
         Assert.True(FieldRules.HostSends(FieldScope.HostOwned));
-        Assert.False(FieldRules.FriendSends(FieldScope.HostOwned));
+        Assert.False(FieldRules.FriendSends(FieldScope.HostOwned, sameRoom: false));
         Assert.False(FieldRules.HostSends(FieldScope.Loadout));
+    }
+
+    [Fact]
+    public void FriendSendsHostOwnedFieldsInTheHostsRoom()
+    {
+        Assert.True(FieldRules.FriendSends(FieldScope.HostOwned, sameRoom: true));
+        Assert.False(FieldRules.FriendSends(FieldScope.PerPlayer, sameRoom: true));
     }
 
     [Fact]

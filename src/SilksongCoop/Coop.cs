@@ -39,11 +39,12 @@ internal sealed class Coop : IDisposable
         Preload = new AssetPreload(this);
         Tools = new ToolReplicas(this);
         Pickups = new PickupSync(this);
+        Shops = new ShopSync(this);
         Dev = new DevTools(this);
         _modules =
         [
             Joining, Rooms, World, Preload, Heroes, Tools, HeroAudio, ClipAudio, Dialogue, Enemies, Downed,
-            Pulls, Pause, Pickups, Dev,
+            Pulls, Pause, Pickups, Shops, Dev,
         ];
         Current = this;
     }
@@ -87,6 +88,8 @@ internal sealed class Coop : IDisposable
     public ToolReplicas Tools { get; }
 
     public PickupSync Pickups { get; }
+
+    public ShopSync Shops { get; }
 
     public DevTools Dev { get; }
 

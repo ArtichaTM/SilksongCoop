@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SilksongCoop.Net;
 using SilksongCoop.Rules;
+using UnityEngine.SceneManagement;
 
 namespace SilksongCoop.Game;
 
@@ -15,12 +16,44 @@ internal sealed class Rooms(Coop coop) : Module(coop)
     /// <summary>My room once the hero stands in it; null while loading or in menus.</summary>
     public string? Current { get; private set; }
 
+    /// <summary>Where this game is headed while it loads a room.</summary>
+    public string? Heading { get; private set; }
+
     public int CurrentHash => Current is null ? 0 : Fnv.Hash(Current);
 
     public bool PartnerHere => Coop.InCoop && Current is not null && Coop.Partner.Scene == Current;
 
+    /// <summary>In one room, or one of the two still loading into the other's.</summary>
+    public bool Together
+    {
+        get
+        {
+            Partner partner = Coop.Partner;
+            bool arriving = Current is null && Heading is not null && Heading == partner.Scene;
+            bool partnerLoading = partner.Scene is null && partner.Heading is not null;
+            bool partnerArriving = partnerLoading && partner.Heading == Current;
+            return Coop.InCoop && (PartnerHere || arriving || partnerArriving);
+        }
+    }
+
     /// <summary>This game runs the enemies and objects of its room.</summary>
     public bool LocalOwns => !PartnerHere || Coop.IsHost;
+
+    /// <summary>The room's own scene, or one it loaded on top (a boss arena such as Bone_05_boss).</summary>
+    public bool Holds(Scene scene)
+    {
+        if (Current is null || !scene.IsValid())
+        {
+            return false;
+        }
+        if (scene.name == Current)
+        {
+            return true;
+        }
+        string name = scene.name;
+        return SceneAdditiveLoadConditional._additiveSceneLoads
+            .Any(load => load && load.gameObject.scene.name == Current && load.SceneNameToLoad == name);
+    }
 
     /// <summary>Raised once the hero stands in a new room; the argument is the scene name.</summary>
     public event Action<string>? Entered;
@@ -38,6 +71,7 @@ internal sealed class Rooms(Coop coop) : Module(coop)
         if (scene != Current && GameRefs.HeroReady)
         {
             Current = scene;
+            Heading = null;
             Entered?.Invoke(scene);
             SendRoomInfo();
         }
@@ -49,6 +83,7 @@ internal sealed class Rooms(Coop coop) : Module(coop)
     public void Leaving(string targetScene)
     {
         Current = null;
+        Heading = targetScene;
         Session?.Send(MessageType.RoomInfo, w => w.String("").String(targetScene).String(""));
     }
 

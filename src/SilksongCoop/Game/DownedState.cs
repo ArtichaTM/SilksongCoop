@@ -18,6 +18,7 @@ internal sealed class DownedState : Module
     private const float CocoonRadius = 0.6f;
     private const float Skin = 0.02f;
     private const float FriendDeathWait = 4f;
+    private const int SelfReviveHealth = 1;
 
     private GameObject? _ownCocoon;
     private bool _rolling;
@@ -30,6 +31,7 @@ internal sealed class DownedState : Module
     private bool _watchPartner;
     private bool _breakingForPartner;
     private PlayMakerFSM? _bindFsm;
+    private float _quietFor;
 
     public DownedState(Coop coop)
         : base(coop) => coop.Rooms.Entered += OnEntered;
@@ -48,6 +50,7 @@ internal sealed class DownedState : Module
         session.On(MessageType.Revive, reader => OnRevived(reader.Int()));
         session.On(MessageType.BothDown, _ => OnBothDown());
         session.On(MessageType.CocoonBroken, _ => OnPartnerBrokeCocoon());
+        session.On(MessageType.GotUp, _ => OnPartnerGotUp());
     }
 
     public override void Update()
@@ -60,6 +63,7 @@ internal sealed class DownedState : Module
             }
             AimCamera(hero, _watchPartner ? Coop.Heroes.PartnerTransform : null);
             Roll(hero);
+            GetUpWhenQuiet(hero);
         }
         Partner partner = Coop.Partner;
         bool showPartnerCocoon = partner.Downed && partner.Scene is { } room && room == Coop.Rooms.Current;
@@ -106,12 +110,14 @@ internal sealed class DownedState : Module
         }
         if (IsDown || _downThroughPull)
         {
+            Log($"death ignored: already down={IsDown}, down through a pull={_downThroughPull}");
             routine = Nothing();
             return true;
         }
         if (Coop.Partner.Downed && Coop.IsHost)
         {
             // D36d: both down, the host's real death at its own spot.
+            Log("died while the partner was down: real death for both");
             Session?.Send(MessageType.BothDown);
             Coop.Partner.Downed = false;
             RespawningTogether = true;
@@ -138,6 +144,7 @@ internal sealed class DownedState : Module
             return true;
         }
         Session?.Send(MessageType.Revive, w => w.Int(amount));
+        Log($"revived the partner with {amount} health");
         partner.Downed = false;
         DestroyPartnerCocoon();
         Coop.Hints.Show($"Revived {partner.Name}");
@@ -212,6 +219,7 @@ internal sealed class DownedState : Module
         {
             return;
         }
+        Log("pulled while down; going down again in the next room");
         Thaw(hero);
         IsDown = false;
         _downThroughPull = true;
@@ -235,7 +243,9 @@ internal sealed class DownedState : Module
 
     private void GoDown(HeroController hero, Vector2 deathPosition)
     {
+        Log($"down in {Coop.Rooms.Current} at {deathPosition}");
         IsDown = true;
+        _quietFor = 0f;
         _watchPartner = false;
         _spot = CocoonSpot(deathPosition);
         _spawnHeight = _spot.y;
@@ -263,6 +273,7 @@ internal sealed class DownedState : Module
         partner.Downed = true;
         partner.Cocoon = new Vector2(reader.Float(), reader.Float());
         partner.Position = partner.Cocoon;
+        Log($"partner down at {partner.Cocoon}");
         Coop.Hints.Show($"{partner.Name} is down: Bind on the cocoon to revive", 5f);
         if (IsDown && Coop.IsHost && GameRefs.Hero is { } hero)
         {
@@ -274,10 +285,42 @@ internal sealed class DownedState : Module
 
     private void OnRevived(int amount)
     {
-        if (!IsDown || GameRefs.Hero is not { } hero)
+        if (IsDown && GameRefs.Hero is { } hero)
         {
+            Log($"revived by the partner with {amount} health");
+            GetUp(hero, amount);
+            Coop.Hints.Show("Revived");
+        }
+    }
+
+    /// <summary>With no enemy left there is no silk for a reviving Bind; the downed get up alone.</summary>
+    private void GetUpWhenQuiet(HeroController hero)
+    {
+        float delay = Coop.Config.SelfReviveDelay.Value;
+        if (delay <= 0f || !Coop.InCoop || Coop.Enemies.AnyEnemyActive)
+        {
+            _quietFor = 0f;
             return;
         }
+        _quietFor += Time.deltaTime;
+        if (_quietFor >= delay)
+        {
+            Log($"no enemies for {delay:0} s: got up alone");
+            Session?.Send(MessageType.GotUp);
+            GetUp(hero, SelfReviveHealth);
+            Coop.Hints.Show("No enemies around: you got up");
+        }
+    }
+
+    private void OnPartnerGotUp()
+    {
+        Log("partner got up alone");
+        Coop.Partner.Downed = false;
+        DestroyPartnerCocoon();
+    }
+
+    private void GetUp(HeroController hero, int amount)
+    {
         IsDown = false;
         Vector2 at = _spot;
         DestroyOwnCocoon();
@@ -287,12 +330,12 @@ internal sealed class DownedState : Module
         hero.playerData.health = 0;
         hero.AddHealth(amount);
         hero.StartInvulnerable(1.5f);
-        Coop.Hints.Show("Revived");
     }
 
     /// <summary>Friend side of both down: the game's own respawn at the host's last respawn point.</summary>
     private void OnBothDown()
     {
+        Log("both down: respawning");
         DestroyPartnerCocoon();
         Coop.Partner.Downed = false;
         if (Coop.IsHost || GameRefs.Manager is not { } gm || GameRefs.Hero is not { } hero)
@@ -326,6 +369,7 @@ internal sealed class DownedState : Module
 
     private void DieForReal(HeroController hero)
     {
+        Log("down became a real death");
         IsDown = false;
         RespawningTogether = Coop.InCoop;
         DestroyOwnCocoon();
@@ -341,6 +385,8 @@ internal sealed class DownedState : Module
             AllowRealDie = false;
         }
     }
+
+    private void Log(string text) => Coop.Log.LogInfo($"downed: {text}");
 
     /// <summary>The same switches <c>HeroController.Die</c> flips, minus the death consequences.</summary>
     private static void Freeze(HeroController hero)

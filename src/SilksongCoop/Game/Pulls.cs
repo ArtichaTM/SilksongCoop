@@ -258,7 +258,10 @@ internal sealed class Pulls : Module
     {
         if (hero.TryGetComponent(out Rigidbody2D body))
         {
-            body.linearVelocity = Vector2.zero;
+            // Only the speed into the gate: zeroing the fall too pins the hero sliding along its edge.
+            Vector2 speed = body.linearVelocity;
+            bool sideways = side is GatePosition.left or GatePosition.right;
+            body.linearVelocity = sideways ? new Vector2(0f, speed.y) : new Vector2(speed.x, 0f);
         }
         Bounds gate = point.collider.bounds;
         Bounds self = hero.bounds;

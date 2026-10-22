@@ -7,7 +7,10 @@ internal enum FieldScope
     /// <summary>One value in the host's save, whoever changes it (D21, D36a, D36b).</summary>
     Shared,
 
-    /// <summary>Only the host's game writes it; the friend's copy follows the host (D42).</summary>
+    /// <summary>
+    /// The host's game writes it; the friend's copy follows the host (D42). A change the friend makes in the
+    /// host's room counts too: a scripted sequence there (a memory's end) may run in the friend's game only.
+    /// </summary>
     HostOwned,
 
     /// <summary>Each game keeps its own: HP, silk, where the player stands.</summary>
@@ -65,5 +68,6 @@ internal static class FieldRules
 
     public static bool HostSends(FieldScope scope) => scope is FieldScope.Shared or FieldScope.HostOwned;
 
-    public static bool FriendSends(FieldScope scope) => scope == FieldScope.Shared;
+    public static bool FriendSends(FieldScope scope, bool sameRoom) =>
+        scope == FieldScope.Shared || (sameRoom && scope == FieldScope.HostOwned);
 }

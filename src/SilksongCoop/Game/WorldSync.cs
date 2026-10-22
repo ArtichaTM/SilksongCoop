@@ -211,10 +211,11 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
             return;
         }
         FieldScope scope = FieldRules.Of(name);
-        bool sends = Coop.IsHost ? FieldRules.HostSends(scope) : FieldRules.FriendSends(scope);
+        bool together = Coop.Rooms.Together;
+        bool sends = Coop.IsHost ? FieldRules.HostSends(scope) : FieldRules.FriendSends(scope, together);
         if (!sends)
         {
-            // D42: the friend's game never moves the host's respawn point; put the host's value back.
+            // D42: the friend's game alone never moves the host's respawn point; put the host's value back.
             Restore(field, _baseline[name]);
             return;
         }
@@ -272,7 +273,7 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
             return;
         }
         FieldScope scope = FieldRules.Of(name);
-        if (Coop.IsHost && !FieldRules.FriendSends(scope))
+        if (Coop.IsHost && !FieldRules.FriendSends(scope, Coop.Rooms.Together))
         {
             return;
         }
@@ -299,10 +300,26 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
         }
         JToken? merged = JsonLeaves.Apply(token, change, additive: Coop.IsHost);
         field.SetValue(PlayerData.instance, merged?.ToObject(field.FieldType, Json));
+        ShowCurrency(name, field);
         if (!Coop.IsHost)
         {
             // The host's value is the agreed one; the host itself re-sends its merged result instead.
             _baseline[name] = Leaves(name, field);
+        }
+    }
+
+    /// <summary>The HUD counter only learns of the game's own pickups; it shows the partner's too.</summary>
+    private static void ShowCurrency(string name, FieldInfo field)
+    {
+        CurrencyType? type = name switch
+        {
+            nameof(PlayerData.geo) => CurrencyType.Money,
+            nameof(PlayerData.ShellShards) => CurrencyType.Shard,
+            _ => null,
+        };
+        if (type is { } currency && field.GetValue(PlayerData.instance) is int amount)
+        {
+            CurrencyCounter.ToValue(amount, currency);
         }
     }
 

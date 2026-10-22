@@ -37,6 +37,12 @@ internal sealed class CoopConfig
         CocoonSpeed = file.Bind("Revive", "CocoonSpeed", 2f, "How fast a downed player rolls the cocoon");
         CocoonRise = file.Bind("Revive", "CocoonRiseLimit", 4f, "How high above its spawn the cocoon rises");
         CameraKey = file.Bind("Revive", "CameraKey", KeyCode.V, "While down: watch cocoon or partner");
+        SelfReviveDelay = file.Bind(
+            "Revive",
+            "SelfReviveDelay",
+            10f,
+            "Seconds after which a downed player gets up alone once no enemy is left in the room; 0 disables"
+        );
 
         PauseFreezesBoth = file.Bind("Pause", "PauseFreezesBoth", false, "Pausing freezes both games (D29)");
 
@@ -82,6 +88,8 @@ internal sealed class CoopConfig
     public ConfigEntry<float> CocoonRise { get; }
 
     public ConfigEntry<KeyCode> CameraKey { get; }
+
+    public ConfigEntry<float> SelfReviveDelay { get; }
 
     public ConfigEntry<bool> PauseFreezesBoth { get; }
 

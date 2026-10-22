@@ -4,7 +4,6 @@ using HutongGames.PlayMaker;
 using SilksongCoop.Net;
 using SilksongCoop.Rules;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace SilksongCoop.Game;
 
@@ -16,7 +15,10 @@ internal enum FsmMode
     /// <summary>Enemies and boss arenas: the room owner runs them, the other game mirrors (D9).</summary>
     Authority,
 
-    /// <summary>Levers, gates, lifts (D46): either player may trigger them; both games follow.</summary>
+    /// <summary>
+    /// Levers, gates, walls, lifts (D46): either player may trigger them. The room owner runs them; the other
+    /// game relays its triggers and mirrors, so a chain of states never plays twice.
+    /// </summary>
     Shared,
 }
 
@@ -60,9 +62,6 @@ internal sealed class EnemySync : Module
 
     /// <summary>Inside a death the partner reported.</summary>
     public static bool RemoteDeath { get; private set; }
-
-    /// <summary>A state the partner sent was forced into this FSM.</summary>
-    public event System.Action<Fsm>? RemoteStateApplied;
 
     private bool Mirroring => !Coop.Rooms.LocalOwns;
 
@@ -147,9 +146,7 @@ internal sealed class EnemySync : Module
         {
             return;
         }
-        FsmMode mode = ModeOf(fsm);
-        bool send = mode == FsmMode.Shared || (mode == FsmMode.Authority && Coop.Rooms.LocalOwns);
-        if (send)
+        if (Coop.Rooms.LocalOwns && ModeOf(fsm) != FsmMode.None)
         {
             int id = IdOf(fsm.GameObject);
             Session?.Send(MessageType.FsmState, w => w.Int(id).String(fsm.Name).String(toState.Name));
@@ -157,7 +154,7 @@ internal sealed class EnemySync : Module
     }
 
     /// <summary>A mirrored FSM only moves when the owner says so, even inside an applied state.</summary>
-    public bool BlocksEvent(Fsm fsm) => Mirroring && ModeOf(fsm) == FsmMode.Authority;
+    public bool BlocksEvent(Fsm fsm) => Mirroring && ModeOf(fsm) != FsmMode.None;
 
     /// <summary>
     /// A mirror reacted to something only it can see (its own player nearby): the owner takes the same
@@ -188,6 +185,9 @@ internal sealed class EnemySync : Module
         return state.Transitions.Any(t => t.FsmEvent == fsmEvent)
             || fsm.GlobalTransitions.Any(t => t.FsmEvent == fsmEvent);
     }
+
+    /// <summary>A living enemy is out in the room; with none, nobody earns the silk a revive needs.</summary>
+    public bool AnyEnemyActive => _enemies.Values.Any(enemy => enemy.IsActive);
 
     public bool IsMirrored(HealthManager health) => !Applying && Mirroring && IsTracked(health);
 
@@ -220,7 +220,7 @@ internal sealed class EnemySync : Module
 
     public void Track(HealthManager health)
     {
-        if (Coop.Rooms.Current is null || health.gameObject.scene.name != Coop.Rooms.Current)
+        if (!Coop.Rooms.Holds(health.gameObject.scene))
         {
             return;
         }
@@ -274,7 +274,7 @@ internal sealed class EnemySync : Module
         _enteredAt = Time.unscaledTime;
         foreach (HealthManager health in Resources.FindObjectsOfTypeAll<HealthManager>())
         {
-            if (health.gameObject.scene.name == scene)
+            if (Coop.Rooms.Holds(health.gameObject.scene))
             {
                 Track(health);
             }
@@ -284,8 +284,13 @@ internal sealed class EnemySync : Module
     private FsmMode Classify(Fsm fsm)
     {
         GameObject go = fsm.GameObject;
-        if (!go || go.scene.name != Coop.Rooms.Current || go.GetComponentInParent<HeroController>(true))
+        if (!go || !Coop.Rooms.Holds(go.scene) || go.GetComponentInParent<HeroController>(true))
         {
+            return FsmMode.None;
+        }
+        if (go.GetComponentInParent<NPCControlBase>(true))
+        {
+            // D30: talk stays local; a synced conversation drags the partner into it.
             return FsmMode.None;
         }
         if (go.GetComponentInParent<HealthManager>(true) || InBossArena(go.transform))
@@ -335,9 +340,7 @@ internal sealed class EnemySync : Module
     private void SendFrame()
     {
         int room = Coop.Rooms.CurrentHash;
-        List<Tracked> active = _enemies.Values
-            .Where(enemy => enemy.Health && enemy.Health.gameObject.activeInHierarchy && !enemy.Health.isDead)
-            .ToList();
+        List<Tracked> active = _enemies.Values.Where(enemy => enemy.IsActive).ToList();
         for (int start = 0; start < active.Count; start += EntriesPerPacket)
         {
             List<Tracked> chunk = active.Skip(start).Take(EntriesPerPacket).ToList();
@@ -397,9 +400,7 @@ internal sealed class EnemySync : Module
         {
             return;
         }
-        FsmMode mode = ModeOf(component.Fsm);
-        bool apply = mode == FsmMode.Shared ? component.ActiveStateName != state : Mirroring;
-        if (apply && mode != FsmMode.None)
+        if (Mirroring && ModeOf(component.Fsm) != FsmMode.None)
         {
             SetState(component, state);
         }
@@ -415,7 +416,7 @@ internal sealed class EnemySync : Module
         {
             return;
         }
-        if (ModeOf(component.Fsm) == FsmMode.Authority)
+        if (ModeOf(component.Fsm) != FsmMode.None)
         {
             component.SendEvent(eventName);
         }
@@ -439,7 +440,6 @@ internal sealed class EnemySync : Module
         }
         if (killed)
         {
-            // The hitter's game already dropped the loot for the killing blow.
             DieQuietly(health, direction, attack);
             return;
         }
@@ -584,15 +584,15 @@ internal sealed class EnemySync : Module
         {
             Applying = false;
         }
-        RemoteStateApplied?.Invoke(component.Fsm);
     }
 
+    /// <summary>A death the partner already had, not reported back; loot drops here too.</summary>
     private static void DieQuietly(HealthManager health, float? direction, AttackTypes attack)
     {
         RemoteDeath = true;
         try
         {
-            health.Die(direction, attack, NailElements.None, null, true, 1f, false, true);
+            health.Die(direction, attack, NailElements.None, null, true, 1f, false, false);
         }
         finally
         {
@@ -615,15 +615,14 @@ internal sealed class EnemySync : Module
 
     private void Reindex()
     {
-        if (Time.unscaledTime - _lastIndex < ReindexCooldown || Coop.Rooms.Current is not { } scene)
+        if (Time.unscaledTime - _lastIndex < ReindexCooldown || Coop.Rooms.Current is null)
         {
             return;
         }
         _lastIndex = Time.unscaledTime;
-        Scene active = SceneManager.GetSceneByName(scene);
         foreach (PlayMakerFSM fsm in Resources.FindObjectsOfTypeAll<PlayMakerFSM>())
         {
-            if (fsm.gameObject.scene == active)
+            if (Coop.Rooms.Holds(fsm.gameObject.scene))
             {
                 _objects[IdOf(fsm.gameObject)] = fsm.gameObject;
             }
@@ -655,6 +654,8 @@ internal sealed class EnemySync : Module
         public bool HasTarget { get; set; }
 
         public float LastSeen { get; set; }
+
+        public bool IsActive => Health && !Health.isDead && Health.gameObject.activeInHierarchy;
 
         /// <summary>A mirror's body is kinematic: its physics never fights the owner's positions.</summary>
         public void SetMirrored(bool mirrored)
