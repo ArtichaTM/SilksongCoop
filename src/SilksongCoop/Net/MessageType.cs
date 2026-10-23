@@ -39,6 +39,8 @@ internal enum MessageType : byte
     PickupTaken,
     GotUp,
     ShopBought,
+    PlatformBreak,
+    BreakablesBroken,
 }
 
 /// <summary>First byte after the magic: how the rest of the datagram is framed.</summary>

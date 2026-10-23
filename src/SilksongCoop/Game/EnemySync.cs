@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HutongGames.PlayMaker;
+using HutongGames.PlayMaker.Actions;
 using SilksongCoop.Net;
 using SilksongCoop.Rules;
 using UnityEngine;
@@ -36,6 +37,10 @@ internal sealed class EnemySync : Module
     private const int EntriesPerPacket = 48;
     private const int SnapshotChunk = 16;
     private const float ReindexCooldown = 1f;
+    private const int MaxReports = 60;
+
+    // Cages, branches, barrels and sleeping fleas that a few hits break open (no save flag of their own).
+    private const string FleaRescue = "Flea Rescue";
 
     private static readonly string[] SharedKeywords =
     [
@@ -50,6 +55,7 @@ internal sealed class EnemySync : Module
     private float _lastIndex = -ReindexCooldown;
     private float _enteredAt;
     private GameObject? _hitSource;
+    private int _reports;
 
     public EnemySync(Coop coop)
         : base(coop) => coop.Rooms.Entered += OnEntered;
@@ -62,6 +68,9 @@ internal sealed class EnemySync : Module
 
     /// <summary>Inside a death the partner reported.</summary>
     public static bool RemoteDeath { get; private set; }
+
+    /// <summary>The FSM whose check of its own body against the ground is running.</summary>
+    public static Fsm? BodyCheck { get; set; }
 
     private bool Mirroring => !Coop.Rooms.LocalOwns;
 
@@ -100,6 +109,19 @@ internal sealed class EnemySync : Module
         {
             _nextFrame = now + FrameInterval;
             SendFrame();
+        }
+    }
+
+    /// <summary>After all FSM updates: no velocity its FSM set moves a mirror off the owner's spot.</summary>
+    public override void LateUpdate()
+    {
+        if (!Mirroring)
+        {
+            return;
+        }
+        foreach (Tracked enemy in _enemies.Values)
+        {
+            enemy.ClearVelocity();
         }
     }
 
@@ -158,11 +180,13 @@ internal sealed class EnemySync : Module
 
     /// <summary>
     /// A mirror reacted to something only it can see (its own player nearby): the owner takes the same
-    /// event if it is in the same state. Once per state entry; plain FINISHED stays the owner's call.
+    /// event if it is in the same state. Once per state entry. Plain FINISHED stays the owner's call, and so
+    /// does the ground under the mirror's body, which only follows positions and keeps stale velocities.
     /// </summary>
     public void RelayBlocked(Fsm fsm, FsmEvent fsmEvent)
     {
-        if (fsm.ActiveState is not { } state || fsmEvent == FsmEvent.Finished || !Leads(fsm, state, fsmEvent))
+        bool ownersCall = fsmEvent == FsmEvent.Finished || fsm == BodyCheck;
+        if (fsm.ActiveState is not { } state || ownersCall || !Leads(fsm, state, fsmEvent))
         {
             return;
         }
@@ -178,6 +202,7 @@ internal sealed class EnemySync : Module
             .String(fsm.Name)
             .String(state.Name)
             .String(fsmEvent.Name));
+        Report($"relay out {fsm.GameObject.name} [{fsm.Name}] {state.Name} -{fsmEvent.Name}-> {Where(fsm)}");
     }
 
     private static bool Leads(Fsm fsm, FsmState state, FsmEvent fsmEvent)
@@ -204,6 +229,11 @@ internal sealed class EnemySync : Module
     {
         int id = IdOf(health.gameObject);
         bool killed = health.isDead;
+        Report($"hit out {health.name}: damage {damage}, hp {health.hp}, killed {killed}");
+        if (damage <= 0 && !killed)
+        {
+            return;
+        }
         Session?.Send(MessageType.EnemyHit, w => w
             .Int(id)
             .Int(damage)
@@ -263,7 +293,7 @@ internal sealed class EnemySync : Module
         }
     }
 
-    private static int IdOf(GameObject go) => Fnv.Hash(go.scene.name + "/" + GameRefs.PathOf(go.transform));
+    public static int IdOf(GameObject go) => Fnv.Hash(go.scene.name + "/" + GameRefs.PathOf(go.transform));
 
     private void OnEntered(string scene)
     {
@@ -272,6 +302,7 @@ internal sealed class EnemySync : Module
         _objects.Clear();
         _relayed.Clear();
         _enteredAt = Time.unscaledTime;
+        _reports = 0;
         foreach (HealthManager health in Resources.FindObjectsOfTypeAll<HealthManager>())
         {
             if (Coop.Rooms.Holds(health.gameObject.scene))
@@ -293,15 +324,25 @@ internal sealed class EnemySync : Module
             // D30: talk stays local; a synced conversation drags the partner into it.
             return FsmMode.None;
         }
+        if (Coop.Platforms.Handles(fsm))
+        {
+            // Each game runs its own crumbling platform; PlatformSync starts the partner's break.
+            return FsmMode.None;
+        }
         if (go.GetComponentInParent<HealthManager>(true) || InBossArena(go.transform))
         {
             return FsmMode.Authority;
         }
         bool persistent = go.GetComponent<PersistentBoolItem>() || go.GetComponent<PersistentIntItem>();
         bool named = fsm.Name == "BG Control" || SharedKeywords.Any(word => fsm.Name.Contains(word));
+        bool rescue = go.name.StartsWith(FleaRescue) && ReactsToHits(fsm);
         // A synced hero cutscene (Tut_01 Weakness Scene) has both games resetting each other.
-        return (persistent || named) && !HeroCutscenes.Drives(fsm) ? FsmMode.Shared : FsmMode.None;
+        return (persistent || named || rescue) && !HeroCutscenes.Drives(fsm) ? FsmMode.Shared : FsmMode.None;
     }
+
+    /// <summary>Unstarted FSMs count as false: loading their actions early logs errors.</summary>
+    private static bool ReactsToHits(Fsm fsm) =>
+        fsm.Initialized && HeroCutscenes.ActionsOf(fsm).Any(action => action is ReceivedDamage);
 
     private static bool InBossArena(Transform transform)
     {
@@ -419,6 +460,7 @@ internal sealed class EnemySync : Module
         if (ModeOf(component.Fsm) != FsmMode.None)
         {
             component.SendEvent(eventName);
+            Report($"relay in {component.name} [{fsmName}] {state} -{eventName}-> {Where(component.Fsm)}");
         }
     }
 
@@ -429,11 +471,17 @@ internal sealed class EnemySync : Module
         float direction = reader.Float();
         AttackTypes attack = (AttackTypes)reader.Int();
         bool killed = reader.Bool();
-        if (Mirroring || !_enemies.TryGetValue(id, out Tracked? enemy) || !enemy.Health)
+        if (Mirroring)
         {
             return;
         }
+        if (!_enemies.TryGetValue(id, out Tracked? enemy) || !enemy.Health)
+        {
+            Report($"hit in: no enemy {id:x8} here, damage {damage}");
+            return;
+        }
         HealthManager health = enemy.Health;
+        Report($"hit in {health.name}: damage {damage}, hp {health.hp}, dead {health.isDead}, kill {killed}");
         if (health.isDead)
         {
             return;
@@ -629,6 +677,24 @@ internal sealed class EnemySync : Module
         }
     }
 
+    /// <summary>Diagnostics for enemies that ignore one player: a bounded number of lines per room.</summary>
+    private void Report(string text)
+    {
+        if (_reports < MaxReports)
+        {
+            _reports++;
+            Coop.Log.LogInfo(text);
+        }
+    }
+
+    private string Where(Fsm fsm)
+    {
+        Vector2 enemy = fsm.GameObject.transform.position;
+        Vector2? hero = GameRefs.Hero is { } local ? local.transform.position : null;
+        Vector2? partner = Coop.Heroes.PartnerTransform is { } drawn ? drawn.position : null;
+        return $"enemy {enemy}, hero {hero?.ToString() ?? "-"}, partner {partner?.ToString() ?? "-"}";
+    }
+
     private GameObject HitSource()
     {
         if (!_hitSource)
@@ -674,6 +740,14 @@ internal sealed class EnemySync : Module
             {
                 body.bodyType = own;
                 _ownBodyType = null;
+            }
+        }
+
+        public void ClearVelocity()
+        {
+            if (_ownBodyType is not null && Health && Health.TryGetComponent(out Rigidbody2D body))
+            {
+                body.linearVelocity = Vector2.zero;
             }
         }
     }

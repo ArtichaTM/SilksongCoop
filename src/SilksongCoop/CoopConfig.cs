@@ -46,6 +46,13 @@ internal sealed class CoopConfig
 
         PauseFreezesBoth = file.Bind("Pause", "PauseFreezesBoth", false, "Pausing freezes both games (D29)");
 
+        SyncPlatforms = file.Bind(
+            "World",
+            "SyncCrumblingPlatforms",
+            true,
+            "A platform that crumbles and reforms breaks in your game too when the partner touches it"
+        );
+
         DevEnabled = file.Bind("Dev", "Enabled", false, "Dev tools; a save they ran on is deleted on exit");
         DevInvulnerable = file.Bind("Dev", "Invulnerable", false, "No hero damage in dev mode");
         DevKey = file.Bind("Dev", "DevModeKey", KeyCode.F1, "Dev mode on or off: one-hit kills, bug report");
@@ -92,6 +99,8 @@ internal sealed class CoopConfig
     public ConfigEntry<float> SelfReviveDelay { get; }
 
     public ConfigEntry<bool> PauseFreezesBoth { get; }
+
+    public ConfigEntry<bool> SyncPlatforms { get; }
 
     public ConfigEntry<bool> DevEnabled { get; }
 

@@ -11,36 +11,40 @@ using UnityEngine;
 namespace SilksongCoop.Patches;
 
 /// <summary>
-/// H14: enemies the owner runs chase, face and measure the nearer player. Each targeting action reads the
-/// hero from an FSM variable; for the length of the call the variable points at the chosen player and is
-/// put back afterwards, so nothing in the FSM changes for good.
+/// H14: enemies and shared objects the owner runs chase, face and measure the nearer player (a flea cage
+/// checks how far its hitter stands). Each targeting action reads the hero from an FSM variable; for the
+/// length of the call the variable points at the chosen player and is put back afterwards, so nothing in the
+/// FSM changes for good. A measurement may hold the hero in either end (Bone Circler measures from the hero
+/// to its home).
 /// </summary>
 [HarmonyPatch]
 internal static class TargetingPatches
 {
     private const float Rethink = 3f;
 
-    private static readonly (Type Action, string Method, string Field)[] Actions =
+    private static readonly string[] Ends = ["gameObject", "target"];
+
+    private static readonly (Type Action, string Method, string[] Fields)[] Actions =
     [
-        (typeof(ChaseObject), "DoBuzz", "target"),
-        (typeof(ChaseObjectGround), "DoChase", "target"),
-        (typeof(ChaseObjectV2), "DoChase", "target"),
-        (typeof(ChaseObjectV3), "DoChase", "target"),
-        (typeof(ChaseObjectVertical), "DoChase", "target"),
-        (typeof(CheckTargetDirection), "DoCheckDirection", "target"),
-        (typeof(FaceObject), "DoFace", "objectB"),
-        (typeof(FaceObjectV2), "DoFace", "objectB"),
-        (typeof(FaceObjectV3), "DoFace", "ObjectB"),
-        (typeof(FaceObjectV4), "DoFace", "ObjectB"),
-        (typeof(GetDistance), "DoGetDistance", "target"),
-        (typeof(GetXDistance), "DoGetDistance", "target"),
-        (typeof(GetYDistance), "DoGetDistance", "target"),
-        (typeof(GetAngleToTarget2D), "DoGetAngle", "target"),
+        (typeof(ChaseObject), "DoBuzz", ["target"]),
+        (typeof(ChaseObjectGround), "DoChase", ["target"]),
+        (typeof(ChaseObjectV2), "DoChase", ["target"]),
+        (typeof(ChaseObjectV3), "DoChase", ["target"]),
+        (typeof(ChaseObjectVertical), "DoChase", ["target"]),
+        (typeof(CheckTargetDirection), "DoCheckDirection", Ends),
+        (typeof(FaceObject), "DoFace", ["objectB"]),
+        (typeof(FaceObjectV2), "DoFace", ["objectB"]),
+        (typeof(FaceObjectV3), "DoFace", ["ObjectB"]),
+        (typeof(FaceObjectV4), "DoFace", ["ObjectB"]),
+        (typeof(GetDistance), "DoGetDistance", Ends),
+        (typeof(GetXDistance), "DoGetDistance", Ends),
+        (typeof(GetYDistance), "DoGetDistance", Ends),
+        (typeof(GetAngleToTarget2D), "DoGetAngle", Ends),
     ];
 
-    private static readonly Dictionary<Type, FieldInfo> Fields = Actions.ToDictionary(
+    private static readonly Dictionary<Type, FieldInfo[]> Fields = Actions.ToDictionary(
         entry => entry.Action,
-        entry => AccessTools.Field(entry.Action, entry.Field));
+        entry => entry.Fields.Select(field => AccessTools.Field(entry.Action, field)).ToArray());
 
     private static readonly Dictionary<int, (bool Partner, float Until)> Choices = [];
 
@@ -59,8 +63,8 @@ internal static class TargetingPatches
         {
             return;
         }
-        FsmGameObject? variable = Fields[__instance.GetType()].GetValue(__instance) as FsmGameObject;
-        if (variable?.Value != hero.gameObject || coop.Enemies.ModeOf(__instance.Fsm) != FsmMode.Authority)
+        FsmGameObject? variable = HeroVariable(__instance, hero.gameObject);
+        if (variable is null || coop.Enemies.ModeOf(__instance.Fsm) == FsmMode.None)
         {
             return;
         }
@@ -77,6 +81,30 @@ internal static class TargetingPatches
         {
             variable.Value = __state.Hero;
         }
+    }
+
+    /// <summary>The action's first listed parameter that holds the hero.</summary>
+    private static FsmGameObject? HeroVariable(FsmStateAction action, GameObject hero)
+    {
+        foreach (FieldInfo field in Fields[action.GetType()])
+        {
+            if (VariableOf(field.GetValue(action)) is { } variable && variable.Value == hero)
+            {
+                return variable;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>An object parameter, or an owner parameter set to a specific object.</summary>
+    private static FsmGameObject? VariableOf(object? parameter)
+    {
+        return parameter switch
+        {
+            FsmGameObject value => value,
+            FsmOwnerDefault { OwnerOption: OwnerDefaultOption.SpecifyGameObject } owner => owner.GameObject,
+            _ => null,
+        };
     }
 
     private struct Swap

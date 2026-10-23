@@ -74,13 +74,17 @@ internal static class AlertPatches
         return eye && !Helper.LineCast2DHit(eye.position, at, Terrain, out _);
     }
 
-    /// <summary>Alert ranges also drive non-enemies (the magnet tool pulling rosaries to the hero).</summary>
+    /// <summary>
+    /// Alert ranges also drive non-enemies (the magnet tool pulling rosaries to the hero). An enemy may
+    /// detach its range on start (Bone Hunter's unalert range), so the range's first parent decides.
+    /// </summary>
     private static bool IsEnemys(AlertRange range)
     {
         int key = range.GetInstanceID();
         if (!EnemyRanges.TryGetValue(key, out bool enemy))
         {
-            enemy = range.GetComponentInParent<HealthManager>(true);
+            Transform owner = range.initialParent ? range.initialParent : range.transform;
+            enemy = owner.GetComponentInParent<HealthManager>(true);
             EnemyRanges[key] = enemy;
         }
         return enemy;

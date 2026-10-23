@@ -40,11 +40,13 @@ internal sealed class Coop : IDisposable
         Tools = new ToolReplicas(this);
         Pickups = new PickupSync(this);
         Shops = new ShopSync(this);
+        Platforms = new PlatformSync(this);
+        Breakables = new BreakableSync(this);
         Dev = new DevTools(this);
         _modules =
         [
-            Joining, Rooms, World, Preload, Heroes, Tools, HeroAudio, ClipAudio, Dialogue, Enemies, Downed,
-            Pulls, Pause, Pickups, Shops, Dev,
+            Joining, Rooms, World, Preload, Heroes, Tools, HeroAudio, ClipAudio, Dialogue, Enemies, Platforms,
+            Breakables, Downed, Pulls, Pause, Pickups, Shops, Dev,
         ];
         Current = this;
     }
@@ -90,6 +92,10 @@ internal sealed class Coop : IDisposable
     public PickupSync Pickups { get; }
 
     public ShopSync Shops { get; }
+
+    public PlatformSync Platforms { get; }
+
+    public BreakableSync Breakables { get; }
 
     public DevTools Dev { get; }
 

@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using GlobalEnums;
 using HarmonyLib;
 using HutongGames.PlayMaker;
@@ -32,6 +36,7 @@ internal static class EnemyPatches
         if (InCoop is { } coop && toState is not null)
         {
             coop.Enemies.OnSwitch(__instance, toState);
+            coop.Platforms.OnSwitch(__instance, toState);
             coop.Pulls.OnFsmSwitch(__instance, toState);
         }
     }
@@ -58,10 +63,7 @@ internal static class EnemyPatches
         }
         EnemySync.LocalHit = false;
         int damage = __instance.isDead ? __state : __state - __instance.hp;
-        if (damage > 0 || __instance.isDead)
-        {
-            InCoop?.Enemies.ReportHit(__instance, damage, hitInstance);
-        }
+        InCoop?.Enemies.ReportHit(__instance, damage, hitInstance);
     }
 
     [HarmonyPrefix]
@@ -135,4 +137,33 @@ internal static class EnemyPatches
     [HarmonyPrefix]
     [HarmonyPatch(typeof(BattleScene), nameof(BattleScene.StartBattle))]
     private static void BattleStart(BattleScene __instance) => InCoop?.Enemies.ReportBattleStart(__instance);
+}
+
+/// <summary>Marks an FSM while it checks its own body against the ground; a mirror never relays it.</summary>
+[HarmonyPatch]
+internal static class BodyCheckPatches
+{
+    private static readonly Type[] Checks =
+    [
+        typeof(CheckIsCharacterGrounded), typeof(CheckCollisionSide), typeof(CheckCollisionSideV2),
+        typeof(CheckCollisionSideEnter), typeof(CheckCollisionSideEnterV2), typeof(CheckGroundClearance),
+        typeof(DetectGroundEdge),
+    ];
+
+    private static readonly string[] Steps =
+        ["OnEnter", "OnUpdate", "OnFixedUpdate", "DoCollisionEnter2D", "DoCollisionStay2D"];
+
+    private static IEnumerable<MethodBase> TargetMethods()
+    {
+        return Checks.SelectMany(type => Steps.Select(step => AccessTools.DeclaredMethod(type, step)))
+            .OfType<MethodBase>();
+    }
+
+    private static void Prefix(FsmStateAction __instance, out Fsm? __state)
+    {
+        __state = EnemySync.BodyCheck;
+        EnemySync.BodyCheck = __instance.Fsm;
+    }
+
+    private static void Finalizer(Fsm? __state) => EnemySync.BodyCheck = __state;
 }
