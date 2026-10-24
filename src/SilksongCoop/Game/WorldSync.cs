@@ -34,6 +34,8 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
     private SceneData? _sceneData;
     private int _friendChangesThisTick;
     private bool _flooded;
+    private bool _flushingSave;
+    private bool _partnerSaving;
 
     private enum SceneKind : byte
     {
@@ -59,6 +61,47 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
         session.On(MessageType.FieldChange, OnFieldChange);
         session.On(MessageType.SceneDataChange, OnSceneDataChange);
         session.On(MessageType.InventoryCheck, OnInventoryCheck);
+        session.On(MessageType.SaveRequest, reader => OnSaveRequest(reader.Bool()));
+    }
+
+    /// <summary>
+    /// Friend side, 10.09: its game saved (a bench), which writes nothing here. Its edits go out first, so
+    /// the host's save holds them, the bench's respawn point included, from any room (12.1 b).
+    /// </summary>
+    public void RequestHostSave()
+    {
+        if (!Running || !Coop.InCoop || Coop.IsHost || !SameSave())
+        {
+            return;
+        }
+        // 12.1 b: a save is a bench sit, and the last bench either player sat on is the shared respawn.
+        Session?.Send(MessageType.SaveRequest, w => w.Bool(true));
+        _flushingSave = true;
+        try
+        {
+            foreach (string name in _fields.Keys)
+            {
+                SendFieldChanges(name);
+            }
+        }
+        finally
+        {
+            _flushingSave = false;
+        }
+        SendSceneChanges();
+        Session?.Send(MessageType.SaveRequest, w => w.Bool(false));
+    }
+
+    /// <summary>Host side: the edits between the two messages are the save's, from any room.</summary>
+    private void OnSaveRequest(bool starts)
+    {
+        _partnerSaving = starts && Coop.IsHost;
+        if (starts || !Coop.IsHost || GameRefs.GameplayScene is null || GameRefs.Manager is not { } gm)
+        {
+            return;
+        }
+        Coop.Log.LogInfo($"{Coop.Partner.Name} saved: saving the shared game");
+        gm.SaveGame(null);
     }
 
     /// <summary>Takes the current save as the common starting point: the host at the save hand-off, the
@@ -211,8 +254,13 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
             return;
         }
         FieldScope scope = FieldRules.Of(name);
-        bool together = Coop.Rooms.Together;
+        bool together = Coop.Rooms.Together || _flushingSave;
         bool sends = Coop.IsHost ? FieldRules.HostSends(scope) : FieldRules.FriendSends(scope, together);
+        if (!sends && scope == FieldScope.HostOwned && PlayerData.instance.atBench)
+        {
+            // The bench set its respawn and saves next; that save sends it (12.1 b).
+            return;
+        }
         bool hostGrants = !Coop.IsHost && Coop.Memories.HostGrants && ProgressGuard.IsGrowingNumber(name);
         if (!sends || hostGrants)
         {
@@ -275,7 +323,7 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
             return;
         }
         FieldScope scope = FieldRules.Of(name);
-        if (Coop.IsHost && !FieldRules.FriendSends(scope, Coop.Rooms.Together))
+        if (Coop.IsHost && !FieldRules.FriendSends(scope, Coop.Rooms.Together || _partnerSaving))
         {
             return;
         }

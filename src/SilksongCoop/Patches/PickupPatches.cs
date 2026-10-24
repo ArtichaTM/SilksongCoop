@@ -36,6 +36,19 @@ internal static class PickupPatches
     }
 }
 
+/// <summary>Every rosary or shard spent, for the unsynced-purchase log (user note 1).</summary>
+[HarmonyPatch(typeof(CurrencyManager), nameof(CurrencyManager.ChangeCurrency))]
+internal static class SpendPatches
+{
+    private static void Prefix(int amount, CurrencyType type)
+    {
+        if (amount < 0)
+        {
+            Coop.Current?.Spending.OnSpent(-amount, type);
+        }
+    }
+}
+
 /// <summary>A purchase closes the partner's open shop (3.4 a).</summary>
 [HarmonyPatch(typeof(ShopItem), nameof(ShopItem.SetPurchased))]
 internal static class ShopPatches

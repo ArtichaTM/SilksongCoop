@@ -21,7 +21,7 @@ internal static class HitResponsePatches
     }
 }
 
-/// <summary>A replayed hit on a bouncy object must not knock the local hero back.</summary>
+/// <summary>A replayed hit (bouncy object, lever) must not knock the local hero back.</summary>
 [HarmonyPatch]
 internal static class ReplayRecoilPatches
 {
@@ -32,5 +32,5 @@ internal static class ReplayRecoilPatches
         yield return AccessTools.Method(typeof(HeroController), nameof(HeroController.RecoilDown));
     }
 
-    private static bool Prefix() => !HitResponseSync.Applying;
+    private static bool Prefix() => !HitResponseSync.Applying && !LeverSync.Applying;
 }

@@ -12,7 +12,8 @@ internal readonly struct SpriteFrame(
     Vector2 scale,
     float angle,
     Color32 color,
-    int material = 0
+    int material = 0,
+    SpriteLayers layers = default
 )
 {
     public int Key { get; } = key;
@@ -32,6 +33,9 @@ internal readonly struct SpriteFrame(
 
     /// <summary>A Unity sprite's material by name hash (glows blend additively); 0 for tk2d.</summary>
     public int Material { get; } = material;
+
+    /// <summary>Where a Unity sprite draws: glows sit on a lighting layer, not the hero's (3.1).</summary>
+    public SpriteLayers Layers { get; } = layers;
 
     public static SpriteFrame Of(int key, tk2dBaseSprite sprite)
     {
@@ -56,7 +60,9 @@ internal readonly struct SpriteFrame(
         float angle = transform.eulerAngles.z;
         Vector2 at = transform.position;
         int material = FlatSprites.Sent(renderer.sharedMaterial);
-        return new SpriteFrame(key, FlatSprites.Marker, sprite, at, scale, angle, renderer.color, material);
+        SpriteLayers layers = new(renderer.gameObject.layer, renderer.sortingLayerID, renderer.sortingOrder);
+        Color32 color = renderer.color;
+        return new SpriteFrame(key, FlatSprites.Marker, sprite, at, scale, angle, color, material, layers);
     }
 
     public void Write(PacketWriter writer)
@@ -66,7 +72,8 @@ internal readonly struct SpriteFrame(
             .Float(Scale.x).Float(Scale.y)
             .Float(Angle)
             .Byte(Color.r).Byte(Color.g).Byte(Color.b).Byte(Color.a)
-            .Int(Material);
+            .Int(Material)
+            .Byte((byte)Layers.Layer).Int(Layers.SortingLayer).Int(Layers.Order);
     }
 
     public static SpriteFrame Read(PacketReader reader)
@@ -78,7 +85,9 @@ internal readonly struct SpriteFrame(
         Vector2 scale = new(reader.Float(), reader.Float());
         float angle = reader.Float();
         Color32 color = new(reader.Byte(), reader.Byte(), reader.Byte(), reader.Byte());
-        return new SpriteFrame(key, collection, spriteId, position, scale, angle, color, reader.Int());
+        int material = reader.Int();
+        SpriteLayers layers = new(reader.Byte(), reader.Int(), reader.Int());
+        return new SpriteFrame(key, collection, spriteId, position, scale, angle, color, material, layers);
     }
 
     /// <summary>Moves a sprite to this frame; false when the collection isn't loaded here.</summary>
@@ -108,6 +117,9 @@ internal readonly struct SpriteFrame(
             return false;
         }
         renderer.sprite = sprite;
+        renderer.gameObject.layer = Layers.Layer;
+        renderer.sortingLayerID = Layers.SortingLayer;
+        renderer.sortingOrder = Layers.Order;
         if (FlatSprites.FindMaterial(Material) is { } material && renderer.sharedMaterial != material)
         {
             renderer.sharedMaterial = material;
@@ -123,3 +135,6 @@ internal readonly struct SpriteFrame(
         transform.rotation = Quaternion.Euler(0f, 0f, Angle);
     }
 }
+
+/// <summary>A renderer's Unity layer (which camera draws it), sorting layer and order.</summary>
+internal readonly record struct SpriteLayers(int Layer, int SortingLayer, int Order);

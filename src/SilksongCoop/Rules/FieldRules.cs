@@ -10,6 +10,7 @@ internal enum FieldScope
     /// <summary>
     /// The host's game writes it; the friend's copy follows the host (D42). A change the friend makes in the
     /// host's room counts too: a scripted sequence there (a memory's end) may run in the friend's game only.
+    /// So does a bench the friend saves at, from any room (12.1 b).
     /// </summary>
     HostOwned,
 

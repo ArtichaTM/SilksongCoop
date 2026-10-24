@@ -8,8 +8,8 @@ using UnityEngine.SceneManagement;
 namespace SilksongCoop.Game;
 
 /// <summary>
-/// Which room each player is in, and who simulates it (D9, D12): the host whenever the host is there,
-/// otherwise whoever is.
+/// Which room each player is in, and who simulates it (D9, D12, 1.1 a): whoever entered first, until they
+/// leave. Two players landing in one room at once both claim it; the host's claim wins.
 /// </summary>
 internal sealed class Rooms(Coop coop) : Module(coop)
 {
@@ -18,6 +18,9 @@ internal sealed class Rooms(Coop coop) : Module(coop)
 
     /// <summary>Where this game is headed while it loads a room.</summary>
     public string? Heading { get; private set; }
+
+    private bool _ownsShared;
+    private bool _lastOwns = true;
 
     public int CurrentHash => Current is null ? 0 : Fnv.Hash(Current);
 
@@ -37,7 +40,7 @@ internal sealed class Rooms(Coop coop) : Module(coop)
     }
 
     /// <summary>This game runs the enemies and objects of its room.</summary>
-    public bool LocalOwns => !PartnerHere || Coop.IsHost;
+    public bool LocalOwns => !PartnerHere || _ownsShared;
 
     /// <summary>The room's own scene, or one it loaded on top (a boss arena such as Bone_05_boss).</summary>
     public bool Holds(Scene scene)
@@ -72,9 +75,21 @@ internal sealed class Rooms(Coop coop) : Module(coop)
         {
             Current = scene;
             Heading = null;
+            _ownsShared = Coop.Partner.Scene != scene;
             Entered?.Invoke(scene);
             SendRoomInfo();
         }
+        ReportOwner();
+    }
+
+    private void ReportOwner()
+    {
+        bool owns = LocalOwns;
+        if (owns != _lastOwns && Coop.InCoop)
+        {
+            Coop.Log.LogInfo($"room {Current}: {(owns ? "this game" : "the partner")} runs it now");
+        }
+        _lastOwns = owns;
     }
 
     public override void OnJoined() => SendRoomInfo();
@@ -84,7 +99,7 @@ internal sealed class Rooms(Coop coop) : Module(coop)
     {
         Current = null;
         Heading = targetScene;
-        Session?.Send(MessageType.RoomInfo, w => w.String("").String(targetScene).String(""));
+        Session?.Send(MessageType.RoomInfo, w => w.String("").String(targetScene).String("").Bool(false));
     }
 
     private void SendRoomInfo()
@@ -101,9 +116,10 @@ internal sealed class Rooms(Coop coop) : Module(coop)
             .Distinct()
             .ToList();
         string entryGate = GameRefs.Manager?.entryGateName ?? "";
+        bool claims = _ownsShared;
         Session?.Send(MessageType.RoomInfo, w =>
         {
-            w.String(Current).String(Current).String(entryGate);
+            w.String(Current).String(Current).String(entryGate).Bool(claims);
             WriteList(w, gates);
             WriteList(w, neighbours);
         });
@@ -115,6 +131,7 @@ internal sealed class Rooms(Coop coop) : Module(coop)
         string scene = reader.String();
         partner.Heading = reader.String();
         partner.EntryGate = reader.String();
+        bool partnerClaims = reader.Bool();
         if (scene.Length == 0)
         {
             partner.Scene = null;
@@ -123,9 +140,16 @@ internal sealed class Rooms(Coop coop) : Module(coop)
         partner.Gates = ReadList(reader);
         partner.Neighbours = ReadList(reader);
         partner.Scene = scene;
-        if (scene == Current)
+        if (scene != Current)
         {
-            // We were here first: hand over (host arriving) or align the mirror (friend arriving).
+            return;
+        }
+        // The partner claims only if it found the room empty; both claiming means both landed at once.
+        _ownsShared = partnerClaims ? _ownsShared && Coop.IsHost : true;
+        Coop.Log.LogInfo($"partner entered {scene}; {(_ownsShared ? "this game" : "the partner")} runs it");
+        if (_ownsShared)
+        {
+            // The arriving mirror copies the room as it is here.
             Coop.Enemies.SendSnapshot();
             Coop.Breakables.SendSnapshot();
             Coop.Levers.SendSnapshot();

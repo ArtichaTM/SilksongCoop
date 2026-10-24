@@ -16,3 +16,18 @@ internal static class LeverPatches
         }
     }
 }
+
+/// <summary>The same for the plain <c>Lever</c> (Ant_17 trap bench and most later levers).</summary>
+[HarmonyPatch(typeof(Lever), nameof(Lever.Hit))]
+internal static class PlainLeverPatches
+{
+    private static void Prefix(Lever __instance, out bool __state) => __state = __instance.activated;
+
+    private static void Postfix(Lever __instance, bool __state)
+    {
+        if (!__state && __instance.activated && Coop.Current is { InCoop: true } coop)
+        {
+            coop.Levers.OnLocalPull(__instance);
+        }
+    }
+}

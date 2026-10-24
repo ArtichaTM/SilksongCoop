@@ -11,6 +11,9 @@ internal sealed class Hints
 
     public string Status { get; set; } = "";
 
+    /// <summary>A standing line at the bottom centre (the downed player's camera key).</summary>
+    public string Footer { get; set; } = "";
+
     public void Show(string text, float seconds = 3f)
     {
         _messages.RemoveAll(message => message.Text == text);
@@ -26,6 +29,10 @@ internal sealed class Hints
         {
             GUI.Box(new Rect((Screen.width - 520) / 2f, y, 520, 32), text, _style);
             y += 36;
+        }
+        if (Footer.Length > 0)
+        {
+            GUI.Box(new Rect((Screen.width - 520) / 2f, Screen.height - 80, 520, 32), Footer, _style);
         }
         if (Status.Length > 0)
         {

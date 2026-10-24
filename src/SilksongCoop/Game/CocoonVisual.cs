@@ -4,7 +4,8 @@ namespace SilksongCoop.Game;
 
 /// <summary>
 /// The coop revive cocoon (D15): a copy of the game's own cocoon corpse with everything but its visuals
-/// removed, so it has no pickup, save or hit logic of its own.
+/// removed, so it has no pickup, save or hit logic of its own. Never spawn it inside a physics callback:
+/// Unity refuses the removals there and the copy keeps the real cocoon's break logic.
 /// </summary>
 internal static class CocoonVisual
 {

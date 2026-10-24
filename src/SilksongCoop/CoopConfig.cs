@@ -34,10 +34,20 @@ internal sealed class CoopConfig
         );
 
         ReviverHealed = file.Bind("Revive", "ReviverHealed", false, "Reviving Bind also heals the reviver");
-        CocoonMoves = file.Bind("Revive", "DownedMovesCocoon", false, "A downed player can roll the cocoon");
-        CocoonSpeed = file.Bind("Revive", "CocoonSpeed", 2f, "How fast a downed player rolls the cocoon");
-        CocoonRise = file.Bind("Revive", "CocoonRiseLimit", 4f, "How high above its spawn the cocoon rises");
+        // Deprecated 3.6 b: unused since 2026-10-25 and not maintained; renamed so saved "true" values lapse.
+        const string Unused = "Unused since 2026-10-25, not maintained: ";
+        const string MovesKey = "DownedMovesCocoonUnused";
+        CocoonMoves = file.Bind("Revive", MovesKey, false, Unused + "a downed player rolls the cocoon");
+        CocoonSpeed = file.Bind("Revive", "CocoonSpeed", 2f, Unused + "how fast the cocoon rolls");
+        CocoonRise = file.Bind("Revive", "CocoonRiseLimit", 4f, Unused + "how high the cocoon rises");
         CameraKey = file.Bind("Revive", "CameraKey", KeyCode.V, "While down: watch cocoon or partner");
+        ForceReviveFullHealth = file.Bind(
+            "Revive",
+            "ForceReviveFullHealth",
+            true,
+            "Getting up without a Bind (no enemy left, summoned to the partner's fight) restores "
+                + "full health; off: 1 health"
+        );
         SelfReviveDelay = file.Bind(
             "Revive",
             "SelfReviveDelay",
@@ -98,6 +108,8 @@ internal sealed class CoopConfig
     public ConfigEntry<float> CocoonRise { get; }
 
     public ConfigEntry<KeyCode> CameraKey { get; }
+
+    public ConfigEntry<bool> ForceReviveFullHealth { get; }
 
     public ConfigEntry<float> SelfReviveDelay { get; }
 

@@ -153,7 +153,8 @@ internal sealed class Pulls : Module
     public void OnFsmSwitch(Fsm fsm, FsmState toState)
     {
         bool closing = fsm.Name == "BG Control" && fsm.LastTransition?.EventName == "BG CLOSE";
-        if (!closing || !Coop.InCoop || EnemySync.Applying || Coop.Rooms.Current is not { } scene)
+        bool exempt = EnemySync.Applying || PartnerWaits.Locking;
+        if (!closing || !Coop.InCoop || exempt || Coop.Rooms.Current is not { } scene)
         {
             return;
         }

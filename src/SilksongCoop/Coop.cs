@@ -40,6 +40,8 @@ internal sealed class Coop : IDisposable
         Tools = new ToolReplicas(this);
         Pickups = new PickupSync(this);
         Shops = new ShopSync(this);
+        Spending = new SpendLog(this);
+        Tolls = new TollSync(this);
         Platforms = new PlatformSync(this);
         Breakables = new BreakableSync(this);
         Memories = new MemorySync(this);
@@ -54,7 +56,7 @@ internal sealed class Coop : IDisposable
         [
             Joining, Rooms, World, Preload, Heroes, Tools, HeroAudio, ClipAudio, Dialogue, Enemies, Platforms,
             Breakables, Memories, HitResponses, Levers, Plates, Waits, BellBeast, Downed, Pulls, Pause,
-            Pickups, Shops, Pointer, Dev,
+            Pickups, Shops, Spending, Tolls, Pointer, Dev,
         ];
         Current = this;
     }
@@ -100,6 +102,10 @@ internal sealed class Coop : IDisposable
     public PickupSync Pickups { get; }
 
     public ShopSync Shops { get; }
+
+    public SpendLog Spending { get; }
+
+    public TollSync Tolls { get; }
 
     public PlatformSync Platforms { get; }
 

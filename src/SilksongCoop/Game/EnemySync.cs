@@ -3,6 +3,7 @@ using System.Linq;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using SilksongCoop.Net;
+using SilksongCoop.Patches;
 using SilksongCoop.Rules;
 using UnityEngine;
 
@@ -42,15 +43,20 @@ internal sealed class EnemySync : Module
     // Cages, branches, barrels and sleeping fleas that a few hits break open (no save flag of their own).
     private const string FleaRescue = "Flea Rescue";
 
+    // What HealthManager.Die sends: a death is the owner's call, a mirror never relays it (mark 16-19 loop).
+    private static readonly HashSet<string> DeathEvents = ["ZERO HP", "FATAL DAMAGE", "LAVA DEATH"];
+
     private static readonly string[] SharedKeywords =
     [
         "Lever", "Gate", "Lift", "Elevator", "Platform", "Bridge",
     ];
 
     private readonly Dictionary<int, Tracked> _enemies = [];
+    private readonly Dictionary<HealthManager, Tracked> _byHealth = [];
     private readonly Dictionary<Fsm, FsmMode> _modes = [];
     private readonly Dictionary<int, GameObject> _objects = [];
     private readonly Dictionary<Fsm, (string State, string Event)> _relayed = [];
+    private readonly HashSet<Fsm> _localGates = [];
     private float _nextFrame;
     private float _lastIndex = -ReindexCooldown;
     private float _enteredAt;
@@ -167,7 +173,7 @@ internal sealed class EnemySync : Module
     /// <summary>Owner side: a synced FSM is about to switch state; the mirror follows.</summary>
     public void OnSwitch(Fsm fsm, FsmState toState)
     {
-        if (Applying || !Coop.Rooms.PartnerHere)
+        if (Applying || !Coop.Rooms.PartnerHere || IsLocalGate(fsm))
         {
             return;
         }
@@ -179,7 +185,32 @@ internal sealed class EnemySync : Module
     }
 
     /// <summary>A mirrored FSM only moves when the owner says so, even inside an applied state.</summary>
-    public bool BlocksEvent(Fsm fsm) => Mirroring && ModeOf(fsm) != FsmMode.None;
+    public bool BlocksEvent(Fsm fsm) => Mirroring && ModeOf(fsm) != FsmMode.None && !IsLocalGate(fsm);
+
+    /// <summary>Gates a wait closed in this game only (3.5); they sync again once the fight starts.</summary>
+    private bool IsLocalGate(Fsm fsm)
+    {
+        if (PartnerWaits.Locking)
+        {
+            _localGates.Add(fsm);
+        }
+        return _localGates.Contains(fsm);
+    }
+
+    /// <summary>The owner's closed gates reach the late player (a closed owner ignores its relay).</summary>
+    public void ReleaseLocalGates()
+    {
+        if (!Mirroring && Coop.Rooms.PartnerHere)
+        {
+            foreach (Fsm gate in _localGates.Where(gate => gate.GameObject && gate.ActiveState is not null))
+            {
+                int id = IdOf(gate.GameObject);
+                string state = gate.ActiveStateName;
+                Session?.Send(MessageType.FsmState, w => w.Int(id).String(gate.Name).String(state));
+            }
+        }
+        _localGates.Clear();
+    }
 
     /// <summary>
     /// A mirror reacted to something only it can see (its own player nearby): the owner takes the same
@@ -188,7 +219,8 @@ internal sealed class EnemySync : Module
     /// </summary>
     public void RelayBlocked(Fsm fsm, FsmEvent fsmEvent)
     {
-        bool ownersCall = fsmEvent == FsmEvent.Finished || fsm == BodyCheck;
+        bool death = DeathEvents.Contains(fsmEvent.Name);
+        bool ownersCall = fsmEvent == FsmEvent.Finished || fsm == BodyCheck || death;
         if (fsm.ActiveState is not { } state || ownersCall || !Leads(fsm, state, fsmEvent))
         {
             return;
@@ -219,7 +251,12 @@ internal sealed class EnemySync : Module
 
     public bool IsMirrored(HealthManager health) => !Applying && Mirroring && IsTracked(health);
 
-    private bool IsTracked(HealthManager health) => _enemies.ContainsKey(IdOf(health.gameObject));
+    /// <summary>By instance: an enemy's FSM may move it to another folder, which changes its path.</summary>
+    private bool IsTracked(HealthManager health) => _byHealth.ContainsKey(health);
+
+    /// <summary>The id it was tracked under, which both games agree on; its path may differ now.</summary>
+    private int TrackedId(HealthManager health) =>
+        _byHealth.TryGetValue(health, out Tracked? enemy) ? enemy.Id : IdOf(health.gameObject);
 
     public bool IsOwnedAndShared(HealthManager health)
     {
@@ -230,7 +267,7 @@ internal sealed class EnemySync : Module
     /// <summary>A local hit on a mirrored enemy: the owner applies the same damage (D35).</summary>
     public void ReportHit(HealthManager health, int damage, HitInstance hit)
     {
-        int id = IdOf(health.gameObject);
+        int id = TrackedId(health);
         bool killed = health.isDead;
         Report($"hit out {health.name}: damage {damage}, hp {health.hp}, killed {killed}");
         if (damage <= 0 && !killed)
@@ -247,7 +284,7 @@ internal sealed class EnemySync : Module
 
     public void ReportDeath(HealthManager health)
     {
-        int id = IdOf(health.gameObject);
+        int id = TrackedId(health);
         Session?.Send(MessageType.EnemyDied, w => w.Int(id));
     }
 
@@ -257,10 +294,16 @@ internal sealed class EnemySync : Module
         {
             return;
         }
+        if (_byHealth.ContainsKey(health))
+        {
+            return;
+        }
         int id = IdOf(health.gameObject);
         if (!_enemies.TryGetValue(id, out Tracked? known) || known.Health != health)
         {
-            _enemies[id] = new Tracked(id, health) { LastSeen = Time.unscaledTime };
+            Tracked enemy = new(id, health) { LastSeen = Time.unscaledTime };
+            _enemies[id] = enemy;
+            _byHealth[health] = enemy;
         }
     }
 
@@ -273,7 +316,7 @@ internal sealed class EnemySync : Module
         }
     }
 
-    /// <summary>Sent by the game that was in the room first when the partner arrives (D12).</summary>
+    /// <summary>Sent by the room's owner when the partner arrives (D12); the mirror copies it.</summary>
     public void SendSnapshot()
     {
         if (!Coop.InCoop || Coop.Rooms.Current is null)
@@ -301,9 +344,11 @@ internal sealed class EnemySync : Module
     private void OnEntered(string scene)
     {
         _enemies.Clear();
+        _byHealth.Clear();
         _modes.Clear();
         _objects.Clear();
         _relayed.Clear();
+        _localGates.Clear();
         _enteredAt = Time.unscaledTime;
         _reports = 0;
         foreach (HealthManager health in Resources.FindObjectsOfTypeAll<HealthManager>())
@@ -444,7 +489,7 @@ internal sealed class EnemySync : Module
         {
             return;
         }
-        if (Mirroring && ModeOf(component.Fsm) != FsmMode.None)
+        if (Mirroring && ModeOf(component.Fsm) != FsmMode.None && !_localGates.Contains(component.Fsm))
         {
             SetState(component, state);
         }
@@ -463,6 +508,7 @@ internal sealed class EnemySync : Module
         if (ModeOf(component.Fsm) != FsmMode.None)
         {
             Relaying = true;
+            AlertPatches.TrustPartner(component.gameObject);
             try
             {
                 component.SendEvent(eventName);
@@ -590,14 +636,10 @@ internal sealed class EnemySync : Module
             {
                 states.Add((reader.Int(), reader.String(), reader.String()));
             }
-            if (forThisRoom && _enemies.TryGetValue(id, out Tracked? enemy) && enemy.Health)
+            if (forThisRoom && Mirroring && _enemies.TryGetValue(id, out Tracked? enemy) && enemy.Health)
             {
                 ApplySnapshot(enemy, dead, active, hp, position, scaleX);
-                if (!Coop.IsHost)
-                {
-                    // The host takes over and restarts behaviour (D12); a mirror copies it.
-                    states.ForEach(entry => SetState(FindFsm(entry.Object, entry.Fsm), entry.State));
-                }
+                states.ForEach(entry => SetState(FindFsm(entry.Object, entry.Fsm), entry.State));
             }
         }
     }

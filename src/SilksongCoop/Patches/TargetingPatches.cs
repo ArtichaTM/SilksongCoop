@@ -11,7 +11,7 @@ using UnityEngine;
 namespace SilksongCoop.Patches;
 
 /// <summary>
-/// H14: enemies and shared objects the owner runs chase, face and measure the nearer player (a flea cage
+/// H14: enemies and shared objects chase, face and measure the nearer player in both games (a flea cage
 /// checks how far its hitter stands). Each targeting action reads the hero from an FSM variable; for the
 /// length of the call the variable points at the chosen player and is put back afterwards, so nothing in the
 /// FSM changes for good. A measurement may hold the hero in either end (Bone Circler measures from the hero
@@ -32,6 +32,8 @@ internal static class TargetingPatches
         (typeof(ChaseObjectV3), "DoChase", ["target"]),
         (typeof(ChaseObjectVertical), "DoChase", ["target"]),
         (typeof(CheckTargetDirection), "DoCheckDirection", Ends),
+        (typeof(DistanceFly), "DoBuzz", ["target"]),
+        (typeof(DistanceFlyV2), "DoBuzz", ["target"]),
         (typeof(FaceObject), "DoFace", ["objectB"]),
         (typeof(FaceObjectV2), "DoFace", ["objectB"]),
         (typeof(FaceObjectV3), "DoFace", ["ObjectB"]),
@@ -40,6 +42,10 @@ internal static class TargetingPatches
         (typeof(GetXDistance), "DoGetDistance", Ends),
         (typeof(GetYDistance), "DoGetDistance", Ends),
         (typeof(GetAngleToTarget2D), "DoGetAngle", Ends),
+        (typeof(FireAtTarget), "DoSetVelocity", ["target"]),
+        // Skarr hunters dig to the teleplane nearest the hero and aim from its position (marks 9, 11-12).
+        (typeof(FindClosest), "DoFindClosest", ["gameObject"]),
+        (typeof(GetPosition), "DoGetPosition", ["gameObject"]),
     ];
 
     private static readonly Dictionary<Type, FieldInfo[]> Fields = Actions.ToDictionary(
@@ -55,7 +61,7 @@ internal static class TargetingPatches
     private static void Prefix(FsmStateAction __instance, out Swap __state)
     {
         __state = default;
-        if (Coop.Current is not { InCoop: true } coop || !coop.Rooms.PartnerHere || !coop.Rooms.LocalOwns)
+        if (Coop.Current is not { InCoop: true } coop || !coop.Rooms.PartnerHere)
         {
             return;
         }

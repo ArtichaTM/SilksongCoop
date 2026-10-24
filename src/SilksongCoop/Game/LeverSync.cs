@@ -8,9 +8,10 @@ using UnityEngine;
 namespace SilksongCoop.Game;
 
 /// <summary>
-/// Levers (<c>Lever_tk2d</c>: Great Bone Gate, Bone Gate, Chain Plat), 1.4: neither an FSM nor a
-/// <c>HitResponse</c>, and their save flag is written only on leaving the room. A pull in either game pulls
-/// the partner's copy, gates and all; a player arriving in a room gets the levers already pulled there.
+/// Levers (<c>Lever_tk2d</c>: Great Bone Gate, Bone Gate, Chain Plat; <c>Lever</c>: Ant_17 trap bench and
+/// 280 more), 1.4: neither an FSM nor a <c>HitResponse</c>, and their save flag is written only on leaving
+/// the room. A pull in either game pulls the partner's copy, gates and all; a player arriving in a room gets
+/// the levers already pulled there.
 /// </summary>
 internal sealed class LeverSync : Module
 {
@@ -20,6 +21,7 @@ internal sealed class LeverSync : Module
         AccessTools.Field(typeof(PersistentItem<bool>), "OnSetSaveState");
 
     private readonly Dictionary<int, Lever_tk2d> _levers = [];
+    private readonly Dictionary<int, Lever> _plainLevers = [];
     private float _lastIndex = -ReindexCooldown;
 
     public LeverSync(Coop coop)
@@ -32,7 +34,7 @@ internal sealed class LeverSync : Module
 
     public override void Dispose() => Coop.Rooms.Entered -= OnEntered;
 
-    public void OnLocalPull(Lever_tk2d lever)
+    public void OnLocalPull(Component lever)
     {
         if (!Applying && Coop.Rooms.PartnerHere && Coop.Rooms.Holds(lever.gameObject.scene))
         {
@@ -46,6 +48,7 @@ internal sealed class LeverSync : Module
         Reindex(force: true);
         List<int> pulled = _levers.Where(pair => pair.Value && pair.Value.activated)
             .Select(pair => pair.Key)
+            .Concat(_plainLevers.Where(pair => pair.Value && pair.Value.activated).Select(pair => pair.Key))
             .ToList();
         if (pulled.Count > 0)
         {
@@ -66,6 +69,7 @@ internal sealed class LeverSync : Module
     private void OnEntered(string scene)
     {
         _levers.Clear();
+        _plainLevers.Clear();
         _lastIndex = -ReindexCooldown;
     }
 
@@ -77,9 +81,17 @@ internal sealed class LeverSync : Module
         for (int i = 0; i < count; i++)
         {
             int id = reader.Int();
-            if (forThisRoom && Find(id) is { activated: false } lever)
+            if (!forThisRoom)
+            {
+                continue;
+            }
+            if (Find(id) is { activated: false } lever)
             {
                 Pull(lever, live);
+            }
+            else if (FindPlain(id) is { activated: false } plain)
+            {
+                Pull(plain, live);
             }
         }
     }
@@ -114,6 +126,36 @@ internal sealed class LeverSync : Module
         }
     }
 
+    private static void Pull(Lever lever, bool live)
+    {
+        Applying = true;
+        try
+        {
+            if (!live)
+            {
+                lever.SetActivated(fromStart: true);
+                return;
+            }
+            TrackTriggerObjects range = lever.canHitTrigger;
+            lever.canHitTrigger = null;
+            try
+            {
+                GameObject? source = GameRefs.Hero?.gameObject;
+                HitInstance nail = new() { AttackType = AttackTypes.Nail, IsFirstHit = true };
+                nail.Source = source;
+                lever.Hit(nail);
+            }
+            finally
+            {
+                lever.canHitTrigger = range;
+            }
+        }
+        finally
+        {
+            Applying = false;
+        }
+    }
+
     /// <summary>What a room load runs for a saved lever: pulled pose, gates open; null if unsaved.</summary>
     private static PersistentItem<bool>.SetValueEvent? LoadedPulled(Lever_tk2d lever)
     {
@@ -131,6 +173,16 @@ internal sealed class LeverSync : Module
         return lever ? lever : null;
     }
 
+    private Lever? FindPlain(int id)
+    {
+        if (!_plainLevers.TryGetValue(id, out Lever? lever) || !lever)
+        {
+            Reindex(force: false);
+            _plainLevers.TryGetValue(id, out lever);
+        }
+        return lever ? lever : null;
+    }
+
     private void Reindex(bool force)
     {
         if ((!force && Time.unscaledTime - _lastIndex < ReindexCooldown) || Coop.Rooms.Current is null)
@@ -143,6 +195,13 @@ internal sealed class LeverSync : Module
             if (Coop.Rooms.Holds(lever.gameObject.scene))
             {
                 _levers[EnemySync.IdOf(lever.gameObject)] = lever;
+            }
+        }
+        foreach (Lever lever in Object.FindObjectsByType<Lever>(FindObjectsSortMode.None))
+        {
+            if (Coop.Rooms.Holds(lever.gameObject.scene))
+            {
+                _plainLevers[EnemySync.IdOf(lever.gameObject)] = lever;
             }
         }
     }

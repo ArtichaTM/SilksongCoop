@@ -20,6 +20,7 @@ internal sealed class ShopSync(Coop coop) : Module(coop)
 
     public void OnLocalPurchase()
     {
+        Coop.Spending.OnShopPurchase();
         if (Coop.Rooms.PartnerHere)
         {
             Session?.Send(MessageType.ShopBought);

@@ -50,6 +50,10 @@ internal enum MessageType : byte
     BeastAppear,
     BeastTrip,
     BeastTripJoined,
+    CurrencySpent,
+    TollPaid,
+    ForceRevive,
+    SaveRequest,
 }
 
 /// <summary>First byte after the magic: how the rest of the datagram is framed.</summary>

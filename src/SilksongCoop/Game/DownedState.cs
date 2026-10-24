@@ -51,17 +51,24 @@ internal sealed class DownedState : Module
         session.On(MessageType.BothDown, _ => OnBothDown());
         session.On(MessageType.CocoonBroken, _ => OnPartnerBrokeCocoon());
         session.On(MessageType.GotUp, _ => OnPartnerGotUp());
+        session.On(MessageType.ForceRevive, _ => OnSummoned());
     }
 
     public override void Update()
     {
+        Coop.Hints.Footer = "";
         if (IsDown && GameRefs.Hero is { } hero)
         {
-            if (Input.GetKeyDown(Coop.Config.CameraKey.Value))
+            KeyCode key = Coop.Config.CameraKey.Value;
+            if (Input.GetKeyDown(key))
             {
                 _watchPartner = !_watchPartner;
             }
+            string watch = _watchPartner ? "back to your cocoon" : $"watch {Coop.Partner.Name}";
+            Coop.Hints.Footer = $"{key}: {watch}";
             AimCamera(hero, _watchPartner ? Coop.Heroes.PartnerTransform : null);
+            // Built here, not in GoDown: a death inside a physics callback can't strip the copy's logic.
+            _ownCocoon ??= CocoonVisual.Spawn(_spot, Coop.Config.PlayerName.Value);
             Roll(hero);
             GetUpWhenQuiet(hero);
         }
@@ -91,6 +98,7 @@ internal sealed class DownedState : Module
 
     public override void Dispose()
     {
+        Coop.Hints.Footer = "";
         DestroyPartnerCocoon();
         DestroyOwnCocoon();
         if (GameRefs.Hero is { } hero)
@@ -251,7 +259,6 @@ internal sealed class DownedState : Module
         _spawnHeight = _spot.y;
         Freeze(hero);
         hero.transform.position = new Vector3(_spot.x, _spot.y, hero.transform.position.z);
-        _ownCocoon = CocoonVisual.Spawn(_spot, Coop.Config.PlayerName.Value);
         _rolling = Coop.Config.CocoonMoves.Value;
         Vector2 spot = _spot;
         string scene = Coop.Rooms.Current ?? "";
@@ -307,10 +314,34 @@ internal sealed class DownedState : Module
         {
             Log($"no enemies for {delay:0} s: got up alone");
             Session?.Send(MessageType.GotUp);
-            GetUp(hero, SelfReviveHealth);
+            GetUp(hero, ForcedHealth(hero));
             Coop.Hints.Show("No enemies around: you got up");
         }
     }
+
+    /// <summary>9.1-9.4: a fight starts while the partner is down; it gets up and joins this hero.</summary>
+    public void SummonPartner()
+    {
+        Log("partner is down as a fight starts: summoning it");
+        Session?.Send(MessageType.ForceRevive);
+    }
+
+    private void OnSummoned()
+    {
+        if (!IsDown || GameRefs.Hero is not { } hero)
+        {
+            return;
+        }
+        Log($"summoned to {Coop.Partner.Name}'s fight: getting up");
+        Session?.Send(MessageType.GotUp);
+        GetUp(hero, ForcedHealth(hero));
+        Coop.Pulls.JoinPartnerWhenFree();
+        Coop.Hints.Show($"{Coop.Partner.Name} started a fight: you got up");
+    }
+
+    /// <summary>A revive without a Bind: full health unless the config says 1.</summary>
+    private int ForcedHealth(HeroController hero) =>
+        Coop.Config.ForceReviveFullHealth.Value ? hero.playerData.CurrentMaxHealth : SelfReviveHealth;
 
     private void OnPartnerGotUp()
     {
@@ -419,7 +450,7 @@ internal sealed class DownedState : Module
         hero.RegainControl();
     }
 
-    /// <summary>D19 option: a slow float, at most CocoonRiseLimit above its spawn (A2).</summary>
+    /// <summary>D19 option, deprecated (3.6 b): a slow float, at most CocoonRiseLimit up.</summary>
     private void Roll(HeroController hero)
     {
         if (!_rolling || !_ownCocoon)

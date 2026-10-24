@@ -127,8 +127,6 @@ internal sealed class Puppet
                 renderer.color = _tint;
                 _flatTools[frame.Key] = renderer;
             }
-            renderer.sortingLayerID = _sortingLayer;
-            renderer.sortingOrder = _sortingOrder + 1;
             renderer.gameObject.SetActive(frame.ApplyTo(renderer, _z, Color.white));
         }
         foreach (KeyValuePair<int, SpriteRenderer> entry in _flatTools)

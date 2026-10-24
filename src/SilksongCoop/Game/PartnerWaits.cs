@@ -14,6 +14,8 @@ namespace SilksongCoop.Game;
 /// where it was started. It waits on a hero walking into a <c>BattleScene</c>, an FSM event whose next
 /// states close arena gates, and the takeovers in <see cref="WaitPoints"/>. What cannot wait (a hit, a
 /// timer, a battle an FSM starts mid-cutscene) starts at once and pulls the partner in (4.1 c, Pulls).
+/// While an arena waits, its gates close for the early player (3.5): no enemies, no music, no way past.
+/// The late player's arrival starts it for both; a session that ends first starts it alone.
 /// </summary>
 internal sealed class PartnerWaits : Module
 {
@@ -22,13 +24,19 @@ internal sealed class PartnerWaits : Module
     private const int FinishedChainDepth = 8;
     private const string GatesClose = "BG CLOSE";
 
-    private readonly Dictionary<(Fsm Fsm, string State, string Event), bool> _startsLock = [];
+    private readonly Dictionary<(Fsm Fsm, string State, string Event), Start> _starts = [];
     private Held? _held;
     private float _nextHint;
     private bool _replaying;
 
     public PartnerWaits(Coop coop)
         : base(coop) => coop.Rooms.Entered += OnEntered;
+
+    /// <summary>
+    /// Gates closing for a wait (3.5): they close in this game only, so the late player can still walk in,
+    /// and nobody is pulled.
+    /// </summary>
+    public static bool Locking { get; private set; }
 
     public override void Register(Session session) => session.On(MessageType.PartnerWait, OnPartnerWait);
 
@@ -38,14 +46,19 @@ internal sealed class PartnerWaits : Module
         {
             return;
         }
-        if (!Coop.InCoop || Coop.Rooms.Current != held.Scene || !held.StillPending())
+        if (!held.StillPending() || Coop.Rooms.Current != held.Scene)
         {
-            _held = null;
+            Release();
+            return;
+        }
+        if (!Coop.InCoop)
+        {
+            StartAlone();
             return;
         }
         if (BothAt(held.Spot))
         {
-            _held = null;
+            Release();
             Coop.Log.LogInfo($"wait over, starting {held.Name}");
             Replay(held);
             return;
@@ -58,21 +71,48 @@ internal sealed class PartnerWaits : Module
         }
     }
 
-    public override void OnLeft() => _held = null;
+    public override void OnLeft() => StartAlone();
+
+    /// <summary>Nobody is coming: the shut arena starts for the player inside it.</summary>
+    private void StartAlone()
+    {
+        if (_held is not { } held)
+        {
+            return;
+        }
+        Release();
+        if (held.Locked && held.StillPending() && Coop.Rooms.Current == held.Scene)
+        {
+            Coop.Log.LogInfo($"partner gone, starting {held.Name} alone");
+            Replay(held);
+        }
+    }
 
     public override void Dispose() => Coop.Rooms.Entered -= OnEntered;
+
+    /// <summary>The wait is over: gates it closed sync again (the start that follows closes both).</summary>
+    private void Release()
+    {
+        _held = null;
+        Coop.Enemies.ReleaseLocalGates();
+    }
 
     /// <summary>Before an unmirrored FSM takes an event: true holds it back until both are here.</summary>
     public bool HoldsEvent(Fsm fsm, FsmEvent? fsmEvent)
     {
         bool plain = fsmEvent is null || fsmEvent == FsmEvent.Finished || !fsm.GameObject;
-        if (_replaying || plain || fsm.ActiveState is not { } state || !StartsAlone(fsm, state, fsmEvent!))
+        if (_replaying || plain || fsm.ActiveState is not { } state || !MustWait())
+        {
+            return false;
+        }
+        Start start = StartOf(fsm, state, fsmEvent!);
+        if (!start.Waits)
         {
             return false;
         }
         string stateName = state.Name;
         string name = $"{fsm.GameObject!.name} [{fsm.Name}] {stateName} -{fsmEvent!.Name}->";
-        Held held = new(name, () => fsm.ActiveStateName == stateName, () => fsm.Event(fsmEvent));
+        Held held = new(name, () => fsm.ActiveStateName == stateName, () => fsm.Event(fsmEvent), start.Lock);
         Hold(held, EnemySync.Relaying);
         return true;
     }
@@ -86,39 +126,40 @@ internal sealed class PartnerWaits : Module
             return false;
         }
         Func<bool> pending = () => battle && !battle.started && !battle.completed;
-        Hold(new Held(battle.name, pending, battle.StartBattle), false);
+        Hold(new Held(battle.name, pending, battle.StartBattle, battle.LockInBattle), false);
         return true;
     }
 
-    /// <summary>Taking this event starts a fight or takeover that the partner must not miss.</summary>
-    private bool StartsAlone(Fsm fsm, FsmState state, FsmEvent fsmEvent)
+    /// <summary>Whether taking this event starts what the partner must not miss, and its gates.</summary>
+    private Start StartOf(Fsm fsm, FsmState state, FsmEvent fsmEvent)
     {
-        if (!MustWait())
-        {
-            return false;
-        }
         (Fsm, string, string) key = (fsm, state.Name, fsmEvent.Name);
-        if (!_startsLock.TryGetValue(key, out bool starts))
+        if (!_starts.TryGetValue(key, out Start start))
         {
-            starts = WaitPoints.Waits(fsm.GameObject.name, fsm.Name, state.Name, fsmEvent.Name)
-                || LeadsToLock(fsm, state, fsmEvent);
-            _startsLock[key] = starts;
+            FsmStateAction? closer = GateCloser(fsm, state, fsmEvent);
+            bool listed = WaitPoints.Waits(fsm.GameObject.name, fsm.Name, state.Name, fsmEvent.Name);
+            start = new Start(listed || closer is not null, closer is null ? null : () => CloseGates(closer));
+            _starts[key] = start;
         }
-        return starts;
+        return start;
     }
 
-    /// <summary>Coop with nobody down (a downed player cannot come) and the partner not near.</summary>
+    /// <summary>Coop, this player up, and the partner not near or down (a downed one is summoned).</summary>
     private bool MustWait()
     {
-        if (!Coop.InCoop || Coop.Rooms.Current is null || Coop.Downed.IsDown || Coop.Partner.Downed)
+        if (!Coop.InCoop || Coop.Rooms.Current is null || Coop.Downed.IsDown)
         {
             return false;
         }
-        return !(GameRefs.Hero is { } hero && PartnerNear(hero.transform.position));
+        bool near = GameRefs.Hero is { } hero && PartnerNear(hero.transform.position);
+        return Coop.Partner.Downed || !near;
     }
 
-    private bool BothAt(Vector2 spot) =>
-        PartnerNear(spot) && GameRefs.Hero is { } hero && Near(hero.transform.position, spot);
+    private bool BothAt(Vector2 spot)
+    {
+        bool partner = !Coop.Partner.Downed && PartnerNear(spot);
+        return partner && GameRefs.Hero is { } hero && Near(hero.transform.position, spot);
+    }
 
     private bool PartnerNear(Vector2 spot) => Coop.Rooms.PartnerHere && Near(Coop.Partner.Position, spot);
 
@@ -142,6 +183,29 @@ internal sealed class PartnerWaits : Module
         _held = held;
         _nextHint = 0f;
         Coop.Log.LogInfo($"waiting for the partner: {held.Name} at {held.Spot}");
+        if (partnerStarted)
+        {
+            return;
+        }
+        if (held.Lock is { } shut)
+        {
+            // 3.5: the early player is shut in; the late one's own start closes its gates later.
+            Locking = true;
+            try
+            {
+                shut();
+            }
+            finally
+            {
+                Locking = false;
+            }
+            held.Locked = true;
+            Coop.Log.LogInfo($"gates closed while {held.Name} waits");
+        }
+        if (Coop.Partner.Downed)
+        {
+            Coop.Downed.SummonPartner();
+        }
     }
 
     private void Replay(Held held)
@@ -169,12 +233,12 @@ internal sealed class PartnerWaits : Module
 
     private void OnEntered(string scene)
     {
-        _held = null;
-        _startsLock.Clear();
+        Release();
+        _starts.Clear();
     }
 
-    /// <summary>The event's target state, or a state its FINISHED chain runs through, closes gates.</summary>
-    private static bool LeadsToLock(Fsm fsm, FsmState state, FsmEvent fsmEvent)
+    /// <summary>The action that closes gates in the event's target state or its FINISHED chain.</summary>
+    private static FsmStateAction? GateCloser(Fsm fsm, FsmState state, FsmEvent fsmEvent)
     {
         string? target = NextState(state.Transitions.Concat(fsm.GlobalTransitions), fsmEvent);
         HashSet<string> seen = [];
@@ -182,15 +246,32 @@ internal sealed class PartnerWaits : Module
         {
             if (fsm.GetState(target) is not { } next)
             {
-                return false;
+                return null;
             }
-            if (ActionsOf(next).Any(ClosesGates))
+            if (ActionsOf(next).FirstOrDefault(ClosesGates) is { } closer)
             {
-                return true;
+                return closer;
             }
             target = NextState(next.Transitions, FsmEvent.Finished);
         }
-        return false;
+        return null;
+    }
+
+    /// <summary>Only the gate part of the start: the same "BG CLOSE" send, or the battle's lock.</summary>
+    private static void CloseGates(FsmStateAction closer)
+    {
+        switch (closer)
+        {
+            case SendEventByName send when send.eventTarget?.target != FsmEventTarget.EventTarget.Self:
+                send.Fsm.Event(send.eventTarget, GatesClose);
+                break;
+            case CallMethodProper call when call.Fsm.GetOwnerDefaultTarget(call.gameObject) is { } go:
+                if (go.TryGetComponent(out BattleScene battle))
+                {
+                    battle.LockInBattle();
+                }
+                break;
+        }
     }
 
     private static string? NextState(IEnumerable<FsmTransition> transitions, FsmEvent fsmEvent) =>
@@ -224,13 +305,21 @@ internal sealed class PartnerWaits : Module
         }
     }
 
-    private sealed class Held(string name, Func<bool> stillPending, Action start)
+    private readonly record struct Start(bool Waits, Action? Lock);
+
+    private sealed class Held(string name, Func<bool> stillPending, Action start, Action? close)
     {
         public string Name { get; } = name;
 
         public Func<bool> StillPending { get; } = stillPending;
 
         public Action Start { get; } = start;
+
+        /// <summary>Closes the gates without starting the fight (3.5); null for a cutscene.</summary>
+        public Action? Lock { get; } = close;
+
+        /// <summary>The early player is shut in: the start runs even if the partner never comes.</summary>
+        public bool Locked { get; set; }
 
         public string? Scene { get; set; }
 
