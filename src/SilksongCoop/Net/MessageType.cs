@@ -43,6 +43,13 @@ internal enum MessageType : byte
     BreakablesBroken,
     MemoryOrbTaken,
     ObjectHit,
+    LeverPulled,
+    PartnerWait,
+    PlatePressed,
+    LiftButton,
+    BeastAppear,
+    BeastTrip,
+    BeastTripJoined,
 }
 
 /// <summary>First byte after the magic: how the rest of the datagram is framed.</summary>

@@ -128,6 +128,7 @@ internal sealed class Rooms(Coop coop) : Module(coop)
             // We were here first: hand over (host arriving) or align the mirror (friend arriving).
             Coop.Enemies.SendSnapshot();
             Coop.Breakables.SendSnapshot();
+            Coop.Levers.SendSnapshot();
         }
     }
 

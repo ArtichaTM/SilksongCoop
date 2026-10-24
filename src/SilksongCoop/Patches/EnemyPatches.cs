@@ -21,12 +21,16 @@ internal static class EnemyPatches
     [HarmonyPatch(typeof(Fsm), nameof(Fsm.ProcessEvent))]
     private static bool ProcessEvent(Fsm __instance, FsmEvent fsmEvent)
     {
-        if (InCoop is not { } coop || !coop.Enemies.BlocksEvent(__instance))
+        if (InCoop is not { } coop)
         {
             return true;
         }
-        coop.Enemies.RelayBlocked(__instance, fsmEvent);
-        return false;
+        if (coop.Enemies.BlocksEvent(__instance))
+        {
+            coop.Enemies.RelayBlocked(__instance, fsmEvent);
+            return false;
+        }
+        return !coop.Waits.HoldsEvent(__instance, fsmEvent);
     }
 
     [HarmonyPrefix]
@@ -39,6 +43,7 @@ internal static class EnemyPatches
             coop.Platforms.OnSwitch(__instance, toState);
             coop.Pulls.OnFsmSwitch(__instance, toState);
             coop.Memories.OnSwitch(__instance, toState);
+            coop.BellBeast.OnSwitch(__instance, toState);
         }
     }
 
@@ -138,6 +143,15 @@ internal static class EnemyPatches
     [HarmonyPrefix]
     [HarmonyPatch(typeof(BattleScene), nameof(BattleScene.StartBattle))]
     private static void BattleStart(BattleScene __instance) => InCoop?.Enemies.ReportBattleStart(__instance);
+
+    /// <summary>4.1 b: a hero walking into a battle with the partner away holds its start back.</summary>
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(BattleScene), "OnTriggerEnter2D")]
+    private static bool BattleEntered(BattleScene __instance, Collider2D collision)
+    {
+        bool hero = collision.CompareTag("Player") && collision.GetComponent<HeroController>();
+        return !hero || InCoop?.Waits.HoldsBattle(__instance) != true;
+    }
 }
 
 /// <summary>Marks an FSM while it checks its own body against the ground; a mirror never relays it.</summary>

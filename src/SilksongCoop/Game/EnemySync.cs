@@ -69,6 +69,9 @@ internal sealed class EnemySync : Module
     /// <summary>Inside a death the partner reported.</summary>
     public static bool RemoteDeath { get; private set; }
 
+    /// <summary>Inside an event the mirror relayed: the partner's hero set it off.</summary>
+    public static bool Relaying { get; private set; }
+
     /// <summary>The FSM whose check of its own body against the ground is running.</summary>
     public static Fsm? BodyCheck { get; set; }
 
@@ -459,7 +462,15 @@ internal sealed class EnemySync : Module
         }
         if (ModeOf(component.Fsm) != FsmMode.None)
         {
-            component.SendEvent(eventName);
+            Relaying = true;
+            try
+            {
+                component.SendEvent(eventName);
+            }
+            finally
+            {
+                Relaying = false;
+            }
             Report($"relay in {component.name} [{fsmName}] {state} -{eventName}-> {Where(component.Fsm)}");
         }
     }
