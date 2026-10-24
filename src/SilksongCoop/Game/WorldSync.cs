@@ -213,9 +213,11 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
         FieldScope scope = FieldRules.Of(name);
         bool together = Coop.Rooms.Together;
         bool sends = Coop.IsHost ? FieldRules.HostSends(scope) : FieldRules.FriendSends(scope, together);
-        if (!sends)
+        bool hostGrants = !Coop.IsHost && Coop.Memories.HostGrants && ProgressGuard.IsGrowingNumber(name);
+        if (!sends || hostGrants)
         {
             // D42: the friend's game alone never moves the host's respawn point; put the host's value back.
+            // A shared memory's reward runs in both games: the host's Silk Heart is the one that counts.
             Restore(field, _baseline[name]);
             return;
         }

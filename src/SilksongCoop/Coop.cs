@@ -42,12 +42,14 @@ internal sealed class Coop : IDisposable
         Shops = new ShopSync(this);
         Platforms = new PlatformSync(this);
         Breakables = new BreakableSync(this);
+        Memories = new MemorySync(this);
+        HitResponses = new HitResponseSync(this);
         Pointer = new PartnerPointer(this);
         Dev = new DevTools(this);
         _modules =
         [
             Joining, Rooms, World, Preload, Heroes, Tools, HeroAudio, ClipAudio, Dialogue, Enemies, Platforms,
-            Breakables, Downed, Pulls, Pause, Pickups, Shops, Pointer, Dev,
+            Breakables, Memories, HitResponses, Downed, Pulls, Pause, Pickups, Shops, Pointer, Dev,
         ];
         Current = this;
     }
@@ -98,6 +100,10 @@ internal sealed class Coop : IDisposable
 
     public BreakableSync Breakables { get; }
 
+    public MemorySync Memories { get; }
+
+    public HitResponseSync HitResponses { get; }
+
     public PartnerPointer Pointer { get; }
 
     public DevTools Dev { get; }
@@ -116,13 +122,19 @@ internal sealed class Coop : IDisposable
 
     private string Password => Config.Password.Value;
 
+    /// <summary>This game's quit-to-menu coroutine is running; set until the menu scene is up.</summary>
+    public bool QuittingToMenu { get; private set; }
+
     public void Update()
     {
         HandleKeys();
-        if (IsHost && GameRefs.InMenu)
+        if (GameRefs.InMenu)
         {
-            // D31: the host left the world; the friend's game follows to its menu.
-            EndSession("the host quit to the menu");
+            QuittingToMenu = false;
+            if (IsHost)
+            {
+                EndSession("the host quit to the menu");
+            }
             _hostedOnStart = false;
         }
         Session?.Tick();
@@ -175,6 +187,13 @@ internal sealed class Coop : IDisposable
         {
             Hints.Show($"Cannot join: {exception.Message}", 6f);
         }
+    }
+
+    /// <summary>D31: quit was pressed; the partner learns now, so both quits never overlap.</summary>
+    public void OnQuitToMenu()
+    {
+        QuittingToMenu = true;
+        EndSession(IsHost ? "the host quit to the menu" : "partner quit to the menu");
     }
 
     /// <summary>Closes the session for good; the host stops listening, the friend stops joining.</summary>
@@ -249,14 +268,17 @@ internal sealed class Coop : IDisposable
     private void OnLeft(string reason)
     {
         Log.LogInfo($"partner left: {reason}");
-        Hints.Show($"Partner left: {reason}", 6f);
         PartnerGone();
         if (Session is { IsHost: false })
         {
-            // D31: the friend's game cannot run the host's world alone.
+            // D31: the friend's game cannot run the host's world alone; HostGone shows the hint.
             Session.Dispose();
             Session = null;
             Joining.HostGone(reason);
+        }
+        else
+        {
+            Hints.Show($"Partner left: {reason}", 6f);
         }
     }
 
@@ -279,7 +301,7 @@ internal sealed class Coop : IDisposable
 
     private void HandleKeys()
     {
-        bool inGame = GameRefs.GameplayScene is not null;
+        bool inGame = GameRefs.GameplayScene is not null && !QuittingToMenu;
         if (inGame && !IsFriend && Input.GetKeyDown(Config.HostKey.Value))
         {
             if (Session is null)

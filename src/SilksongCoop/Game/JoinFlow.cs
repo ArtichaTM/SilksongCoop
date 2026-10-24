@@ -94,7 +94,8 @@ internal sealed class JoinFlow(Coop coop) : Module(coop)
     {
         Coop.Hints.Show($"Back to menu: {reason}", 8f);
         _chunks = null;
-        if (GameRefs.Manager is { } gm && !gm.IsMenuScene())
+        // A second ReturnToMainMenu over a running one leaves the game on the loading screen.
+        if (GameRefs.Manager is { } gm && !gm.IsMenuScene() && !Coop.QuittingToMenu)
         {
             gm.ReturnToMainMenuNoSave();
         }

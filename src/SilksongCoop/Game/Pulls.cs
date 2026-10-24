@@ -134,11 +134,12 @@ internal sealed class Pulls : Module
         {
             return;
         }
+        bool memoryEnd = Coop.Memories.EndsOnItsOwn(Coop.Rooms.Current);
         Coop.Rooms.Leaving(info.SceneName);
         bool walked = info.GetType().DeclaringType == typeof(TransitionPoint);
         bool hazard = GameRefs.Hero?.doingHazardRespawn == true;
         bool exempt = _applying || Coop.Downed.RespawningTogether || hazard || Coop.Joining.Loading;
-        if (exempt || (walked && !_pullNextGate))
+        if (exempt || memoryEnd || (walked && !_pullNextGate))
         {
             return;
         }

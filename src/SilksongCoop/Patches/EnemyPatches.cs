@@ -38,6 +38,7 @@ internal static class EnemyPatches
             coop.Enemies.OnSwitch(__instance, toState);
             coop.Platforms.OnSwitch(__instance, toState);
             coop.Pulls.OnFsmSwitch(__instance, toState);
+            coop.Memories.OnSwitch(__instance, toState);
         }
     }
 

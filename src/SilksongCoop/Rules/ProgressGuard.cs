@@ -21,6 +21,9 @@ internal static class ProgressGuard
         "scenesVisited", "scenesMapped", "scenesEncounteredBench", "scenesEncounteredCocoon",
     ];
 
+    /// <summary>A count that upgrades raise: masks, spools, Silk Hearts, needle and pouch levels.</summary>
+    public static bool IsGrowingNumber(string field) => GrowingNumbers.Contains(field);
+
     /// <summary>False when a friend's change to a whole field would take progression away.</summary>
     public static bool Allows(string field, JToken? current, JToken? proposed)
     {
