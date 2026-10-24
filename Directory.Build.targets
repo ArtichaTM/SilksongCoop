@@ -47,6 +47,7 @@
                 }
             }
         }
+        _Success = !Log.HasLoggedErrors;
         ]]>
       </Code>
     </Task>

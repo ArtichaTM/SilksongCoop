@@ -4,7 +4,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>FsmDump</RootNamespace>
-    <PluginDir Condition="'$(PluginDir)' == ''">$(InstallRoot)/FsmDump</PluginDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,7 +18,9 @@
     <Reference Include="$(GameManaged)/UnityEngine.TextRenderingModule.dll" Private="false" />
   </ItemGroup>
 
-  <Target Name="InstallPlugin" Condition="'$(PluginDir)' != ''">
+  <!-- `make install` passes PluginDir; the game paths live in the Makefile. -->
+  <Target Name="InstallPlugin">
+    <Error Condition="'$(PluginDir)' == ''" Text="PluginDir is not set; install through make" />
     <!-- ScriptEngine aborts the whole reload when a DLL has no symbols next to it. -->
     <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(PluginDir)" />
     <Message Importance="high" Text="installed into $(PluginDir)" />

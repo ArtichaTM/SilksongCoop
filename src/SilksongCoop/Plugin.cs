@@ -13,12 +13,16 @@ public sealed class Plugin : BaseUnityPlugin
     private Harmony? _harmony;
     private Coop? _coop;
 
+    /// <summary>Set when Awake ends; the loader reads it by name, as Unity swallows Awake's errors.</summary>
+    public bool IsUp { get; private set; }
+
     private void Awake()
     {
         _coop = new Coop(this, new CoopConfig(Config), Logger);
         _harmony = new Harmony(Guid);
         _harmony.PatchAll(typeof(Plugin).Assembly);
         Logger.LogInfo($"{Name} {Version} loaded, protocol {Handshake.ProtocolVersion}");
+        IsUp = true;
     }
 
     private void Update() => _coop?.Update();

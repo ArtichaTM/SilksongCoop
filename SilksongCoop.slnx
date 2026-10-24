@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/SilksongCoop/SilksongCoop.csproj" />
+    <Project Path="src/SilksongCoop.Loader/SilksongCoop.Loader.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/SilksongCoop.Tests/SilksongCoop.Tests.csproj" />
