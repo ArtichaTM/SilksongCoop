@@ -11,6 +11,8 @@
     <Reference Include="$(BepInExCore)/0Harmony.dll" Private="false" />
     <Reference Include="$(GameManaged)/Assembly-CSharp.dll" Private="false" />
     <Reference Include="$(GameManaged)/PlayMaker.dll" Private="false" />
+    <Reference Include="$(GameManaged)/Unity.Addressables.dll" Private="false" />
+    <Reference Include="$(GameManaged)/Unity.ResourceManager.dll" Private="false" />
     <Reference Include="$(GameManaged)/UnityEngine.dll" Private="false" />
     <Reference Include="$(GameManaged)/UnityEngine.CoreModule.dll" Private="false" />
     <Reference Include="$(GameManaged)/UnityEngine.InputLegacyModule.dll" Private="false" />

@@ -5,16 +5,21 @@ using System.Linq;
 using System.Reflection;
 using HutongGames.PlayMaker;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace FsmDump;
 
 /// <summary>Plain-text dump of FSMs: states, actions with their field values, transitions.</summary>
 internal static class FsmWriter
 {
-    public static int DumpAll(string path)
+    public static int DumpAll(string path) => Dump(path, scene => scene.IsValid());
+
+    public static int DumpScene(Scene scene, string path) => Dump(path, candidate => candidate == scene);
+
+    private static int Dump(string path, Func<Scene, bool> include)
     {
         PlayMakerFSM[] fsms = Resources.FindObjectsOfTypeAll<PlayMakerFSM>()
-            .Where(fsm => fsm.gameObject.scene.IsValid())
+            .Where(fsm => include(fsm.gameObject.scene))
             .OrderBy(fsm => fsm.gameObject.scene.name)
             .ThenBy(fsm => PathOf(fsm.gameObject))
             .ToArray();

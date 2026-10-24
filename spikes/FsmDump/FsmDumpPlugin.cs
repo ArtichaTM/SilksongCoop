@@ -13,6 +13,7 @@ namespace FsmDump;
 public sealed class FsmDumpPlugin : BaseUnityPlugin
 {
     private ConfigEntry<KeyCode> _dumpKey = null!;
+    private ConfigEntry<KeyCode> _batchKey = null!;
     private ConfigEntry<KeyCode> _markKey = null!;
     private ConfigEntry<KeyCode> _recordKey = null!;
     private Harmony? _harmony;
@@ -28,6 +29,8 @@ public sealed class FsmDumpPlugin : BaseUnityPlugin
     private void Awake()
     {
         _dumpKey = Config.Bind("Keys", "Dump", KeyCode.F9, "Write every loaded FSM to a file");
+        const string batchHelp = "Load and dump every scene (use a throwaway save)";
+        _batchKey = Config.Bind("Keys", "BatchDump", KeyCode.F8, batchHelp);
         _markKey = Config.Bind("Keys", "Mark", KeyCode.F10, "Write a numbered marker into the trace");
         _recordKey = Config.Bind("Keys", "Record", KeyCode.F11, "Start or stop recording the trace");
         Directory.CreateDirectory(OutputDir);
@@ -59,6 +62,10 @@ public sealed class FsmDumpPlugin : BaseUnityPlugin
             string idle = $"not recording: press {_recordKey.Value}";
             Flash(Trace.IsRecording ? $"MARK {Trace.Mark()} written" : idle);
         }
+        if (Input.GetKeyDown(_batchKey.Value) && !BatchDump.IsRunning)
+        {
+            StartBatch();
+        }
         if (Input.GetKeyDown(_dumpKey.Value))
         {
             string path = Path.Combine(OutputDir, $"dump_{SceneTag()}.txt");
@@ -67,6 +74,17 @@ public sealed class FsmDumpPlugin : BaseUnityPlugin
             int objectCount = ObjectWriter.DumpScene(objects);
             Flash($"DUMPED {count} FSMs, {objectCount} objects -> {Path.GetFileName(path)}");
         }
+    }
+
+    /// <summary>GOG only: the Steam copy may push achievements or stats while scenes load.</summary>
+    private void StartBatch()
+    {
+        if (!File.Exists(Path.Combine(Paths.GameRootPath, "Galaxy64.dll")))
+        {
+            Flash("batch dump runs only in the GOG copy");
+            return;
+        }
+        StartCoroutine(BatchDump.Run());
     }
 
     private void StartRecording()
@@ -97,6 +115,10 @@ public sealed class FsmDumpPlugin : BaseUnityPlugin
         GUI.color = Trace.IsRecording ? Color.red : Color.white;
         GUI.Box(new Rect(10, 10, 900, 34), _status, _style);
         GUI.color = Color.white;
+        if (BatchDump.Progress != "")
+        {
+            GUI.Box(new Rect(10, 90, 900, 34), $"batch: {BatchDump.Progress}", _style);
+        }
         if (Time.unscaledTime < _flashUntil)
         {
             GUI.Box(new Rect(10, 50, 900, 34), _flash, _style);
