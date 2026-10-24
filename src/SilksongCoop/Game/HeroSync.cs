@@ -262,7 +262,8 @@ internal sealed class HeroSync(Coop coop) : Module(coop)
         {
             bool sprite = renderer is SpriteRenderer || renderer.GetComponent<tk2dBaseSprite>();
             string path = GameRefs.PathOf(renderer.transform).Substring(heroPath);
-            if (renderer.gameObject != hero.gameObject && sprite && !path.StartsWith(VignettePath)
+            bool ours = renderer.name == PartnerPointer.ArrowName;
+            if (renderer.gameObject != hero.gameObject && sprite && !ours && !path.StartsWith(VignettePath)
                 && !IsDarkness(renderer))
             {
                 _effects.Add((Fnv.Hash(path + renderer.GetType().Name), renderer));

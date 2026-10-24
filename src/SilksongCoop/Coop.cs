@@ -42,11 +42,12 @@ internal sealed class Coop : IDisposable
         Shops = new ShopSync(this);
         Platforms = new PlatformSync(this);
         Breakables = new BreakableSync(this);
+        Pointer = new PartnerPointer(this);
         Dev = new DevTools(this);
         _modules =
         [
             Joining, Rooms, World, Preload, Heroes, Tools, HeroAudio, ClipAudio, Dialogue, Enemies, Platforms,
-            Breakables, Downed, Pulls, Pause, Pickups, Shops, Dev,
+            Breakables, Downed, Pulls, Pause, Pickups, Shops, Pointer, Dev,
         ];
         Current = this;
     }
@@ -96,6 +97,8 @@ internal sealed class Coop : IDisposable
     public PlatformSync Platforms { get; }
 
     public BreakableSync Breakables { get; }
+
+    public PartnerPointer Pointer { get; }
 
     public DevTools Dev { get; }
 

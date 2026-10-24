@@ -22,6 +22,7 @@ internal sealed class CoopConfig
 
         Color lightBlue = new(0.55f, 0.85f, 1f, 1f);
         Tint = file.Bind("Partner", "Tint", lightBlue, "Colour of the partner's Hornet (D23)");
+        ShowPointer = file.Bind("Partner", "ShowPointer", true, "Arrow towards an off-screen partner");
 
         BossHp = file.Bind("Scaling", "BossHpMultiplier", 1.5f, "Boss HP multiplier while a friend is in");
         EnemyHp = file.Bind("Scaling", "EnemyHpMultiplier", 1f, "Other enemies' HP multiplier");
@@ -79,6 +80,8 @@ internal sealed class CoopConfig
     public ConfigEntry<KeyCode> JoinKey { get; }
 
     public ConfigEntry<Color> Tint { get; }
+
+    public ConfigEntry<bool> ShowPointer { get; }
 
     public ConfigEntry<float> BossHp { get; }
 
