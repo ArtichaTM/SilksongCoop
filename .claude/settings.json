@@ -3,14 +3,15 @@
     "SessionStart": [
       {
         "hooks": [
-          { "type": "command", "command": "echo '== Project root README.md =='; cat \"$CLAUDE_PROJECT_DIR/README.md\"" }
+          { "type": "command", "command": "echo '== README.md =='; cat \"$CLAUDE_PROJECT_DIR/README.md\"" }
         ]
       }
     ],
     "SubagentStart": [
       {
         "hooks": [
-          { "type": "command", "command": "" }
+          { "type": "command", "command": "echo '== README.md =='; cat \"$CLAUDE_PROJECT_DIR/README.md\"" },
+          { "type": "command", "command": "echo '== docs/sync-audit/README.md =='; cat \"$CLAUDE_PROJECT_DIR/docs/sync-audit/README.md\"" }
         ]
       }
     ]
