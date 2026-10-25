@@ -46,6 +46,8 @@ internal sealed class Coop : IDisposable
         Breakables = new BreakableSync(this);
         Memories = new MemorySync(this);
         HitResponses = new HitResponseSync(this);
+        Replays = new ReplaySync(this);
+        Persistent = new PersistentSync(this);
         Levers = new LeverSync(this);
         Plates = new PlateSync(this);
         BellBeast = new BellBeastSync(this);
@@ -55,8 +57,8 @@ internal sealed class Coop : IDisposable
         _modules =
         [
             Joining, Rooms, World, Preload, Heroes, Tools, HeroAudio, ClipAudio, Dialogue, Enemies, Platforms,
-            Breakables, Memories, HitResponses, Levers, Plates, Waits, BellBeast, Downed, Pulls, Pause,
-            Pickups, Shops, Spending, Tolls, Pointer, Dev,
+            Breakables, Memories, HitResponses, Replays, Persistent, Levers, Plates, Waits, BellBeast, Downed,
+            Pulls, Pause, Pickups, Shops, Spending, Tolls, Pointer, Dev,
         ];
         Current = this;
     }
@@ -114,6 +116,10 @@ internal sealed class Coop : IDisposable
     public MemorySync Memories { get; }
 
     public HitResponseSync HitResponses { get; }
+
+    public ReplaySync Replays { get; }
+
+    public PersistentSync Persistent { get; }
 
     public LeverSync Levers { get; }
 

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
 using SilksongCoop.Game;
+using UnityEngine;
 
 namespace SilksongCoop.Patches;
 
@@ -15,6 +16,28 @@ internal static class HitResponsePatches
     private static void Postfix(HitResponse __instance, HitInstance damageInstance, double __state)
     {
         if (__instance.lastHitTime != __state && Coop.Current is { InCoop: true } coop)
+        {
+            coop.HitResponses.OnLocalHit(__instance, damageInstance);
+        }
+    }
+}
+
+/// <summary>Rosary caches and health cocoons (2.22, 2.44): their hits go to the partner's copy.</summary>
+[HarmonyPatch]
+internal static class ResponderHitPatches
+{
+    private static IEnumerable<MethodBase> TargetMethods()
+    {
+        yield return AccessTools.Method(typeof(RosaryCache), nameof(RosaryCache.Hit));
+        yield return AccessTools.Method(typeof(HealthCocoon), nameof(HealthCocoon.Hit));
+    }
+
+    private static void Postfix(
+        MonoBehaviour __instance,
+        HitInstance damageInstance,
+        IHitResponder.HitResponse __result)
+    {
+        if (__result.response != IHitResponder.Response.None && Coop.Current is { InCoop: true } coop)
         {
             coop.HitResponses.OnLocalHit(__instance, damageInstance);
         }

@@ -54,6 +54,10 @@ internal enum MessageType : byte
     TollPaid,
     ForceRevive,
     SaveRequest,
+    TimePasses,
+    StateReplayed,
+    PlatformCut,
+    PersistentSnapshot,
 }
 
 /// <summary>First byte after the magic: how the rest of the datagram is framed.</summary>

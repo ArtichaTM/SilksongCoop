@@ -44,10 +44,11 @@ internal static class GameRefs
     }
 
     /// <summary>Hierarchy path with sibling indices so twins differ; the same in both games.</summary>
-    public static string PathOf(Transform transform)
+    /// <param name="root">An ancestor the path starts below; null for the scene root.</param>
+    public static string PathOf(Transform transform, Transform? root = null)
     {
         string path = $"{transform.name}:{transform.GetSiblingIndex()}";
-        for (Transform parent = transform.parent; parent != null; parent = parent.parent)
+        for (Transform parent = transform.parent; parent != null && parent != root; parent = parent.parent)
         {
             path = $"{parent.name}:{parent.GetSiblingIndex()}/{path}";
         }

@@ -153,6 +153,7 @@ internal sealed class Rooms(Coop coop) : Module(coop)
             Coop.Enemies.SendSnapshot();
             Coop.Breakables.SendSnapshot();
             Coop.Levers.SendSnapshot();
+            Coop.Persistent.SendSnapshot();
         }
     }
 

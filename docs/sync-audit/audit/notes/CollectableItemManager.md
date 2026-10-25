@@ -1,0 +1,3 @@
+# CollectableItemManager / ToolItemManager / QuestManager versions [note by main 2026-10-25]
+The inventory panes (items, relics, mementos, tools, quests) cache their lists and rebuild only when `CollectableItemManager.Version`, `ToolItemManager.Version` or `QuestManager.Version` moves. The game bumps them in its own setters (CollectableRelicManager.SetRelicData, PlayerDataCollectable, ShopItem, quest updates, save load); the counters do nothing else.
+Coop: PlayerData written from outside those setters (another game's copy replacing Relics, Collectables, Tools, QuestCompletionData) is in the save but invisible in the inventory until something bumps the version.

@@ -45,6 +45,8 @@ internal static class EnemyPatches
             coop.Memories.OnSwitch(__instance, toState);
             coop.BellBeast.OnSwitch(__instance, toState);
             coop.Tolls.OnSwitch(__instance, toState);
+            coop.Replays.OnSwitch(__instance, toState);
+            coop.Pickups.OnSwitch(__instance, toState);
         }
     }
 
@@ -62,16 +64,28 @@ internal static class EnemyPatches
         return false;
     }
 
+    /// <summary>A mirror takes only its hero's hits; allies and hazards hit the owner's (7.4 a).</summary>
     [HarmonyPrefix]
     [HarmonyPatch(typeof(HealthManager), nameof(HealthManager.Hit))]
-    private static void HitBefore(HealthManager __instance, out int __state)
+    private static bool HitBefore(
+        HealthManager __instance,
+        HitInstance hitInstance,
+        ref IHitResponder.HitResponse __result,
+        out int __state)
     {
         __state = -1;
-        if (InCoop is { } coop && coop.Enemies.IsMirrored(__instance))
+        if (InCoop is not { } coop || !coop.Enemies.IsMirrored(__instance))
         {
-            __state = __instance.hp;
-            EnemySync.LocalHit = true;
+            return true;
         }
+        if (!hitInstance.IsHeroDamage)
+        {
+            __result = IHitResponder.Response.None;
+            return false;
+        }
+        __state = __instance.hp;
+        EnemySync.LocalHit = true;
+        return true;
     }
 
     [HarmonyPostfix]
@@ -102,6 +116,26 @@ internal static class EnemyPatches
         bool ownDeath = EnemySync.LocalHit || EnemySync.RemoteDeath;
         return ownDeath || InCoop?.Enemies.IsMirrored(__instance) != true;
     }
+
+    /// <summary>Corpses wait under their enemy and move to the scene root on death (2.37).</summary>
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(EnemyDeathEffects), nameof(EnemyDeathEffects.PreInstantiate))]
+    private static void CorpsesMade(EnemyDeathEffects __instance)
+    {
+        foreach (GameObject corpse in __instance.instantiatedCorpses ?? [])
+        {
+            if (corpse)
+            {
+                EnemySync.KeepId(corpse);
+            }
+        }
+    }
+
+    /// <summary>Outside coop too: a room's spawns are made as it loads, before anyone joins.</summary>
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(PreInstantiateGameObject), nameof(PreInstantiateGameObject.Awake))]
+    private static void PreInstantiated(PreInstantiateGameObject __instance) =>
+        Coop.Current?.Enemies.OnPreInstantiated(__instance);
 
     [HarmonyPostfix]
     [HarmonyPatch(
@@ -196,4 +230,34 @@ internal static class BodyCheckPatches
     }
 
     private static void Finalizer(Fsm? __state) => EnemySync.BodyCheck = __state;
+}
+
+/// <summary>
+/// A mirrored enemy faces the way the owner's does (its scale comes with each frame). Its own facing actions
+/// would turn it toward this game's hero and play a turn animation, then the owner's scale flips it back.
+/// </summary>
+[HarmonyPatch]
+internal static class MirrorFacingPatches
+{
+    private static readonly string[] Prefixes = ["FaceDirection", "FaceObject", "FlipScale"];
+
+    private static IEnumerable<MethodBase> TargetMethods()
+    {
+        string[] hooks = ["OnEnter", "OnUpdate", "OnLateUpdate", "OnFixedUpdate"];
+        return typeof(FaceDirection).Assembly.GetTypes()
+            .Where(type => type.Namespace == typeof(FaceDirection).Namespace && Faces(type))
+            .SelectMany(type => hooks.Select(hook => Hook(type, hook)))
+            .Where(method => method is not null && method.DeclaringType != typeof(FsmStateAction))
+            .Distinct()!;
+    }
+
+    private static MethodInfo? Hook(Type type, string name) =>
+        type.GetMethod(name, BindingFlags.Public | BindingFlags.Instance);
+
+    /// <summary>Scale flips only; FaceObjectTk2dSpriteScale flips the sprite, which frames lack.</summary>
+    private static bool Faces(Type type) =>
+        Prefixes.Any(type.Name.StartsWith) && type.Name != nameof(FaceObjectTk2dSpriteScale);
+
+    private static bool Prefix(FsmStateAction __instance) =>
+        Coop.Current is not { InCoop: true } coop || !coop.Enemies.MirrorsFacing(__instance.Fsm);
 }

@@ -1,3 +1,4 @@
 # VinePlatform / SuspendedPlatformCut [note by agent 2.02]
 Hanging platform held by a vine. A nail hit on SuspendedPlatformCut (IHitResponder, cutsToBreak hits) calls CutDown(): the platform falls, lands (camera shake, slam effect) and an enemy detector kills any HealthManager it touches. Saved via PersistentBoolItem so it stays down.
 Coop angle: the cut is a world event any player can cause; the platform is walkable for both only after it has fallen in both games.
+Cut conditions [main 2026-10-25]: SuspendedPlatformCut.Hit takes only nail/heavy/nail-tag hits, only while the hitter's y is inside the vine collider, and only with a hero in canCutTrigger when one is set. A hit replayed from another position fails these checks; the final `Cut()` call (also on SuspendedPlatform, SuspendedSwayPlat, SuspendedDropPropeller vines) is the event to share.

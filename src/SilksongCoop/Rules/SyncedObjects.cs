@@ -8,10 +8,14 @@ namespace SilksongCoop.Rules;
 /// </summary>
 internal static class SyncedObjects
 {
-    /// <summary>Hazards a boss sets off (name prefix): the owner's random X is the one that falls.</summary>
+    /// <summary>
+    /// Owner-run objects without HP (name prefix): a boss's hazards (the owner's random X falls) and
+    /// corpses that release a creature (it comes out where the owner's corpse landed, 2.37).
+    /// </summary>
     private static readonly (string Prefix, string Fsm)[] OwnerRun =
     [
         ("Mossbone Stalactite", "Control"),
+        ("Corpse Shellwood Goomba Flyer", "Custom Corpse"),
     ];
 
     /// <summary>Either player sets them off: impacts from both count, the break writes PlayerData.</summary>
@@ -20,9 +24,39 @@ internal static class SyncedObjects
         ("Fixer Bridge Bottom", "Control"),
     ];
 
+    /// <summary>Each game runs them (name prefix); the state a trigger leads to is replayed (7.6).</summary>
+    private static readonly StateEntry[] Replayed =
+    [
+        new("explode_wall", "Control", "Strike"),
+        new("Pilgrim Trap Wire", "Control", "Snap"),
+    ];
+
+    /// <summary>FSM pickups (name prefix) and the state a take enters: one take per world (7.3).</summary>
+    private static readonly StateEntry[] FsmPickups =
+    [
+        new("Mossberry Pickup", "Control", "PD Bool"),
+    ];
+
     public static bool IsOwnerRun(string objectName, string fsm) =>
         OwnerRun.Any(entry => entry.Fsm == fsm && objectName.StartsWith(entry.Prefix));
 
     public static bool IsEitherTriggers(string objectName, string fsm) =>
         EitherTriggers.Contains((objectName, fsm));
+
+    public static bool IsReplayed(string objectName, string fsm, string state) =>
+        Replayed.Any(entry => entry.Matches(objectName, fsm, state));
+
+    /// <summary>The pickup's name prefix when this state takes it, else null.</summary>
+    public static string? FsmPickupTaken(string objectName, string fsm, string state) =>
+        FsmPickups.FirstOrDefault(entry => entry.Matches(objectName, fsm, state))?.Prefix;
+
+    public static bool IsFsmPickup(string objectName, string fsm, string prefix) =>
+        FsmPickups.Any(entry => entry.Prefix == prefix && entry.Fsm == fsm && objectName.StartsWith(prefix));
+
+    /// <summary>An FSM state on objects whose name starts with <see cref="Prefix"/>.</summary>
+    private sealed record StateEntry(string Prefix, string Fsm, string State)
+    {
+        public bool Matches(string objectName, string fsm, string state) =>
+            (Fsm, State) == (fsm, state) && objectName.StartsWith(Prefix);
+    }
 }

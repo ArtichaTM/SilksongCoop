@@ -38,6 +38,10 @@ internal static class SavePatches
     [HarmonyPatch(nameof(GameManager.SaveGameData))]
     private static bool SaveGameData(Action<bool> ogCallback) => Skip(ogCallback);
 
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(GameManager.TimePasses))]
+    private static bool TimePasses() => Coop.Current?.World.RunsTimePasses() != false;
+
     private static bool Skip(Action<bool>? callback)
     {
         if (!IsFriend)

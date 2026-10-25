@@ -62,6 +62,30 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
         session.On(MessageType.SceneDataChange, OnSceneDataChange);
         session.On(MessageType.InventoryCheck, OnInventoryCheck);
         session.On(MessageType.SaveRequest, reader => OnSaveRequest(reader.Bool()));
+        session.On(MessageType.TimePasses, _ => OnTimePasses());
+    }
+
+    /// <summary>
+    /// 7.5 a: time passes (a death, a quit, the mist maze) in the host's game only, so the host's random
+    /// rolls (Skull King invasion, crowds, pilgrim groups) are the shared ones. The friend asks for it.
+    /// </summary>
+    public bool RunsTimePasses()
+    {
+        if (!Running || !Coop.InCoop || Coop.IsHost)
+        {
+            return true;
+        }
+        Session?.Send(MessageType.TimePasses);
+        return false;
+    }
+
+    private void OnTimePasses()
+    {
+        if (Coop.IsHost && Running && GameRefs.GameplayScene is not null && GameRefs.Manager is { } gm)
+        {
+            Coop.Log.LogInfo($"time passes for {Coop.Partner.Name}");
+            gm.TimePasses();
+        }
     }
 
     /// <summary>
@@ -350,6 +374,7 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
         }
         JToken? merged = JsonLeaves.Apply(token, change, additive: Coop.IsHost);
         field.SetValue(PlayerData.instance, merged?.ToObject(field.FieldType, Json));
+        RefreshInventory();
         ShowCurrency(name, field);
         if (!Coop.IsHost)
         {
@@ -359,6 +384,14 @@ internal sealed class WorldSync(Coop coop) : Module(coop)
     }
 
     /// <summary>The HUD counter only learns of the game's own pickups; it shows the partner's too.</summary>
+    /// <summary>The inventory panes cache their lists and rebuild only when these versions move.</summary>
+    private static void RefreshInventory()
+    {
+        CollectableItemManager.IncrementVersion();
+        ToolItemManager.IncrementVersion();
+        QuestManager.IncrementVersion();
+    }
+
     private static void ShowCurrency(string name, FieldInfo field)
     {
         CurrencyType? type = name switch

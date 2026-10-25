@@ -1,0 +1,4 @@
+# GameManager.TimePasses [note by main 2026-10-25]
+Runs after the death save (PlayerDead), on ReturnToMainMenu and in MazeMistZone; not on bench rest. It rolls about 20 PlayerData values with UnityEngine.Random (skullKingWillInvade 30%, shermaWoundedPilgrim, mapperAway, pilgrimRestCrowd, halfwayCrowd, pilgrimGroupBonegrave/Shellgrave/GreymoorField, enemyGroupAnt04, bonetownCrowd, belltownCrowd, grindleChestLocation, mapperLocationAct3, mapperFightGroup, Crawbell values) and its zone checks read the local hero's currentMapZone.
+Correction: audit row Bonetown.39 / Bonetown_boss.5 says the invasion roll happens each time the hero rests; it happens on death and quit. Resting at the Bonetown bench is what starts the invasion once the flag is set.
+Coop: two games rolling separately get different crowds, groups and invasions; only one game should roll.

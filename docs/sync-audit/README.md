@@ -34,7 +34,7 @@ The rules live here; a verdict file holds only a one-line summary of what it cov
 | Partner sees | the event in their own world (not your Hornet) | `live`, `save` (after a room reload, shared save), `never` |
 | Result | what it writes | `shared`, `per-player`, `one-take` (a copy per game, only the first taker gets it), `none` |
 | Partner | what happens to them | `free`, `wait` (start waits for both), `wait*` (starts locally, held until both are in: arena gates close for the early player, no fight yet; every boss arena), `pull`, `both-play` (each game plays it all: bellway travel, memories) |
-| Status | | `done` (code exists, mostly untested), `check` (covered as a side effect), `gap`, `later` (design delayed) |
+| Status | | `done` (code exists, mostly untested), `tested` (works in game), `check` (covered as a side effect), `gap`, `later` (design delayed) |
 | Code | which module does it | `Enemy-A` / `Enemy-S` = `EnemySync` Authority / Shared mode, `Waits` = `PartnerWaits` (+ `WaitPoints`); the rest are module names without `Sync` |
 
 Fill Runs and Status from facts, not guesses:

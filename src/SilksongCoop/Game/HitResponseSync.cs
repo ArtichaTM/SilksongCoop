@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using SilksongCoop.Net;
 using UnityEngine;
 
@@ -7,13 +9,18 @@ namespace SilksongCoop.Game;
 /// <summary>
 /// Room objects a hit drives (crank platforms, switches, anything with a <c>HitResponse</c>), 1.3 a: a hit
 /// the game took is replayed on the partner's copy, so its events and effects run there too. Enemies,
-/// breakables and FSMs that <see cref="EnemySync"/> already syncs are left to their own sync.
+/// breakables and FSMs that <see cref="EnemySync"/> already syncs are left to their own sync. Rosary caches
+/// and health cocoons (2.22, 2.44) take hits the same way: each game flings its own loot, and each player
+/// collects their own copy.
 /// </summary>
 internal sealed class HitResponseSync : Module
 {
     private const float ReindexCooldown = 1f;
 
-    private readonly Dictionary<int, HitResponse> _targets = [];
+    /// <summary>The hit responders replayed here; the index is the kind byte on the wire.</summary>
+    private static readonly Type[] Kinds = [typeof(HitResponse), typeof(RosaryCache), typeof(HealthCocoon)];
+
+    private readonly Dictionary<(int Id, byte Kind), MonoBehaviour> _targets = [];
     private float _lastIndex = -ReindexCooldown;
 
     public HitResponseSync(Coop coop)
@@ -27,15 +34,17 @@ internal sealed class HitResponseSync : Module
     public override void Dispose() => Coop.Rooms.Entered -= OnEntered;
 
     /// <summary>The game took this hit: it passed every filter and its effects ran.</summary>
-    public void OnLocalHit(HitResponse target, HitInstance hit)
+    public void OnLocalHit(MonoBehaviour target, HitInstance hit)
     {
         if (Applying || !Coop.Rooms.PartnerHere || !Synced(target))
         {
             return;
         }
         int id = EnemySync.IdOf(target.gameObject);
+        byte kind = KindOf(target);
         Session?.Send(MessageType.ObjectHit, w => w
             .Int(id)
+            .Byte(kind)
             .Int((int)hit.AttackType)
             .Int((int)hit.SpecialType)
             .Int((int)hit.HitEffectsType)
@@ -45,16 +54,26 @@ internal sealed class HitResponseSync : Module
             .Bool(hit.IsFirstHit));
     }
 
-    private bool Synced(HitResponse target)
+    private bool Synced(MonoBehaviour target)
     {
         GameObject go = target.gameObject;
-        bool ownSync = go.GetComponentInParent<HealthManager>(true) || target.passHitToBreakable;
-        if (!Coop.Rooms.Holds(go.scene) || ownSync)
+        if (!Coop.Rooms.Holds(go.scene))
         {
             return false;
         }
-        return !target.fsmTarget || Coop.Enemies.ModeOf(target.fsmTarget.Fsm) == FsmMode.None;
+        if (target is not HitResponse response)
+        {
+            return true;
+        }
+        bool ownSync = go.GetComponentInParent<HealthManager>(true) || response.passHitToBreakable;
+        PlayMakerFSM? fsm = response.fsmTarget;
+        return !ownSync && (!fsm || Coop.Enemies.ModeOf(fsm!.Fsm) == FsmMode.None);
     }
+
+    private bool InRoom(MonoBehaviour target) => Coop.Rooms.Holds(target.gameObject.scene);
+
+    private static byte KindOf(MonoBehaviour target) =>
+        (byte)Array.FindIndex(Kinds, kind => kind.IsInstanceOfType(target));
 
     private void OnEntered(string scene)
     {
@@ -65,6 +84,7 @@ internal sealed class HitResponseSync : Module
     private void OnPartnerHit(PacketReader reader)
     {
         int id = reader.Int();
+        byte kind = reader.Byte();
         HitInstance hit = new()
         {
             AttackType = (AttackTypes)reader.Int(),
@@ -75,7 +95,8 @@ internal sealed class HitResponseSync : Module
             IsHeroDamage = reader.Bool(),
             IsFirstHit = reader.Bool(),
         };
-        if (!Coop.Rooms.PartnerHere || Find(id) is not { } target || GameRefs.Hero is not { } hero)
+        IHitResponder? target = Find(id, kind) as IHitResponder;
+        if (!Coop.Rooms.PartnerHere || target is null || GameRefs.Hero is not { } hero)
         {
             return;
         }
@@ -92,12 +113,12 @@ internal sealed class HitResponseSync : Module
         }
     }
 
-    private HitResponse? Find(int id)
+    private MonoBehaviour? Find(int id, byte kind)
     {
-        if (!_targets.TryGetValue(id, out HitResponse? target) || !target)
+        if (!_targets.TryGetValue((id, kind), out MonoBehaviour? target) || !target)
         {
             Reindex();
-            _targets.TryGetValue(id, out target);
+            _targets.TryGetValue((id, kind), out target);
         }
         return target ? target : null;
     }
@@ -109,12 +130,12 @@ internal sealed class HitResponseSync : Module
             return;
         }
         _lastIndex = Time.unscaledTime;
-        foreach (HitResponse target in Object.FindObjectsByType<HitResponse>(FindObjectsSortMode.None))
+        IEnumerable<MonoBehaviour> responders = Kinds
+            .SelectMany(kind => UnityEngine.Object.FindObjectsByType(kind, FindObjectsSortMode.None))
+            .OfType<MonoBehaviour>();
+        foreach (MonoBehaviour target in responders.Where(InRoom))
         {
-            if (Coop.Rooms.Holds(target.gameObject.scene))
-            {
-                _targets[EnemySync.IdOf(target.gameObject)] = target;
-            }
+            _targets[(EnemySync.IdOf(target.gameObject), KindOf(target))] = target;
         }
     }
 }

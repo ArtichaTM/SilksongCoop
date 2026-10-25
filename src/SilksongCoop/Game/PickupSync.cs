@@ -1,5 +1,7 @@
 using System.Linq;
+using HutongGames.PlayMaker;
 using SilksongCoop.Net;
+using SilksongCoop.Rules;
 using UnityEngine;
 
 namespace SilksongCoop.Game;
@@ -7,7 +9,8 @@ namespace SilksongCoop.Game;
 /// <summary>
 /// One pickup per world (9.2): a drop or placed item exists in both games, and whoever takes it first
 /// removes the partner's nearest copy. Drops fly out randomly in each game, so copies match by item and
-/// distance, not by exact position.
+/// distance, not by exact position. Dropped rosaries and shards are not matched: they land differently in
+/// each game, so each player collects their own (doubled loot, accepted). Placed ones (saved) stay one-take.
 /// </summary>
 internal sealed class PickupSync(Coop coop) : Module(coop)
 {
@@ -16,7 +19,8 @@ internal sealed class PickupSync(Coop coop) : Module(coop)
     private enum Kind : byte
     {
         Item,
-        Currency,
+        Fsm,
+        PlacedCurrency,
     }
 
     public override void Register(Session session) => session.On(MessageType.PickupTaken, OnTaken);
@@ -24,8 +28,23 @@ internal sealed class PickupSync(Coop coop) : Module(coop)
     public void OnLocalItem(CollectableItemPickup pickup) =>
         Report(Kind.Item, ItemKey(pickup), pickup.transform.position);
 
-    public void OnLocalCurrency(CurrencyObjectBase currency) =>
-        Report(Kind.Currency, CurrencyKey(currency), currency.transform.position);
+    public void OnLocalCurrency(CurrencyObjectBase currency)
+    {
+        if (currency.persistent)
+        {
+            Report(Kind.PlacedCurrency, PlacedKey(currency), currency.transform.position);
+        }
+    }
+
+    /// <summary>An FSM pickup (a Mossberry) was taken here; the shared inventory gives it to both.</summary>
+    public void OnSwitch(Fsm fsm, FsmState toState)
+    {
+        GameObject go = fsm.GameObject;
+        if (go && SyncedObjects.FsmPickupTaken(go.name, fsm.Name, toState.Name) is { } key)
+        {
+            Report(Kind.Fsm, key, go.transform.position);
+        }
+    }
 
     private void Report(Kind kind, string key, Vector2 at)
     {
@@ -56,10 +75,17 @@ internal sealed class PickupSync(Coop coop) : Module(coop)
                 at, p => !p.activatedRead && ItemKey(p) == key);
             RemoveItem(copy, key);
         }
-        else if (kind == Kind.Currency
-            && Nearest<CurrencyObjectBase>(at, c => !c.activated && CurrencyKey(c) == key) is { } currency)
+        else if (kind == Kind.PlacedCurrency)
         {
-            currency.Disable(0f);
+            Object.FindObjectsByType<CurrencyObjectBase>(FindObjectsSortMode.None)
+                .FirstOrDefault(c => c.persistent && !c.activated && PlacedKey(c) == key)
+                ?.Disable(0f);
+        }
+        else if (kind == Kind.Fsm
+            && Nearest<PlayMakerFSM>(at, f => SyncedObjects.IsFsmPickup(f.name, f.FsmName, key)) is { } fsm)
+        {
+            fsm.gameObject.SetActive(false);
+            Coop.Log.LogInfo($"partner took {key}; removed our copy");
         }
     }
 
@@ -104,7 +130,5 @@ internal sealed class PickupSync(Coop coop) : Module(coop)
         return string.IsNullOrEmpty(pickup.playerDataBool) ? pickup.name : pickup.playerDataBool;
     }
 
-    /// <summary>The coin's type and size: a large rosary is not a small one.</summary>
-    private static string CurrencyKey(CurrencyObjectBase currency) =>
-        currency.GetType().Name + "/" + currency.name.Replace("(Clone)", "").Trim();
+    private static string PlacedKey(CurrencyObjectBase coin) => EnemySync.IdOf(coin.gameObject).ToString();
 }

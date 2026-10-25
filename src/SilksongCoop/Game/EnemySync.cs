@@ -51,11 +51,15 @@ internal sealed class EnemySync : Module
         "Lever", "Gate", "Lift", "Elevator", "Platform", "Bridge",
     ];
 
+    // Objects the game made at the scene root (a corpse's gnat): their root index differs per game (2.37).
+    private static readonly Dictionary<GameObject, int> SpawnedIds = [];
+
     private readonly Dictionary<int, Tracked> _enemies = [];
     private readonly Dictionary<HealthManager, Tracked> _byHealth = [];
     private readonly Dictionary<Fsm, FsmMode> _modes = [];
     private readonly Dictionary<int, GameObject> _objects = [];
-    private readonly Dictionary<Fsm, (string State, string Event)> _relayed = [];
+    // Events relayed since the FSM entered this state; two alternating ones were sent every frame.
+    private readonly Dictionary<Fsm, (string State, HashSet<string> Events)> _relayed = [];
     private readonly HashSet<Fsm> _localGates = [];
     private readonly Dictionary<RandomFloat, float> _rolls = [];
     private float _nextFrame;
@@ -181,7 +185,9 @@ internal sealed class EnemySync : Module
         if (Coop.Rooms.LocalOwns && ModeOf(fsm) != FsmMode.None)
         {
             List<float> rolls = RollsOf(toState).Select(PreRoll).ToList();
-            SendState(IdOf(fsm.GameObject), fsm.Name, toState.Name, rolls);
+            GameObject go = fsm.GameObject;
+            Vector2? at = SyncedObjects.IsOwnerRun(go.name, fsm.Name) ? go.transform.position : null;
+            SendState(IdOf(go), fsm.Name, toState.Name, rolls, at);
         }
     }
 
@@ -207,13 +213,22 @@ internal sealed class EnemySync : Module
     private static IEnumerable<RandomFloat> RollsOf(FsmState state) =>
         (state.Actions ?? []).OfType<RandomFloat>().Where(action => action.Enabled);
 
-    private void SendState(int id, string fsmName, string state, List<float> rolls)
+    /// <param name="at">Owner-run objects without HP get no frames; their position rides along.</param>
+    private void SendState(int id, string fsmName, string state, List<float> rolls, Vector2? at = null)
     {
         Session?.Send(MessageType.FsmState, w =>
         {
             w.Int(id).String(fsmName).String(state).Byte((byte)rolls.Count);
             rolls.ForEach(roll => w.Float(roll));
+            w.Bool(at.HasValue).Float(at?.x ?? 0f).Float(at?.y ?? 0f);
         });
+    }
+
+    /// <summary>A mirrored enemy's facing is the owner's scale, sent with its frames.</summary>
+    public bool MirrorsFacing(Fsm fsm)
+    {
+        GameObject go = fsm.GameObject;
+        return Mirroring && go && go.GetComponentInParent<HealthManager>() is { } health && IsTracked(health);
     }
 
     /// <summary>A mirrored FSM only moves when the owner says so, even inside an applied state.</summary>
@@ -255,12 +270,16 @@ internal sealed class EnemySync : Module
         {
             return;
         }
-        (string, string) relay = (state.Name, fsmEvent.Name);
-        if (_relayed.TryGetValue(fsm, out (string, string) last) && last == relay)
+        bool known = _relayed.TryGetValue(fsm, out (string State, HashSet<string> Events) sent);
+        if (!known || sent.State != state.Name)
+        {
+            sent = (state.Name, []);
+            _relayed[fsm] = sent;
+        }
+        if (!sent.Events.Add(fsmEvent.Name))
         {
             return;
         }
-        _relayed[fsm] = relay;
         int id = IdOf(fsm.GameObject);
         Session?.Send(MessageType.FsmEventRelay, w => w
             .Int(id)
@@ -369,7 +388,42 @@ internal sealed class EnemySync : Module
         }
     }
 
-    public static int IdOf(GameObject go) => Fnv.Hash(go.scene.name + "/" + GameRefs.PathOf(go.transform));
+    public static int IdOf(GameObject go)
+    {
+        for (Transform made = go.transform; made != null; made = made.parent)
+        {
+            if (SpawnedIds.TryGetValue(made.gameObject, out int madeId))
+            {
+                string below = GameRefs.PathOf(go.transform, made);
+                return made == go.transform ? madeId : Fnv.Hash($"{madeId:x8}/{below}");
+            }
+        }
+        return Fnv.Hash(go.scene.name + "/" + GameRefs.PathOf(go.transform));
+    }
+
+    /// <summary>Keeps its current id before the game moves it to the scene root (a corpse, 2.37).</summary>
+    public static void KeepId(GameObject go) => SpawnedIds[go] = IdOf(go);
+
+    /// <summary>A pre-instantiated object takes its maker's id, which both games agree on (2.37).</summary>
+    public void OnPreInstantiated(PreInstantiateGameObject maker)
+    {
+        GameObject made = maker.InstantiatedGameObject;
+        if (!made)
+        {
+            return;
+        }
+        SpawnedIds[made] = Fnv.Hash($"{IdOf(maker.gameObject):x8}/made");
+        foreach (HealthManager health in made.GetComponentsInChildren<HealthManager>(true))
+        {
+            // Tracked as it woke up inside Instantiate, under its root index.
+            if (_byHealth.TryGetValue(health, out Tracked? early))
+            {
+                _byHealth.Remove(health);
+                _enemies.Remove(early.Id);
+            }
+            Track(health);
+        }
+    }
 
     private void OnEntered(string scene)
     {
@@ -380,6 +434,7 @@ internal sealed class EnemySync : Module
         _relayed.Clear();
         _localGates.Clear();
         _rolls.Clear();
+        SpawnedIds.Keys.Where(made => !made).ToList().ForEach(made => SpawnedIds.Remove(made));
         _enteredAt = Time.unscaledTime;
         _reports = 0;
         foreach (HealthManager health in Resources.FindObjectsOfTypeAll<HealthManager>())
@@ -523,6 +578,8 @@ internal sealed class EnemySync : Module
         {
             rolls.Add(reader.Float());
         }
+        bool placed = reader.Bool();
+        Vector2 at = new(reader.Float(), reader.Float());
         PlayMakerFSM? component = FindFsm(id, fsmName);
         if (component is null)
         {
@@ -530,6 +587,11 @@ internal sealed class EnemySync : Module
         }
         if (Mirroring && ModeOf(component.Fsm) != FsmMode.None && !_localGates.Contains(component.Fsm))
         {
+            if (placed)
+            {
+                Transform body = component.transform;
+                body.position = new Vector3(at.x, at.y, body.position.z);
+            }
             UseRolls(component.Fsm, state, rolls);
             SetState(component, state);
         }

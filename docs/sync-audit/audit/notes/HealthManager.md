@@ -1,3 +1,4 @@
 # HealthManager [note by agent 2.01]
 Enemy HP/damage/death component: takes HitInstance, sends FSM events (TOOK DAMAGE, HIT, ZERO HP, EXTRACT, STUN DAMAGE), spawns corpse/loot (UnityEngine.Random), reads PlayerData.nailUpgrades for scaling, gives the LOCAL hero silk/recoil. With a PersistentBoolItem it saves isDead and stays dead on reload.
 Coop: damage and death are only seen in the game where the hit landed; loot and silk go to the hitter's game.
+Hero damage flag [main 2026-10-25]: DamageEnemies sets HitInstance.IsHeroDamage for nail attacks, damagers under the HeroController and tool damagers (or its serialized isHeroDamage). Allies that fight enemies (Shakra's flung "Shakra Ring Friendly", Garmond) run in each game and hit each game's enemy copy, so their damage lands twice unless only one game counts it.

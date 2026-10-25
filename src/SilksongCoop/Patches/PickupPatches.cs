@@ -16,6 +16,7 @@ internal static class PickupPatches
     [HarmonyPatch(typeof(CollectableItemPickup), nameof(CollectableItemPickup.DoPickupInstant))]
     private static void ItemInstant(CollectableItemPickup __instance) => Claim(__instance);
 
+    /// <summary>A placed (saved) rosary is one-take; dropped ones each player collects.</summary>
     [HarmonyPostfix]
     [HarmonyPatch(typeof(CurrencyObjectBase), nameof(CurrencyObjectBase.Collect))]
     private static void CurrencyTaken(CurrencyObjectBase __instance, bool __result)

@@ -1,0 +1,3 @@
+# PreInstantiateGameObject [note by main 2026-10-25]
+On Awake it makes its prefab with `Object.Instantiate(prefab)` (no parent, so at the scene root) and deactivates it; a FSM action (GetPreInstantiatedGameObject) later moves and activates it. Used by corpses that release a creature (Mosstown_03 Corpse Shellwood Goomba Flyer releases a Shellwood Gnat).
+Coop: the made object's place in the root list depends on everything else made before it, so two games give it different hierarchy positions; any per-object id built from the hierarchy path differs between the games. Identify it by its maker instead. Instantiate runs the prefab's own Awake/OnEnable first, before the maker's Awake finishes.

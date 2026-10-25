@@ -8,7 +8,7 @@ namespace SilksongCoop.Game;
 /// <summary>
 /// Breakable props (bone piles, cairns, grave markers): most keep no save flag, so the game rebuilds them on
 /// every room load and only the copies in one room need to match. A break in either game breaks the
-/// partner's copy, loot included (the pickup sync removes the second one), and a player arriving in a room
+/// partner's copy, loot included (items one-take, rosaries per player), and a player arriving in a room
 /// gets the pieces already broken there, silently.
 /// </summary>
 internal sealed class BreakableSync : Module
