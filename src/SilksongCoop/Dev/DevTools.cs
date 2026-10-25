@@ -20,6 +20,14 @@ internal sealed class DevTools : Module
         "hasSilkBossNeedle", "hasSilkSpecial", "hasNeedolin",
     ];
 
+    private static readonly string[] MapTools =
+    [
+        "hasQuill", "hasMarker", "hasMarker_a", "hasMarker_b", "hasMarker_c", "hasMarker_d", "hasMarker_e",
+        "hasPinBench", "hasPinCocoon", "hasPinShop", "hasPinSpa", "hasPinStag", "hasPinTube",
+        "hasPinFleaMarrowlands", "hasPinFleaMidlands", "hasPinFleaBlastedlands", "hasPinFleaCitadel",
+        "hasPinFleaPeaklands", "hasPinFleaMucklands",
+    ];
+
     private readonly bool _enabled;
     private readonly FreeFly _fly;
     private readonly TeleportMenu? _teleports;
@@ -131,7 +139,7 @@ internal sealed class DevTools : Module
         {
             GiveEverything();
             _report?.Line("gave everything");
-            Coop.Hints.Show("Gave all abilities, tools and crests");
+            Coop.Hints.Show("Gave all abilities, tools, crests and maps");
         }
     }
 
@@ -241,5 +249,23 @@ internal sealed class DevTools : Module
         }
         ToolItemManager.UnlockAllTools();
         ToolItemManager.UnlockAllCrests();
+        GiveMaps();
+    }
+
+    /// <summary>Area maps are every <c>Has*Map</c> bool, the rule the game's own map count uses.</summary>
+    private static void GiveMaps()
+    {
+        PlayerData data = PlayerData.instance;
+        foreach (System.Reflection.FieldInfo field in typeof(PlayerData).GetFields())
+        {
+            if (field.FieldType == typeof(bool) && field.Name.StartsWith("Has") && field.Name.EndsWith("Map"))
+            {
+                data.SetBool(field.Name, true);
+            }
+        }
+        foreach (string tool in MapTools)
+        {
+            data.SetBool(tool, true);
+        }
     }
 }

@@ -69,7 +69,7 @@ internal sealed class CoopConfig
         DevKey = file.Bind("Dev", "DevModeKey", KeyCode.F1, "Dev mode on or off: one-hit kills, bug report");
         BringKey = file.Bind("Dev", "BringPartnerKey", KeyCode.F2, "Bring the partner to where you stand");
         FlyKey = file.Bind("Dev", "FlyKey", KeyCode.F3, "Toggle free fly in dev mode");
-        GiveAllKey = file.Bind("Dev", "GiveAllKey", KeyCode.F4, "With Shift: give all skills, tools, crests");
+        GiveAllKey = file.Bind("Dev", "GiveAllKey", KeyCode.F4, "With Shift: give everything, maps too");
         const string TeleportHelp = "Teleport menu: the scenes and objects the sync verdicts name";
         TeleportKey = file.Bind("Dev", "TeleportKey", KeyCode.F5, TeleportHelp);
         FlySpeed = file.Bind("Dev", "FlySpeed", 20f, "Free fly speed; Dash held flies 2.5 times faster");
