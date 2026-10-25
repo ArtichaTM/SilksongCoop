@@ -90,7 +90,7 @@ internal sealed class DevTools : Module
         {
             return;
         }
-        _teleports!.Close();
+        _teleports!.Dispose();
         SetOn(false, "plugin unloaded");
         _hostOn = false;
         UpdateReport();

@@ -29,6 +29,7 @@ internal sealed class TeleportMenu(Coop coop, FreeFly fly)
     private bool _focus;
     private bool _heldControl;
     private bool _pauseWasAllowed;
+    private bool _restorePause;
     private Action? _request;
     private float _requestUntil;
     private (TeleportRow Row, int Index)? _arrival;
@@ -51,7 +52,8 @@ internal sealed class TeleportMenu(Coop coop, FreeFly fly)
         }
         if (GameRefs.Manager is { } gm)
         {
-            _pauseWasAllowed = gm.inputHandler.PauseAllowed;
+            _pauseWasAllowed = _restorePause || gm.inputHandler.PauseAllowed;
+            _restorePause = false;
             gm.inputHandler.PreventPause();
         }
     }
@@ -68,14 +70,19 @@ internal sealed class TeleportMenu(Coop coop, FreeFly fly)
             hero.RegainControl();
         }
         _heldControl = false;
-        if (_pauseWasAllowed)
-        {
-            GameRefs.Manager?.inputHandler.AllowPause();
-        }
+        _restorePause = _pauseWasAllowed;
+    }
+
+    /// <summary>Plugin unload: closes and gives pause back at once, there is no next frame.</summary>
+    public void Dispose()
+    {
+        Close();
+        RestorePause(force: true);
     }
 
     public void Update()
     {
+        RestorePause(force: false);
         if (_request is not null)
         {
             RunRequest();
@@ -121,6 +128,20 @@ internal sealed class TeleportMenu(Coop coop, FreeFly fly)
         DrawRows();
         GUILayout.EndScrollView();
         GUILayout.EndArea();
+    }
+
+    /// <summary>Only once the pause button is up, so the Esc that closed the menu does not pause.</summary>
+    private void RestorePause(bool force)
+    {
+        if (!_restorePause || GameRefs.Manager is not { } gm)
+        {
+            return;
+        }
+        if (force || !gm.inputHandler.inputActions.Pause.IsPressed)
+        {
+            _restorePause = false;
+            gm.inputHandler.AllowPause();
+        }
     }
 
     private static List<TeleportRow> LoadRows()
