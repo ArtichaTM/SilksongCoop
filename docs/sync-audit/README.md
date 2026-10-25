@@ -22,7 +22,7 @@ causes and links to the rows each one covers.
 
 The rules live here; a verdict file holds only a one-line summary of what it covers, then its table.
 - Only `sure` and `maybe` audit rows; `no` rows need nothing. Rows with one shared answer are grouped.
-- One file per slice, titled `# Verdicts 2.NN: <Area>`, items `N.MM` unique across files. Columns: `#`, Row,
+- One file per slice, titled `# Verdicts 2.NN: <Area>`, items `N.MM` with N = the file number (`02.md` holds `2.01` ..), unique across files. Columns: `#`, Row,
   Element, Trigger, Runs, Partner sees, Result, Partner, Status, Code, Note.
 - Cells hold the target; Status says whether the code does it. An empty cell is the common case (Trigger `either`,
   Partner `free`). Note is short and only for gap and check rows. Hard limit: 5 values per column.
