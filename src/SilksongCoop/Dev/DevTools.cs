@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using HarmonyLib;
+using HutongGames.PlayMaker.Actions;
 using SilksongCoop.Game;
 using SilksongCoop.Net;
 using UnityEngine;
@@ -141,6 +144,28 @@ internal sealed class DevTools : Module
             _report?.Line("gave everything");
             Coop.Hints.Show("Gave all abilities, tools, crests and maps");
         }
+        if (shift && GameRefs.HeroReady && Input.GetKeyDown(config.ResetEncountersKey.Value))
+        {
+            List<string> flags = ResetEncounters();
+            string names = string.Join(", ", flags);
+            _report?.Line($"reset encounter flags: {names}");
+            Coop.Hints.Show($"Reset {flags.Count} encounter flags, re-enter the room: {names}");
+        }
+    }
+
+    /// <summary>Clears every <c>encountered*</c> bool the room's FSMs test, so meetings replay.</summary>
+    private List<string> ResetEncounters()
+    {
+        PlayerData data = PlayerData.instance;
+        List<string> flags = Object.FindObjectsByType<PlayMakerFSM>(FindObjectsSortMode.None)
+            .Where(fsm => fsm.Fsm.Initialized && Coop.Rooms.Holds(fsm.gameObject.scene))
+            .SelectMany(fsm => HeroCutscenes.ActionsOf(fsm.Fsm).OfType<PlayerDataBoolTest>())
+            .Select(test => test.boolName?.Value ?? "")
+            .Where(name => name.StartsWith("encountered") && data.GetBool(name))
+            .Distinct()
+            .ToList();
+        flags.ForEach(name => data.SetBool(name, false));
+        return flags;
     }
 
     private void ToggleDevMode()
@@ -157,7 +182,7 @@ internal sealed class DevTools : Module
             return;
         }
         SetOn(true, "turned on");
-        const string Keys = "F2 brings partner, F3 fly, Shift+F4 give all, F5 teleport";
+        const string Keys = "F2 brings partner, F3 fly, Shift+F4 give all, F5 teleport, Shift+F12 meetings";
         Coop.Hints.Show($"Dev mode on: one-hit kills, {Keys}", 5f);
     }
 

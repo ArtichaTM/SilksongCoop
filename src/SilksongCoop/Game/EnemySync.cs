@@ -39,6 +39,7 @@ internal sealed class EnemySync : Module
     private const int SnapshotChunk = 16;
     private const float ReindexCooldown = 1f;
     private const int MaxReports = 60;
+    private const int StartChainDepth = 8;
 
     // Cages, branches, barrels and sleeping fleas that a few hits break open (no save flag of their own).
     private const string FleaRescue = "Flea Rescue";
@@ -61,6 +62,7 @@ internal sealed class EnemySync : Module
     // Events relayed since the FSM entered this state; two alternating ones were sent every frame.
     private readonly Dictionary<Fsm, (string State, HashSet<string> Events)> _relayed = [];
     private readonly HashSet<Fsm> _localGates = [];
+    private readonly HashSet<Fsm> _caughtUp = [];
     private readonly Dictionary<RandomFloat, float> _rolls = [];
     private float _nextFrame;
     private float _lastIndex = -ReindexCooldown;
@@ -262,8 +264,13 @@ internal sealed class EnemySync : Module
     /// event if it is in the same state. Once per state entry. Plain FINISHED stays the owner's call, and so
     /// does the ground under the mirror's body, which only follows positions and keeps stale velocities.
     /// </summary>
-    public void RelayBlocked(Fsm fsm, FsmEvent fsmEvent)
+    public void RelayBlocked(Fsm fsm, FsmEvent? fsmEvent)
     {
+        if (fsmEvent is null)
+        {
+            // SendEventByScale sends null when its event for that side is unset.
+            return;
+        }
         bool death = DeathEvents.Contains(fsmEvent.Name);
         bool ownersCall = fsmEvent == FsmEvent.Finished || fsm == BodyCheck || death;
         if (fsm.ActiveState is not { } state || ownersCall || !Leads(fsm, state, fsmEvent))
@@ -433,6 +440,7 @@ internal sealed class EnemySync : Module
         _objects.Clear();
         _relayed.Clear();
         _localGates.Clear();
+        _caughtUp.Clear();
         _rolls.Clear();
         SpawnedIds.Keys.Where(made => !made).ToList().ForEach(made => SpawnedIds.Remove(made));
         _enteredAt = Time.unscaledTime;
@@ -451,6 +459,12 @@ internal sealed class EnemySync : Module
         GameObject go = fsm.GameObject;
         if (!go || !Coop.Rooms.Holds(go.scene) || go.GetComponentInParent<HeroController>(true))
         {
+            return FsmMode.None;
+        }
+        if (fsm.IsSubFsm && HeroCutscenes.Drives(fsm, loadActions: true))
+        {
+            // A RunFSM template that takes the hero (Lace's Dialogue): the owner's states cannot reach it
+            // (no component), so each game runs its own.
             return FsmMode.None;
         }
         if (go.GetComponentInParent<NPCControlBase>(true))
@@ -792,14 +806,78 @@ internal sealed class EnemySync : Module
             return;
         }
         _relayed.Remove(component.Fsm);
+        FsmState? left = component.Fsm.ActiveState;
         Applying = true;
         try
         {
-            component.SetState(state);
+            foreach (string step in StartChain(component.Fsm, state))
+            {
+                EnterState(component, step);
+            }
+            EnterState(component, state);
         }
         finally
         {
             Applying = false;
+        }
+        if (left is not null && left.Name != state && (left.Actions ?? []).OfType<RunFSM>().Any())
+        {
+            ReleaseTemplateBlocker(component.gameObject);
+        }
+    }
+
+    /// <summary>
+    /// The owner's template ran to its end, this game's copy was stopped midway: its input blocker on the
+    /// local hero would stay for good (Lace's Dialogue, marks 26/27).
+    /// </summary>
+    private void ReleaseTemplateBlocker(GameObject owner)
+    {
+        if (GameRefs.Hero is { } hero && Patches.HeroControlLogPatches.Blocks(hero, owner))
+        {
+            hero.RemoveInputBlocker(owner);
+            Coop.Log.LogInfo($"released input blocker of {owner.name}");
+        }
+    }
+
+    /// <summary>
+    /// A mirror still in its start state never ran the owner's setup (Lace's Init sets Self): the FINISHED
+    /// states between it and the first applied one, once per room.
+    /// </summary>
+    private IEnumerable<string> StartChain(Fsm fsm, string target)
+    {
+        List<string> chain = [];
+        if (!_caughtUp.Add(fsm) || fsm.ActiveState is not { } at || at.Name != fsm.StartState)
+        {
+            return chain;
+        }
+        for (int i = 0; i < StartChainDepth; i++)
+        {
+            string? next = at.Transitions.FirstOrDefault(t => t.FsmEvent == FsmEvent.Finished)?.ToState;
+            if (next is null || next == target || fsm.GetState(next) is not { } state)
+            {
+                break;
+            }
+            chain.Add(next);
+            at = state;
+        }
+        return chain;
+    }
+
+    /// <summary>A throwing action leaves its FSM on PlayMaker's execution stack; this takes it off.</summary>
+    private static void EnterState(PlayMakerFSM component, string state)
+    {
+        Fsm? before = FsmExecutionStack.ExecutingFsm;
+        try
+        {
+            component.SetState(state);
+        }
+        catch
+        {
+            while (FsmExecutionStack.ExecutingFsm is { } leaked && leaked != before)
+            {
+                FsmExecutionStack.PopFsm();
+            }
+            throw;
         }
     }
 

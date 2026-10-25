@@ -13,7 +13,7 @@ namespace SilksongCoop.Dev;
 /// </summary>
 internal sealed class DevChecks : IDisposable
 {
-    private const float ControlTimeout = 45f;
+    private const float ControlTimeout = 10f;
     private const float SceneTimeout = 15f;
     private const int ExceptionLimit = 20;
 
@@ -80,7 +80,10 @@ internal sealed class DevChecks : IDisposable
         if (!_lostReported && now - _lostSince > ControlTimeout)
         {
             _lostReported = true;
-            _report.Line($"control not back for {ControlTimeout:0} s in {gm.sceneName}; {CutsceneStates()}");
+            string flags = Patches.HeroControlLogPatches.Describe(hero);
+            string where = $"{ControlTimeout:0} s in {gm.sceneName}";
+            _report.Line($"control not back for {where}; {flags}; {CutsceneStates()}");
+            _coop.Log.LogWarning($"control not back for {ControlTimeout:0} s: {flags}");
         }
     }
 
