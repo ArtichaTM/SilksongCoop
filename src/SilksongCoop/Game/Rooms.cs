@@ -40,22 +40,30 @@ internal sealed class Rooms(Coop coop) : Module(coop)
     }
 
     /// <summary>This game runs the enemies and objects of its room.</summary>
-    public bool LocalOwns => !PartnerHere || _ownsShared;
+    public bool LocalOwns => !ArrivingAtPartner && (!PartnerHere || _ownsShared);
+
+    /// <summary>
+    /// Loading into the partner's room: its FSMs start before the hero stands there, and they are the
+    /// partner's to run, or the enemies patrol on their own until the room is entered.
+    /// </summary>
+    private bool ArrivingAtPartner =>
+        Coop.InCoop && Current is null && Heading is not null && Heading == Coop.Partner.Scene;
 
     /// <summary>The room's own scene, or one it loaded on top (a boss arena such as Bone_05_boss).</summary>
     public bool Holds(Scene scene)
     {
-        if (Current is null || !scene.IsValid())
+        string? room = ArrivingAtPartner ? Heading : Current;
+        if (room is null || !scene.IsValid())
         {
             return false;
         }
-        if (scene.name == Current)
+        if (scene.name == room)
         {
             return true;
         }
         string name = scene.name;
         return SceneAdditiveLoadConditional._additiveSceneLoads
-            .Any(load => load && load.gameObject.scene.name == Current && load.SceneNameToLoad == name);
+            .Any(load => load && load.gameObject.scene.name == room && load.SceneNameToLoad == name);
     }
 
     /// <summary>Raised once the hero stands in a new room; the argument is the scene name.</summary>
