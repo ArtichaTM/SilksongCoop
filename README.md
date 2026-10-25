@@ -14,6 +14,14 @@ our code does about it, and what has been tested. It lives in `docs/sync-audit/`
 - `data/FsmDump/scenes/`: full dump of every scene's FSMs and objects; `Ref` cells point here.
 - `data/FsmDump/index.tsv`: every use of every element. `grep <id> index.tsv` lists all places a fix touches.
 - `data/FsmDump/decomp/`: decompiled Assembly-CSharp.
+- `docs/sync-audit/verdicts/<NN>.md`: how to patch each audited element and whether it is needed.
+
+### Recommended way to develop
+
+Work slice by slice through four stages: **Dump** (`data/FsmDump/`) -> **Audit** (what each element does,
+`audit/<NN>_<Area>.md`) -> **Verdicts** (how to patch it and whether it is needed, `verdicts/<NN>.md`) -> **Code**.
+State: 2.01-2.05 are at Verdicts (`verdicts/01.md` .. `05.md`); 2.06-2.19 have audits only.
+Verdict file rules and column values: `docs/sync-audit/README.md`, "Verdict files".
 
 ### When a coop problem is reported
 
