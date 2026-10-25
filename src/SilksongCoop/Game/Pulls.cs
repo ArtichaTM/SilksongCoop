@@ -76,6 +76,24 @@ internal sealed class Pulls : Module
         }
     }
 
+    /// <summary>Dev teleport to another scene: this hero goes alone, the partner is not pulled.</summary>
+    public void TravelAlone(string scene, string gate)
+    {
+        if (GameRefs.Manager is { } gm)
+        {
+            Transition(gm, scene, gate);
+        }
+    }
+
+    /// <summary>Dev teleport inside the room; the partner does not follow.</summary>
+    public void MoveAlone(Vector2 to)
+    {
+        if (GameRefs.Hero is { } hero)
+        {
+            MoveHero(hero, to);
+        }
+    }
+
     private void JoinPartner()
     {
         Partner partner = Coop.Partner;

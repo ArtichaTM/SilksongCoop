@@ -29,6 +29,12 @@
     <Reference Include="$(GameManaged)/UnityEngine.TextRenderingModule.dll" Private="false" />
   </ItemGroup>
 
+  <!-- The dev teleport menu's table, built by `make teleports` from the sync ledger. -->
+  <ItemGroup>
+    <EmbeddedResource Include="../../docs/sync-audit/teleports.tsv"
+                      LogicalName="SilksongCoop.teleports.tsv" />
+  </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="SilksongCoop.Tests" />
   </ItemGroup>

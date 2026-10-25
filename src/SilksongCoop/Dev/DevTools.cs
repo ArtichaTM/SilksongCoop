@@ -7,8 +7,9 @@ namespace SilksongCoop.Dev;
 
 /// <summary>
 /// Testing tools for running through the game in coop: one-hit kills in both games, free fly, give
-/// everything, bring the partner over, and a bug report. Off by default; when off it binds no keys and
-/// patches nothing. It works on any save and deletes nothing; F4 changes the save for good.
+/// everything, bring the partner over, teleport to audited objects, and a bug report. Off by default;
+/// when off it binds no keys and patches nothing. It works on any save and deletes nothing; F4 changes
+/// the save for good.
 /// </summary>
 internal sealed class DevTools : Module
 {
@@ -21,6 +22,7 @@ internal sealed class DevTools : Module
 
     private readonly bool _enabled;
     private readonly FreeFly _fly;
+    private readonly TeleportMenu? _teleports;
     private readonly Harmony? _harmony;
     private bool _on;
     private bool _hostOn;
@@ -36,6 +38,7 @@ internal sealed class DevTools : Module
         {
             return;
         }
+        _teleports = new TeleportMenu(coop, _fly);
         _harmony = new Harmony(Plugin.Guid + ".dev");
         FreeFly.Patch(_harmony);
     }
@@ -59,7 +62,10 @@ internal sealed class DevTools : Module
         HandleKeys();
         UpdateReport();
         ApplyCheats();
+        _teleports!.Update();
     }
+
+    public void Draw() => _teleports?.Draw();
 
     public override void OnJoined()
     {
@@ -84,6 +90,7 @@ internal sealed class DevTools : Module
         {
             return;
         }
+        _teleports!.Close();
         SetOn(false, "plugin unloaded");
         _hostOn = false;
         UpdateReport();
@@ -101,7 +108,12 @@ internal sealed class DevTools : Module
         }
         if (!Active)
         {
+            _teleports!.Close();
             return;
+        }
+        if (Input.GetKeyDown(config.TeleportKey.Value))
+        {
+            _teleports!.Toggle();
         }
         if (Coop.InCoop && Input.GetKeyDown(config.BringKey.Value))
         {
@@ -137,7 +149,8 @@ internal sealed class DevTools : Module
             return;
         }
         SetOn(true, "turned on");
-        Coop.Hints.Show("Dev mode on: one-hit kills, F2 brings partner, F3 fly, Shift+F4 give all", 5f);
+        const string Keys = "F2 brings partner, F3 fly, Shift+F4 give all, F6 teleport";
+        Coop.Hints.Show($"Dev mode on: one-hit kills, {Keys}", 5f);
     }
 
     /// <summary>Null when dev mode may start here.</summary>

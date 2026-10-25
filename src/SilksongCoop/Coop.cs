@@ -172,7 +172,11 @@ internal sealed class Coop : IDisposable
         }
     }
 
-    public void OnGUI() => Hints.Draw();
+    public void OnGUI()
+    {
+        Hints.Draw();
+        Dev.Draw();
+    }
 
     public void StartHosting()
     {

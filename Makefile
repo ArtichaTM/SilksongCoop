@@ -1,4 +1,4 @@
-.PHONY: verify test install install-local loader
+.PHONY: verify test install install-local loader teleports
 
 # Where builds go: both games' hot-reloaded ScriptEngine folders.
 SCRIPTS := $(HOME)/.local/share/Steam/steamapps/common/Hollow Knight Silksong/BepInEx/scripts
@@ -16,8 +16,12 @@ test:
 # Installs into both games; the post-commit hook publishes the plugin for the loader.
 install: install-local
 
+# Rebuilds the dev teleport table from the verdicts, audit and dump; keeps it when the dump is missing.
+teleports:
+	uv run docs/sync-audit/tools/teleports.py
+
 # Builds the plugin and the FSM dump spike into both games' BepInEx/scripts.
-install-local:
+install-local: teleports
 	dotnet build src/SilksongCoop -c Release -t:Build,InstallPlugin "-p:PluginDir=$(SCRIPTS)/SilksongCoop"
 	dotnet build src/SilksongCoop -c Release -t:InstallPlugin "-p:PluginDir=$(GOG_SCRIPTS)/SilksongCoop"
 	dotnet build spikes/FsmDump -c Release -t:Build,InstallPlugin "-p:PluginDir=$(SCRIPTS)/FsmDump"
