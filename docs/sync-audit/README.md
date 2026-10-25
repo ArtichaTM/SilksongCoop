@@ -14,7 +14,7 @@ causes and links to the rows each one covers.
 - `areas.tsv`: in-game area name for each scene prefix (Blasted Steps and Grand Gate are not mapped yet).
 - `scene_order.txt`: scene walk order used by the catalog.
 - `tools/merge.py`: rebuilds `catalog/`, `areas.tsv` and the dump's `index.tsv`.
-- `teleports.tsv`: the dev teleport menu's table (F6 in dev mode), built by `tools/teleports.py` on `make`.
+- `teleports.tsv`: the dev teleport menu's table (F5 in dev mode), built by `tools/teleports.py` on `make`.
 - `tools/audit_lint_all.sh`: lints every table against its catalog slice (`tools/audit_check.sh` checks one).
 - `tools/agent_prompt.md`: the prompt the audit agents ran with.
 

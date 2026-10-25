@@ -149,7 +149,7 @@ internal sealed class DevTools : Module
             return;
         }
         SetOn(true, "turned on");
-        const string Keys = "F2 brings partner, F3 fly, Shift+F4 give all, F6 teleport";
+        const string Keys = "F2 brings partner, F3 fly, Shift+F4 give all, F5 teleport";
         Coop.Hints.Show($"Dev mode on: one-hit kills, {Keys}", 5f);
     }
 
