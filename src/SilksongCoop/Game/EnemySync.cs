@@ -57,6 +57,7 @@ internal sealed class EnemySync : Module
     private readonly Dictionary<int, GameObject> _objects = [];
     private readonly Dictionary<Fsm, (string State, string Event)> _relayed = [];
     private readonly HashSet<Fsm> _localGates = [];
+    private readonly Dictionary<RandomFloat, float> _rolls = [];
     private float _nextFrame;
     private float _lastIndex = -ReindexCooldown;
     private float _enteredAt;
@@ -179,9 +180,40 @@ internal sealed class EnemySync : Module
         }
         if (Coop.Rooms.LocalOwns && ModeOf(fsm) != FsmMode.None)
         {
-            int id = IdOf(fsm.GameObject);
-            Session?.Send(MessageType.FsmState, w => w.Int(id).String(fsm.Name).String(toState.Name));
+            List<float> rolls = RollsOf(toState).Select(PreRoll).ToList();
+            SendState(IdOf(fsm.GameObject), fsm.Name, toState.Name, rolls);
         }
+    }
+
+    /// <summary>A roll the owner made before entering the state (owner) or sent with it (mirror).</summary>
+    public bool TakeRoll(RandomFloat action, out float value)
+    {
+        if (!_rolls.TryGetValue(action, out value))
+        {
+            return false;
+        }
+        _rolls.Remove(action);
+        return true;
+    }
+
+    /// <summary>Rolled before the state's actions run, so the mirror gets the value with the state.</summary>
+    private float PreRoll(RandomFloat action)
+    {
+        float value = Random.Range(action.min.Value, action.max.Value);
+        _rolls[action] = value;
+        return value;
+    }
+
+    private static IEnumerable<RandomFloat> RollsOf(FsmState state) =>
+        (state.Actions ?? []).OfType<RandomFloat>().Where(action => action.Enabled);
+
+    private void SendState(int id, string fsmName, string state, List<float> rolls)
+    {
+        Session?.Send(MessageType.FsmState, w =>
+        {
+            w.Int(id).String(fsmName).String(state).Byte((byte)rolls.Count);
+            rolls.ForEach(roll => w.Float(roll));
+        });
     }
 
     /// <summary>A mirrored FSM only moves when the owner says so, even inside an applied state.</summary>
@@ -204,9 +236,7 @@ internal sealed class EnemySync : Module
         {
             foreach (Fsm gate in _localGates.Where(gate => gate.GameObject && gate.ActiveState is not null))
             {
-                int id = IdOf(gate.GameObject);
-                string state = gate.ActiveStateName;
-                Session?.Send(MessageType.FsmState, w => w.Int(id).String(gate.Name).String(state));
+                SendState(IdOf(gate.GameObject), gate.Name, gate.ActiveStateName, []);
             }
         }
         _localGates.Clear();
@@ -349,6 +379,7 @@ internal sealed class EnemySync : Module
         _objects.Clear();
         _relayed.Clear();
         _localGates.Clear();
+        _rolls.Clear();
         _enteredAt = Time.unscaledTime;
         _reports = 0;
         foreach (HealthManager health in Resources.FindObjectsOfTypeAll<HealthManager>())
@@ -377,12 +408,14 @@ internal sealed class EnemySync : Module
             // Each game runs its own crumbling platform; PlatformSync starts the partner's break.
             return FsmMode.None;
         }
-        if (go.GetComponentInParent<HealthManager>(true) || InBossArena(go.transform))
+        bool ownerRun = SyncedObjects.IsOwnerRun(go.name, fsm.Name);
+        if (go.GetComponentInParent<HealthManager>(true) || InBossArena(go.transform) || ownerRun)
         {
             return FsmMode.Authority;
         }
         bool persistent = go.GetComponent<PersistentBoolItem>() || go.GetComponent<PersistentIntItem>();
-        bool named = fsm.Name == "BG Control" || SharedKeywords.Any(word => fsm.Name.Contains(word));
+        bool named = fsm.Name == "BG Control" || SharedKeywords.Any(word => fsm.Name.Contains(word))
+            || SyncedObjects.IsEitherTriggers(go.name, fsm.Name);
         bool rescue = go.name.StartsWith(FleaRescue) && ReactsToHits(fsm);
         // A synced hero cutscene (Tut_01 Weakness Scene) has both games resetting each other.
         return (persistent || named || rescue) && !HeroCutscenes.Drives(fsm) ? FsmMode.Shared : FsmMode.None;
@@ -484,6 +517,12 @@ internal sealed class EnemySync : Module
         int id = reader.Int();
         string fsmName = reader.String();
         string state = reader.String();
+        List<float> rolls = [];
+        int rollCount = reader.Byte();
+        for (int i = 0; i < rollCount; i++)
+        {
+            rolls.Add(reader.Float());
+        }
         PlayMakerFSM? component = FindFsm(id, fsmName);
         if (component is null)
         {
@@ -491,7 +530,22 @@ internal sealed class EnemySync : Module
         }
         if (Mirroring && ModeOf(component.Fsm) != FsmMode.None && !_localGates.Contains(component.Fsm))
         {
+            UseRolls(component.Fsm, state, rolls);
             SetState(component, state);
+        }
+    }
+
+    /// <summary>The owner's rolls replace the mirror's own when it enters the state.</summary>
+    private void UseRolls(Fsm fsm, string stateName, List<float> rolls)
+    {
+        if (rolls.Count == 0 || fsm.GetState(stateName) is not { } state)
+        {
+            return;
+        }
+        List<RandomFloat> actions = RollsOf(state).ToList();
+        for (int i = 0; i < actions.Count && i < rolls.Count; i++)
+        {
+            _rolls[actions[i]] = rolls[i];
         }
     }
 

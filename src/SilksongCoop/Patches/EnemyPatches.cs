@@ -48,6 +48,20 @@ internal static class EnemyPatches
         }
     }
 
+    /// <summary>A synced FSM's random float: owner and mirror both take the owner's roll.</summary>
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(RandomFloat), nameof(RandomFloat.OnEnter))]
+    private static bool RandomFloatEnter(RandomFloat __instance)
+    {
+        if (InCoop is not { } coop || !coop.Enemies.TakeRoll(__instance, out float value))
+        {
+            return true;
+        }
+        __instance.storeResult.Value = value;
+        __instance.Finish();
+        return false;
+    }
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(HealthManager), nameof(HealthManager.Hit))]
     private static void HitBefore(HealthManager __instance, out int __state)

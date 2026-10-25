@@ -19,6 +19,7 @@ internal static class WaitPoints
         ("Funeral Leader", "Control", "Idle", "INTERACT"),
         ("Shrine Weaver Ability", "Inspection", "Idle", "INTERACT"),
         ("Caravan", "Quest End Sequence", "Wait", "QUEST END TRAVEL"),
+        ("Snail Shamans Set", "Dialogue", "Wait For Enter", "ENTER"),
     ];
 
     public static bool Waits(string objectName, string fsm, string state, string fsmEvent) =>
