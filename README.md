@@ -5,18 +5,15 @@ Two-player coop mod for Hollow Knight: Silksong (BepInEx plugin, `src/SilksongCo
 ## Sync ledger: the source of truth for what gets synced
 
 Every scene element of the game was dumped and audited for coop. The ledger records what each element needs, what
-our code does about it, and what has been tested. It currently lives in `data/FsmDump/` (gitignored); it moves to
-`docs/sync-audit/` once the audit agents finish.
+our code does about it, and what has been tested. It lives in `docs/sync-audit/` (layout and dump details in its
+`README.md`); the raw dump it points into stays untracked in `data/FsmDump/`.
 
-- `scenes/<Scene>.fsm.txt`, `.objects.txt`: full dump of every scene's FSMs and objects (regenerate with FsmDump F8, GOG copy).
-- `catalog/<Area>.md`: each element listed once, in the first scene it appears in (`scene_order.txt` order).
-- `areas.tsv`: in-game area name for each scene prefix (report bugs by area name; Blasted Steps and Grand Gate are
-  not mapped yet).
-- `index.tsv`: every use of every element (`id`, scene, object, dump ref). `grep <id> index.tsv` lists all places a fix touches.
-- `audit/<NN>_<Area>.md`: per-scene tables written by the audit agents (what coop needs).
-- `audit/notes/<Type>.md`: short explanations of game C# types and actions.
-- `decomp/`: decompiled Assembly-CSharp.
-- `tools/merge.py` rebuilds catalog and index; `tools/agent_prompt.md` is the audit agents' prompt.
+- `docs/sync-audit/audit/<NN>_<Area>.md`: per-scene tables (what coop needs); `audit/notes/<Type>.md`: game type notes.
+- `docs/sync-audit/catalog/<Area>.md`: each element listed once, in the first scene it appears in.
+- `docs/sync-audit/areas.tsv`: in-game area name for each scene prefix (report bugs by area name).
+- `data/FsmDump/scenes/`: full dump of every scene's FSMs and objects; `Ref` cells point here.
+- `data/FsmDump/index.tsv`: every use of every element. `grep <id> index.tsv` lists all places a fix touches.
+- `data/FsmDump/decomp/`: decompiled Assembly-CSharp.
 
 ### When a coop problem is reported
 

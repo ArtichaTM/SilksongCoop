@@ -1,0 +1,3 @@
+# WalkerV2 [note by agent 2.03]
+C# ground-walker component (Dock Worker, Bone Crawler-like walkers): walks left/right, turns at walls/ledges; when its AggroRange (an AlertRange) sees the hero it chases and turns toward `HeroController.instance.transform` (direction sign), not via a PlayMaker action.
+Coop: TargetingPatches only swaps hero variables in listed FSM actions, so WalkerV2's chase direction always uses the room owner's own hero; AlertRange patch lets the partner wake it, but it then walks toward the owner. Fix = patch WalkerV2 hero lookups (or its direction method) to the nearer player, same as PrefersPartner.

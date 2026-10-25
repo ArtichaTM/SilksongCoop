@@ -1,0 +1,122 @@
+# Bonetown: Bone Bottom
+
+## Bonetown
+- FSM [Control] id=ac59a8b8cf at Black Thread States/Black Thread World/Audio Abyss Tension Cue (1 uses in game) -> scenes/Bonetown.fsm.txt:4
+- FSM [breakable_wall_v2] id=836d6b9aba at Black Thread States/Black Thread World/Breakable Wall (96 uses in game) -> scenes/Bonetown.fsm.txt:33
+- FSM [FSM] id=188e429969 at Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group (2 uses in game) -> scenes/Bonetown.fsm.txt:239
+- FSM [Control] id=87454d1164 at Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief, Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief (1), Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief (2) (15 uses in game) -> scenes/Bonetown.fsm.txt:246
+- FSM [Rummage Voice] id=1794b63fde at Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief, Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief (1), Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief (2) (15 uses in game) -> scenes/Bonetown.fsm.txt:882
+- FSM [Grab Cooldown Timer] id=df2259c743 at Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief, Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief (1), Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief (2) (15 uses in game) -> scenes/Bonetown.fsm.txt:891
+- FSM [Collect] id=8e52f60385 at Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief (1)/Rosary Collector, Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief (2)/Rosary Collector, Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief/Rosary Collector (15 uses in game) -> scenes/Bonetown.fsm.txt:1554
+- FSM [Control] id=c63c59c051 at Black Thread States/Normal World/Aspid Collector, Black Thread States/Normal World/Aspid Collector (1), Black Thread States/Normal World/Aspid Collector (3) (23 uses in game) -> scenes/Bonetown.fsm.txt:2283
+- FSM [Sync Berry Sprite] id=0e2184676e at Black Thread States/Normal World/Aspid Collector, Black Thread States/Normal World/Aspid Collector (1), Black Thread States/Normal World/Aspid Collector (3) (26 uses in game) -> scenes/Bonetown.fsm.txt:2604
+- FSM [Control] id=91e7cabf82 at Black Thread States/Normal World/Aspid Collector (3)/Mossberry Pickup (4 uses in game) -> scenes/Bonetown.fsm.txt:3294
+- FSM [Control] id=e356a243d7 at Black Thread States/Normal World/bonebottom_quest_board/complete/Fixer Ambient Folder/BG Fixer (1 uses in game) -> scenes/Bonetown.fsm.txt:3362
+- FSM [Tonk Effects] id=7a7339761d at Black Thread States/Normal World/bonebottom_quest_board/complete/Fixer Ambient Folder/BG Fixer (1 uses in game) -> scenes/Bonetown.fsm.txt:3374
+- FSM [Conversation] id=07ab726f4a at Black Thread States/Normal World/bonebottom_quest_board/complete/Fixer NPC Standing (1 uses in game) -> scenes/Bonetown.fsm.txt:3386
+- FSM [Hit Animate] id=e3e873144d at Black Thread States/Normal World/bonebottom_quest_board/complete/Quest Board Pivot (5 uses in game) -> scenes/Bonetown.fsm.txt:3552
+- FSM [Hand In Sequence] id=8a39736105 at Black Thread States/Normal World/bonebottom_quest_board/complete/Quest Board Pivot/Quest_Board (4 uses in game) -> scenes/Bonetown.fsm.txt:3580
+- FSM [Skull King Leave] id=7f00cf1bbf at Black Thread States/Normal World/bonebottom_quest_board/unassembled/Fixer Pilgrim, Black Thread States/Normal World/Bonechurch_Shop, Black Thread States/Normal World/Inspect Region ... (5 uses in game) -> scenes/Bonetown.fsm.txt:3637
+- FSM [Tonk Effects] id=93184d172e at Black Thread States/Normal World/bonebottom_quest_board/unassembled/Fixer Pilgrim (1 uses in game) -> scenes/Bonetown.fsm.txt:3643
+- FSM [Dialogue] id=b63868e960 at Black Thread States/Normal World/Bonechurch_Shop (1 uses in game) -> scenes/Bonetown.fsm.txt:3665
+- FSM [FSM] id=fad2b95e5d at Black Thread States/Normal World/Bonetown Lift Sequence (1 uses in game) -> scenes/Bonetown.fsm.txt:3794
+- FSM [Lift Control] id=410ff450de at Black Thread States/Normal World/Bonetown Lift Sequence/Bonetown Lift (1 uses in game) -> scenes/Bonetown.fsm.txt:3812
+- FSM [Check Hero Head] id=3bb1491a48 at Black Thread States/Normal World/Bonetown Lift Sequence/Bonetown Lift/Head Checker (1 uses in game) -> scenes/Bonetown.fsm.txt:3987
+- FSM [Behaviour] id=71309760be at Black Thread States/Normal World/Bonetown Resident (3 uses in game) -> scenes/Bonetown.fsm.txt:3999
+- FSM [Rest Animation] id=278a9b8a8a at Black Thread States/Normal World/Bonetown Resident (3 uses in game) -> scenes/Bonetown.fsm.txt:4142
+- FSM [Control] id=2557c98237 at Black Thread States/Normal World/Bonetown Resident Corpse (1 uses in game) -> scenes/Bonetown.fsm.txt:4186
+- FSM [Hit Fling] id=1401dadca9 at Black Thread States/Normal World/fixer_constructs/fixer_statue/Shell Shard Fossil Big/Break Wall Effect/Chunk, Black Thread States/Normal World/fixer_constructs/fixer_statue/Shell Shard Fossil Big/Break Wall Effect/Chunk (1) (2 uses in game) -> scenes/Bonetown.fsm.txt:4292
+- FSM [Control] id=777834af8f at Black Thread States/Normal World/Funeral Control/Funeral Scene/Funeral Leader (1 uses in game) -> scenes/Bonetown.fsm.txt:4308
+- FSM [Control] id=222ceba2e3 at Black Thread States/Normal World/Funeral Control/Funeral Scene/Seen Trigger (1 uses in game) -> scenes/Bonetown.fsm.txt:4430
+- FSM [Rest Animation] id=3851206429 at Black Thread States/Normal World/Generic Pilgrim Control/Generic Pilgrim Round, Black Thread States/Normal World/Pilgrim Crowds/Crowds/Crowd 3/Pilgrim Round BG Look (1) (4 uses in game) -> scenes/Bonetown.fsm.txt:4440
+- FSM [Control] id=49cf6f8185 at Black Thread States/Normal World/Pilgrim Crowds/Crowds (1 uses in game) -> scenes/Bonetown.fsm.txt:4495
+- FSM [Rest Animation] id=9a83eaca74 at Black Thread States/Normal World/Pilgrim Crowds/Crowds/Crowd 1/bonetown_pilgrim_05 (1 uses in game) -> scenes/Bonetown.fsm.txt:4540
+- FSM [Rest Animation] id=b6d92aa22b at Black Thread States/Normal World/Pilgrim Crowds/Crowds/Crowd 3/Generic Pilgrim Horned  BG Look (1) (5 uses in game) -> scenes/Bonetown.fsm.txt:4577
+- FSM [Rest Animation] id=81cc8543a6 at Black Thread States/Normal World/Pilgrim Crowds/Crowds/Crowd 6/Generic Pilgrim Large BG Look (1) (7 uses in game) -> scenes/Bonetown.fsm.txt:4645
+- FSM [Break Bench] id=79c35a1ced at Black Thread States/Normal World/RestBench Control (1 uses in game) -> scenes/Bonetown.fsm.txt:4692
+- FSM [Repairing Scene] id=96357aa10e at Black Thread States/Normal World/RestBench Control (1 uses in game) -> scenes/Bonetown.fsm.txt:4714
+- FSM [Tonk Effects] id=a73c8bf38c at Black Thread States/Normal World/RestBench Control/Bench Getting Repaired/Fixer Pilgrim Bench Repair (1 uses in game) -> scenes/Bonetown.fsm.txt:4731
+- FSM [Dialogue] id=8eba52a2f0 at Black Thread States/Normal World/RestBench Control/Bench Getting Repaired/Fixer Pilgrim Bench Repair (1 uses in game) -> scenes/Bonetown.fsm.txt:4752
+- FSM [State Control] id=751665d5d9 at Black Thread States/Normal World/RestBench Control/bonetown_globe (3 uses in game) -> scenes/Bonetown.fsm.txt:4800
+- FSM [Break] id=95daed5b89 at Black Thread States/Normal World/RestBench Control/bonetown_globe (3 uses in game) -> scenes/Bonetown.fsm.txt:4831
+- FSM [Repair Sprite] id=a2b72488aa at Black Thread States/Normal World/RestBench Control/RestBench (1 uses in game) -> scenes/Bonetown.fsm.txt:4838
+- FSM [Skull King Enter] id=31503a6555 at Black Thread States/Normal World/RestBench Control/RestBench (1 uses in game) -> scenes/Bonetown.fsm.txt:4870
+- FSM [Skull King Invaded] id=559f28dc98 at Black Thread States/Normal World/RestBench Control/RestBench (1 uses in game) -> scenes/Bonetown.fsm.txt:4876
+- FSM [Control] id=d7df9a1786 at Black Thread States/Normal World/silkflys/Silkfly Ambient Perched, Black Thread States/Normal World/silkflys/Silkfly Ambient Perched (1), Black Thread States/Normal World/silkflys/Silkfly Ambient Perched (2) ... (56 uses in game) -> scenes/Bonetown.fsm.txt:5987
+- FSM [FSM] id=c9f73f154f at Black Thread States/Normal World/Skull King Audio Control (1 uses in game) -> scenes/Bonetown.fsm.txt:6509
+- FSM [tilt_plat] id=7a939b3b47 at Black Thread States/Normal World/Tilt Plat Control/Tilt Plat - Repaired/terrain collider, Black Thread States/Normal World/Tilt Plat Control/Tilt Plat - Unbroken/terrain collider (150 uses in game) -> scenes/Bonetown.fsm.txt:6532
+- FSM [Control] id=4a0c22e520 at Churchkeeper Intro Scene (1 uses in game) -> scenes/Bonetown.fsm.txt:6782
+- FSM [Conversation] id=395bd088af at Churchkeeper Intro Scene/Churchkeeper (1 uses in game) -> scenes/Bonetown.fsm.txt:6955
+- FSM [Bonk Sfx] id=042c088fff at Churchkeeper Intro Scene/Churchkeeper (1 uses in game) -> scenes/Bonetown.fsm.txt:7079
+- FSM [Control] id=eabcec93ac at Mapper Control (1 uses in game) -> scenes/Bonetown.fsm.txt:7099
+- FSM [Control] id=cabf35532b at Mapper Control/Shakra Away/Mapper Call Pole (3 uses in game) -> scenes/Bonetown.fsm.txt:7126
+- FSM [Rest Animation] id=0c581f08a5 at Mapper Control/Shakra Away/Mapper NPC (9 uses in game) -> scenes/Bonetown.fsm.txt:7166
+- FSM [Dialogue] id=99f59adeae at Mapper Control/Shakra Away/Mapper NPC (9 uses in game) -> scenes/Bonetown.fsm.txt:7225
+- FSM [Ring Shout] id=ee515b8f28 at Mapper Control/Shakra Away/Mapper NPC (8 uses in game) -> scenes/Bonetown.fsm.txt:7666
+- FSM [Attack Enemies] id=a5856b4235 at Mapper Control/Shakra Away/Mapper NPC (10 uses in game) -> scenes/Bonetown.fsm.txt:7713
+- FSM [Dialogue] id=2312ade11b at Mapper Control/Shakra Resting/Mapper Sit NPC (8 uses in game) -> scenes/Bonetown.fsm.txt:8407
+- FSM [Control] id=5876712659 at Weakness Scene (1 uses in game) -> scenes/Bonetown.fsm.txt:9117
+- C# SceneAdditiveLoadConditional at Boss Loader (35 uses in game) -> scenes/Bonetown.objects.txt:40
+- C# WalkArea at Walk Area Init, Churchkeeper Intro Scene/Walk Area, Walk Area Revisit (31 uses in game) -> scenes/Bonetown.objects.txt:749
+- C# SimpleSpriteFade at Churchkeeper Intro Scene/Intro/Darkness (329 uses in game) -> scenes/Bonetown.objects.txt:785
+- C# FadeGroup at Churchkeeper Intro Scene/Intro/Harsh Light (60 uses in game) -> scenes/Bonetown.objects.txt:789
+- C# CameraBlurPlaneAnimator at Churchkeeper Intro Scene/faint_fader_CK (2 uses in game) -> scenes/Bonetown.objects.txt:838
+- C# DisableAfterTime at Churchkeeper Intro Scene/faint_fader_CK (202 uses in game) -> scenes/Bonetown.objects.txt:838
+- C# PlayAudioAndRecycle at Churchkeeper Intro Scene/faint_fader_CK/Audio Player Actor (12 uses in game) -> scenes/Bonetown.objects.txt:840
+- C# ShopOwner at Mapper Control/Shakra Resting/Mapper Sit NPC, Mapper Control/Shakra Away/Mapper NPC, Black Thread States/Normal World/Bonechurch_Shop (31 uses in game) -> scenes/Bonetown.objects.txt:2043
+- C# RosaryCacheHanging at Mapper Control/Shakra Resting/Rings/rosary_string_empty (3), Mapper Control/Shakra Resting/Rings/rosary_string_empty (2), Mapper Control/Shakra Resting/Rings/rosary_string_empty (4) ... (63 uses in game) -> scenes/Bonetown.objects.txt:2050
+- C# FixParentedJoints at Mapper Control/Shakra Resting/Rings/rosary_string_empty (3)/rosary_string/Point (0), Mapper Control/Shakra Resting/Rings/rosary_string_empty (2)/rosary_string/Point (0), Mapper Control/Shakra Resting/Rings/rosary_string_empty (4)/rosary_string/Point (0) ... (1080 uses in game) -> scenes/Bonetown.objects.txt:2052
+- C# ChainLinkTerrainFixer at Mapper Control/Shakra Resting/Rings/rosary_string_empty (3)/rosary_string/string_cap/terrain detector, Mapper Control/Shakra Resting/Rings/rosary_string_empty (2)/rosary_string/string_cap/terrain detector, Mapper Control/Shakra Resting/Rings/rosary_string_empty (4)/rosary_string/string_cap/terrain detector ... (196 uses in game) -> scenes/Bonetown.objects.txt:2057
+- C# RandomRotationRange at Mapper Control/Shakra Away/Mapper Call Pole/Ring Flash, Black Thread States/Normal World/bonebottom_quest_board/unassembled/Fixer Pilgrim/Thunk Effect, Black Thread States/Normal World/RestBench Control/Bench Break Effects/Strike Nail R ... (865 uses in game) -> scenes/Bonetown.objects.txt:2096
+- C# RosaryCacheShrine at rosary_shrine_small (5 uses in game) -> scenes/Bonetown.objects.txt:3261
+- C# CurveRotationAnimation at rosary_shrine_small/rosary_dish (3072 uses in game) -> scenes/Bonetown.objects.txt:3262
+- C# RosaryCacheString at rosary_string_small_half, rosary_string_medium (118 uses in game) -> scenes/Bonetown.objects.txt:3284
+- C# AnimatorCullingLink at rosary_string_small_half/rosaries/rosary bead, rosary_string_small_half/rosaries/rosary bead (1), rosary_string_small_half/rosaries/rosary bead (2) ... (652 uses in game) -> scenes/Bonetown.objects.txt:3286
+- C# ConveyorMovement at Geo Small Persistent (2), Geo Small Persistent (1), Geo Small Persistent (3) (105 uses in game) -> scenes/Bonetown.objects.txt:3984
+- C# GeoControl at Geo Small Persistent (2), Geo Small Persistent (1), Geo Small Persistent (3) ... (101 uses in game) -> scenes/Bonetown.objects.txt:3984
+- C# ActivateColliderDelay at Geo Small Persistent (2)/Self Collide, Geo Small Persistent (1)/Self Collide, Geo Small Persistent (3)/Self Collide ... (133 uses in game) -> scenes/Bonetown.objects.txt:3991
+- C# ActivateRandomChildren at Black Thread States/Normal World/silkflys (109 uses in game) -> scenes/Bonetown.objects.txt:4779
+- C# RandomLooptk2dAnimator at Black Thread States/Normal World/Pilgrim Crowds/Crowds/Crowd 1/bonetown_pilgrim_01, Black Thread States/Normal World/Pilgrim Crowds/Crowds/Crowd 1/bonetown_pilgrim_02 (2 uses in game) -> scenes/Bonetown.objects.txt:4825
+- C# PlayerDataTestResponse at Black Thread States/Normal World/Pilgrim Crowds/Crowds/Crowd 1/bonetown_pilgrim_01, Black Thread States/Normal World/Pilgrim Crowds/Crowds/Crowd 1/bonetown_pilgrim_02, Black Thread States/Normal World/Pilgrim Crowds/Crowds/Crowd 1/bonetown_pilgrim_05 ... (85 uses in game) -> scenes/Bonetown.objects.txt:4825
+- C# BasicNPCBoolTest at Black Thread States/Normal World/Pilgrim Crowds/Crowds/Crowd 6/Generic Pilgrim Large BG Look (1), Black Thread States/Normal World/Pilgrim Crowds/Crowds/Crowd 7/Generic Pilgrim Large BG Look (2) (17 uses in game) -> scenes/Bonetown.objects.txt:4868
+- C# TriggerEvent at Black Thread States/Normal World/Bonechurch_Shop/Seen Detector, Black Thread States/Normal World/bonebottom_quest_board/Skull King Detector, Black Thread States/Normal World/Bonetown Resident/Skull King Detector (28 uses in game) -> scenes/Bonetown.objects.txt:4929
+- C# ActivateIfPlayerdataTrue at Black Thread States/Normal World/bonebottom_quest_board (13 uses in game) -> scenes/Bonetown.objects.txt:5164
+- C# Tk2dTalkAnimNPC at Black Thread States/Normal World/bonebottom_quest_board/unassembled/Fixer Pilgrim, Black Thread States/Normal World/RestBench Control/Bench Getting Repaired/Fixer Pilgrim Bench Repair (24 uses in game) -> scenes/Bonetown.objects.txt:5168
+- C# QuestBoardInteractable at Black Thread States/Normal World/bonebottom_quest_board/complete/Quest Board Pivot/Quest_Board (4 uses in game) -> scenes/Bonetown.objects.txt:5177
+- C# CurveOffsetAnimation at Black Thread States/Normal World/bonebottom_quest_board/complete/Quest Board Pivot/Quest_Board/Deposit Box Animator (107 uses in game) -> scenes/Bonetown.objects.txt:5207
+- C# FlingSelf at Black Thread States/Normal World/RestBench Control/Bench Break Effects/Chunk, Black Thread States/Normal World/RestBench Control/Bench Break Effects/Chunk (1), Black Thread States/Normal World/RestBench Control/Bench Break Effects/Chunk (2) ... (263 uses in game) -> scenes/Bonetown.objects.txt:5238
+- C# StateTransitionAnimator at Black Thread States/Normal World/RestBench Control/RestBench (4 uses in game) -> scenes/Bonetown.objects.txt:5274
+- C# AwakenChildren at Black Thread States/Normal World/fixer_constructs/fixer_statue/Shell Shard Fossil Big (46 uses in game) -> scenes/Bonetown.objects.txt:5304
+- C# LoopRotator at Black Thread States/Normal World/Funeral Control/Funeral Scene/Funeral Corpse (51 uses in game) -> scenes/Bonetown.objects.txt:5378
+- C# ActivateChildrenOnContact at Black Thread States/Normal World/moss_fliers_burst (124 uses in game) -> scenes/Bonetown.objects.txt:5383
+- C# Lever_tk2d at Black Thread States/Normal World/Bone Lever (58 uses in game) -> scenes/Bonetown.objects.txt:5451
+- C# VibrationPlayer at Black Thread States/Normal World/Bone Lever (182 uses in game) -> scenes/Bonetown.objects.txt:5451
+- C# HitResponse at Black Thread States/Normal World/Bone Lever/activated hit response (1055 uses in game) -> scenes/Bonetown.objects.txt:5456
+- C# CameraShakeAnimator at Black Thread States/Normal World/Bonetown Lift Sequence, Black Thread States/Normal World/Bonetown Lift Sequence/Bone Lift Cogs (82 uses in game) -> scenes/Bonetown.objects.txt:5477
+- C# PlayableDirectorRamp at Black Thread States/Normal World/Bonetown Lift Sequence/Bone Lift Cogs (8 uses in game) -> scenes/Bonetown.objects.txt:5478
+- C# HeroPlatformStick at Black Thread States/Normal World/Bonetown Lift Sequence/Bonetown Lift (56 uses in game) -> scenes/Bonetown.objects.txt:5487
+- C# LiftPlatform at Black Thread States/Normal World/Bonetown Lift Sequence/Bonetown Lift (116 uses in game) -> scenes/Bonetown.objects.txt:5487
+- C# KeepWorldPosition at Black Thread States/Normal World/Bonetown Lift Sequence/Bonetown Lift/sprites/Chains/Chain/Pin (102 uses in game) -> scenes/Bonetown.objects.txt:5498
+- C# PositionActivator at Black Thread States/Normal World/Bonetown Lift Sequence/Bonetown Lift/Activate Clamber Region (44 uses in game) -> scenes/Bonetown.objects.txt:5507
+- C# SimpleButton at Black Thread States/Normal World/Bonetown Lift Sequence/Bonetown Lift/Move Plate (4 uses in game) -> scenes/Bonetown.objects.txt:5509
+- C# AutoNoClamberRegion at Black Thread States/Normal World/Bonetown Lift Sequence/Bonetown Lift/Auto No Clamber Region (77 uses in game) -> scenes/Bonetown.objects.txt:5511
+- C# MatchScale at Black Thread States/Normal World/Tilt Plat Control/Tilt Plat - Repaired/Art/terrain collider particle, Black Thread States/Normal World/Tilt Plat Control/Tilt Plat - Unbroken/Art/terrain collider particle (58 uses in game) -> scenes/Bonetown.objects.txt:5536
+- C# Unmasker at Black Thread States/Black Thread World/Breakable Wall/Masks (122 uses in game) -> scenes/Bonetown.objects.txt:5639
+- C# AudioSourcePitchRandomizer at Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief/Audio Loop Rummage, Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief (1)/Audio Loop Rummage, Black Thread States/Black Thread World/Thief Scene/Rosary Thief Group/Rosary Thief (2)/Audio Loop Rummage (970 uses in game) -> scenes/Bonetown.objects.txt:6215
+
+## Bonetown_boss
+- FSM [Drop] id=fae5851b3a at Boss Scene/Boulders Battle (1 uses in game) -> scenes/Bonetown_boss.fsm.txt:1
+- FSM [Control] id=c524a93681 at Boss Scene/Boulders Battle/Bone_Boulder SK, Boss Scene/Boulders Battle/Bone_Boulder SK (1), Boss Scene/Boulders Battle/Bone_Boulder SK (10) ... (88 uses in game) -> scenes/Bonetown_boss.fsm.txt:45
+- FSM [Control] id=3e4b7e1754 at Boss Scene/Enemy Bool Setter (59 uses in game) -> scenes/Bonetown_boss.fsm.txt:3852
+- FSM [Control] id=3dfb70adb2 at Boss Scene/Leap Up Zone (6 uses in game) -> scenes/Bonetown_boss.fsm.txt:3871
+- FSM [Behaviour] id=45ce21870f at Boss Scene/Skull King (2 uses in game) -> scenes/Bonetown_boss.fsm.txt:3884
+- FSM [Protect From Below] id=fb1adb71d0 at Boss Scene/Skull King (2 uses in game) -> scenes/Bonetown_boss.fsm.txt:4434
+- FSM [Control Invincible Effect] id=f907471184 at Boss Scene/Skull King (2 uses in game) -> scenes/Bonetown_boss.fsm.txt:4444
+- FSM [Death] id=450f0fcf51 at Boss Scene/Skull King/Corpse Skull King Bonetown(Clone) (1 uses in game) -> scenes/Bonetown_boss.fsm.txt:4454
+- FSM [Skull King Encounter] id=0c75409676 at Skull King Encounter - deprecated? (1 uses in game) -> scenes/Bonetown_boss.fsm.txt:4504
+- FSM [Fake Bench] id=b175002615 at Skull King Encounter - deprecated?/Fake Bench (1 uses in game) -> scenes/Bonetown_boss.fsm.txt:4555
+- FSM [Detect Hero] id=3ceac8e4e9 at Skull King Encounter - deprecated?/Fake Bench/Detect Range (1 uses in game) -> scenes/Bonetown_boss.fsm.txt:4613
+- FSM [FSM] id=16b70e1fc2 at Skull King Encounter - deprecated?/Fake Bench/Heal Anim (4 uses in game) -> scenes/Bonetown_boss.fsm.txt:4654
+- C# FlingChildrenOnStart at Boss Scene/Skull King/Wake Chunks (256 uses in game) -> scenes/Bonetown_boss.objects.txt:37
+- C# DeparentAndFollow at Boss Scene/Skull King/Head Collider Follow Point/Head Collider, Boss Scene/Skull King/Pierce Dmg Receiver (16 uses in game) -> scenes/Bonetown_boss.objects.txt:55
+- C# ActivateAllChildren at Boss Scene/Boulders Battle/Bone_Boulder SK/boulder/break_effects, Boss Scene/Boulders Battle/Bone_Boulder SK (1)/boulder/break_effects, Boss Scene/Boulders Battle/Bone_Boulder SK (2)/boulder/break_effects ... (1924 uses in game) -> scenes/Bonetown_boss.objects.txt:75

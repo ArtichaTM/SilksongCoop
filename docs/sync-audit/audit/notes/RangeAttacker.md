@@ -1,0 +1,3 @@
+# RangeAttacker / RangeAttackGroup / SandCentipede [note by agent 2.11]
+Sand-centipede hazard: a RangeAttackGroup tracks objects inside its trigger and, when one is within ~3.7 units of an attacker, that RangeAttacker pops out of the sand, damages the hero (custom damage event, sink pull via "Sand Centipede Hero Damager" FSM), and can be shredded or killed by hero damagers (journal kill). Also reacts to needolin (HeroPerformanceRegion). SandCentipede is the ambient decor version (random timed pop-ups, Random.Range, no damage).
+Touches: local hero (damage, kinematic drag, camera freeze), journal, RNG for appear chance. No PlayerData writes besides journal.

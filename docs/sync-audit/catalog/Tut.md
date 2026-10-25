@@ -1,0 +1,268 @@
+# Tut: Moss Grotto
+
+## Tut_01
+- FSM [PlayMaker Unity 2D] id=c0b2e990f4 at _Managers/PlayMaker Unity 2D (587 uses in game) -> scenes/Tut_01.fsm.txt:1
+- FSM [Set Actor Snapshot & Atmos] id=5e5f06245a at _SceneManager (1 uses in game) -> scenes/Tut_01.fsm.txt:4
+- FSM [Control] id=2646fd1a00 at Black Thread States Thread Only Variant/Normal World/Bone Thumper (8 uses in game) -> scenes/Tut_01.fsm.txt:15
+- FSM [Chest Control] id=245259d8bd at Bone Chest (19 uses in game) -> scenes/Tut_01.fsm.txt:235
+- FSM [Control] id=f81cfb8f0b at CamLock 7 Control (1 uses in game) -> scenes/Tut_01.fsm.txt:311
+- FSM [Silent when hero below] id=5db578e161 at Collectable Item Pickup (1 uses in game) -> scenes/Tut_01.fsm.txt:319
+- FSM [Control] id=42ce149597 at Fixer Bridge Bottom Control/Fixer Bridge Bottom (2 uses in game) -> scenes/Tut_01.fsm.txt:329
+- FSM [Receive Damage] id=c3ba55ccef at Fixer Bridge Bottom Control/Fixer Bridge Bottom/Terrain Collider (2 uses in game) -> scenes/Tut_01.fsm.txt:412
+- FSM [Remind] id=2679f4a8c4 at Interact Reminder (1) (1 uses in game) -> scenes/Tut_01.fsm.txt:421
+- FSM [Control] id=007816fabf at Moss Vine Cluster, Moss Vine Cluster (1), Moss Vine Cluster (2) ... (17 uses in game) -> scenes/Tut_01.fsm.txt:447
+- FSM [Control] id=536cd30f91 at MossBone Fly (1), MossBone Fly (2) (19 uses in game) -> scenes/Tut_01.fsm.txt:815
+- FSM [Control] id=ab726a5c87 at Music Control Return (1 uses in game) -> scenes/Tut_01.fsm.txt:1113
+- FSM [Control] id=67836cedfe at Remasker New thumper control/Sound Control (1 uses in game) -> scenes/Tut_01.fsm.txt:1132
+- FSM [FSM] id=ba66a2aab5 at Reminder Look Down/Reminder Killer (1 uses in game) -> scenes/Tut_01.fsm.txt:1147
+- FSM [Control] id=059f9638ba at Reminder Look Down/Reminder Look Down (1 uses in game) -> scenes/Tut_01.fsm.txt:1157
+- FSM [Control] id=776d390bd7 at Reminder Look Down/Silkfly Ambient, Silkfly Ambient (1), Silkfly Ambient (2) ... (66 uses in game) -> scenes/Tut_01.fsm.txt:1191
+- FSM [unmasker] id=8bfb9c1a58 at Secret sounder (18 uses in game) -> scenes/Tut_01.fsm.txt:1290
+- FSM [Ring] id=b49af73ad3 at Song Gate Tinker (7 uses in game) -> scenes/Tut_01.fsm.txt:1613
+- FSM [Control] id=13334292bc at Tutorial Intro Cutscene (1 uses in game) -> scenes/Tut_01.fsm.txt:1625
+- FSM [Control] id=887374fa20 at Tutorial Intro Cutscene/Attack Reminder (1 uses in game) -> scenes/Tut_01.fsm.txt:1796
+- FSM [Control] id=a4294a9bd7 at Tutorial Intro Cutscene/Jump Reminder (1 uses in game) -> scenes/Tut_01.fsm.txt:1809
+- FSM [Control] id=aa95f61791 at Weakness Scene (2 uses in game) -> scenes/Tut_01.fsm.txt:1834
+- FSM [Shake] id=18573a3e5a at Weakness Scene (3 uses in game) -> scenes/Tut_01.fsm.txt:2059
+- C# PlayFromRandomFrameMecanim at spout stream (15)/water_stream_intermittent0000, spout stream (10)/water_stream_intermittent0000, spout stream (6)/water_stream_intermittent0000 ... (6180 uses in game) -> scenes/Tut_01.objects.txt:4
+- C# ActivateIfPlayerdataFalse at Tutorial Blocker (8 uses in game) -> scenes/Tut_01.objects.txt:28
+- C# DebugDrawColliderRuntime at TileMap Render Data/Scenemap/Chunk 0 0, TileMap Render Data/Scenemap/Chunk 0 1, TileMap Render Data/Scenemap/Chunk 0 2 ... (25170 uses in game) -> scenes/Tut_01.objects.txt:34
+- C# GrassBehaviour at moss_bg_leafs (3)/moss_breakable_0003_long_f_leaf, moss_bg_leafs (3)/moss_breakable_0002_long_f_leaf, moss_bg_leafs (3)/moss_breakable_0004_long_f_leaf ... (11883 uses in game) -> scenes/Tut_01.objects.txt:68
+- C# GrassCut at moss_bg_leafs (3)/moss_breakable_0003_long_f_leaf, moss_bg_leafs (3)/moss_breakable_0002_long_f_leaf, moss_bg_leafs (3)/moss_breakable_0004_long_f_leaf ... (4247 uses in game) -> scenes/Tut_01.objects.txt:68
+- C# RegionSetAudio at Audio Snapshot Region (2), Audio Snapshot Region (3), Audio Snapshot Region ... (94 uses in game) -> scenes/Tut_01.objects.txt:77
+- C# TransitionPoint at top1, left2, right2 ... (1506 uses in game) -> scenes/Tut_01.objects.txt:78
+- C# GateSnap at top1, left2, right2 ... (1373 uses in game) -> scenes/Tut_01.objects.txt:78
+- C# HazardRespawnMarker at top1/Hazard Respawn Marker, left2/Hazard Respawn Marker, right2/Hazard Respawn Marker ... (3948 uses in game) -> scenes/Tut_01.objects.txt:80
+- C# NoClamberRegion at top1/No_clamber_collider, left2/No_clamber_collider, right2/No_clamber_collider ... (2472 uses in game) -> scenes/Tut_01.objects.txt:82
+- C# SendEnemyMessageTrigger at left2/EnemyDetector, right2/EnemyDetector, left3/EnemyDetector ... (1945 uses in game) -> scenes/Tut_01.objects.txt:92
+- C# NonSlider at Roof Collider (2), Roof Collider (1), Roof Collider (19) ... (10357 uses in game) -> scenes/Tut_01.objects.txt:125
+- C# Roof at Roof Collider (2), Roof Collider (1), Roof Collider (19) ... (4451 uses in game) -> scenes/Tut_01.objects.txt:125
+- C# CameraLockArea at CameraLockArea (5), CameraLockArea, CameraLockArea (11) ... (4909 uses in game) -> scenes/Tut_01.objects.txt:145
+- C# PersistentBoolItem at Interact Reminder (1), Reminder Look Down/Reminder Look Down, Reminder Look Down/Silkfly Ambient ... (3711 uses in game) -> scenes/Tut_01.objects.txt:148
+- C# PlayMakerUnity2DProxy at Interact Reminder (1) (481 uses in game) -> scenes/Tut_01.objects.txt:148
+- C# EventRegister at Interact Reminder (1), Reminder Look Down/Reminder Look Down, Fixer Bridge Debris ... (11574 uses in game) -> scenes/Tut_01.objects.txt:148
+- C# DeactivateIfPlayerdataTrue at Interact Reminder (1), Reminder Look Down, Reminder Look Down/Reminder Look Down ... (675 uses in game) -> scenes/Tut_01.objects.txt:148
+- C# TrackTriggerObjects at Reminder Look Down/Reminder Look Down, Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (5)/Range, Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (8)/Range ... (3452 uses in game) -> scenes/Tut_01.objects.txt:158
+- C# AlertRange at Reminder Look Down/Silkfly Ambient/Alert Range, Reminder Look Down/Silkfly Ambient/Needolin Range, Silkfly Ambient (2)/Alert Range ... (7890 uses in game) -> scenes/Tut_01.objects.txt:160
+- C# PersonalObjectPool at Tutorial Intro Cutscene, Bone Chest, Shell Shard Fossil Large Uni ... (6399 uses in game) -> scenes/Tut_01.objects.txt:188
+- C# AudioPlayParticleCollision at Tutorial Intro Cutscene/Crumbly Dust/Idle Rocks_L_Bounce, Moss Vine Cluster (3)/Pt Spatter, Moss Vine Cluster (3)/Destroy Effects/Pt Drip ... (4377 uses in game) -> scenes/Tut_01.objects.txt:196
+- C# DeactivateAfter2dtkAnimation at Tutorial Intro Cutscene/Thunk Effect/Thunk Effect, Tutorial Intro Cutscene/Thunk Effect/Thunk Effect, Tutorial Intro Cutscene/Grab Dust/Thunk Effect ... (6141 uses in game) -> scenes/Tut_01.objects.txt:200
+- C# MusicRegion at Music Region Initial (152 uses in game) -> scenes/Tut_01.objects.txt:246
+- C# DeactivateIfPlayerdataFalse at Music Control Return, Funeral Pilgrim Corpse, Citadel Song Pilgrim Corpses ... (2202 uses in game) -> scenes/Tut_01.objects.txt:324
+- C# Remasker at Remasker New thumper control/Remasker New thumper, Remasker, Remasker New (1) ... (551 uses in game) -> scenes/Tut_01.objects.txt:332
+- C# MapSceneRegion at Map Scene Region (1), Map Scene Region (333 uses in game) -> scenes/Tut_01.objects.txt:399
+- C# TriggerEnterEvent at Map Scene Region (1), Map Scene Region, Collectable Item Pickup/Hero Detector (2534 uses in game) -> scenes/Tut_01.objects.txt:399
+- C# AreaTitleController at Area Title Controller (165 uses in game) -> scenes/Tut_01.objects.txt:408
+- C# NeedolinTextOwner at Funeral Pilgrim Corpse, MossBone Fly (1), MossBone Fly (2) ... (2811 uses in game) -> scenes/Tut_01.objects.txt:492
+- C# PlayMakerUnity2d at _Managers/PlayMaker Unity 2D (587 uses in game) -> scenes/Tut_01.objects.txt:503
+- C# DeactivateAfterDelay at Audio Snapshot Region, Fixer Bridge Falling Debris/Falling Debris/Break Chunks/Sprite_right, Fixer Bridge Falling Debris/Falling Debris/Break Chunks/Sprite_left ... (3733 uses in game) -> scenes/Tut_01.objects.txt:532
+- C# RandomAudioStart at Audio Waterfall Large (1), Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (5)/rage_child/Rage Loop Audio, Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (8)/rage_child/Rage Loop Audio ... (1747 uses in game) -> scenes/Tut_01.objects.txt:619
+- C# DarknessRegion at Darkness Region, Darkness Region (1) (303 uses in game) -> scenes/Tut_01.objects.txt:668
+- C# CustomSceneManager at _SceneManager (565 uses in game) -> scenes/Tut_01.objects.txt:699
+- C# ParticleSystemAutoRecycle at Simple Grass (4)/Green Grass A, Simple Grass/Green Grass A, green_grass_tri/Green Grass A ... (3005 uses in game) -> scenes/Tut_01.objects.txt:786
+- C# RespawnMarker at Death Respawn Marker Init (174 uses in game) -> scenes/Tut_01.objects.txt:822
+- C# MossClump at moss_floor_depress_set (55)/Clump 2 (1), moss_floor_depress_set (55)/Clump 2 (3), moss_floor_depress_set/Clump 1 ... (1188 uses in game) -> scenes/Tut_01.objects.txt:868
+- C# TestGameObjectActivator at Fixer Bridge Falling Debris, Fixer Bridge Debris, Fixer Bridge Bottom Control ... (617 uses in game) -> scenes/Tut_01.objects.txt:949
+- C# SpinSelfSimple at Fixer Bridge Falling Debris/Falling Debris/Break Chunks/Sprite_right, Fixer Bridge Falling Debris/Falling Debris/Break Chunks/Sprite_left, Fixer Bridge Bottom Control/Fixer Bridge Bottom/Break Chunks/Sprite_right ... (1829 uses in game) -> scenes/Tut_01.objects.txt:952
+- C# SetPlayerDataBool at Fixer Bridge Falling Debris/Falling Debris/Set PD Bool (85 uses in game) -> scenes/Tut_01.objects.txt:956
+- C# EventResponder at Fixer Bridge Debris (3343 uses in game) -> scenes/Tut_01.objects.txt:971
+- C# JitterSelf at Fixer Bridge Debris/Debris/Sprite, Fixer Bridge Bottom Control/Fixer Bridge Bottom/Pivot/Sprite, Fixer Bridge Bottom Control/Fixer Bridge Bottom/Pivot/Sprite (1) ... (6061 uses in game) -> scenes/Tut_01.objects.txt:973
+- C# EnviroRegion at Enviro Region Simple (2587 uses in game) -> scenes/Tut_01.objects.txt:1155
+- C# BlurPlane at BlurPlane (519 uses in game) -> scenes/Tut_01.objects.txt:1260
+- C# PointAtPivot at Fixer Bridge Bottom Control/Fixer Bridge Bottom/Pivot/piv 1, Fixer Bridge Bottom Control/Fixer Bridge Bottom/Pivot/piv 1 (1) (49 uses in game) -> scenes/Tut_01.objects.txt:1269
+- C# VisibilityObject at Fixer Bridge Bottom Control/Fixer Bridge Bottom/Break Chunks/Sprite_right, Fixer Bridge Bottom Control/Fixer Bridge Bottom/Break Chunks/Sprite_left (9799 uses in game) -> scenes/Tut_01.objects.txt:1338
+- C# Breakable at moss_stalactite_break_large, moss_ball_break (5), moss_ball_break (20) ... (4804 uses in game) -> scenes/Tut_01.objects.txt:1904
+- C# NonBouncer at moss_stalactite_break_large, moss_ball_break (5), moss_ball_break (20) ... (19077 uses in game) -> scenes/Tut_01.objects.txt:1904
+- C# SetZRandom at moss_stalactite_break_large/Particle_rocks_small (1), Moss Vine Cluster (3)/Destroy Effects/Pt Destroy, Moss Vine Cluster (2)/Destroy Effects/Pt Destroy ... (6097 uses in game) -> scenes/Tut_01.objects.txt:1907
+- C# NoTeleportRegion at Beastling Teleport Region (1), Beastling Teleport Region (2), Beastling Teleport Region (4) ... (827 uses in game) -> scenes/Tut_01.objects.txt:1908
+- C# NonThunker at Bone Chest, Bone Chest/Opened, Moss Vine Cluster (3)/Hero Blocker ... (1487 uses in game) -> scenes/Tut_01.objects.txt:1954
+- C# TinkEffect at Bone Chest/Opened, Song Gate Tinker (5299 uses in game) -> scenes/Tut_01.objects.txt:1955
+- C# SetZMin at moss_ball_break (5)/Particle_rocks_small (1), moss_ball_break (20)/Particle_rocks_small (1), moss_ball_break (8)/Particle_rocks_small (1) ... (3169 uses in game) -> scenes/Tut_01.objects.txt:2070
+- C# BreakableHolder at Shell Shard Fossil Large Uni (182 uses in game) -> scenes/Tut_01.objects.txt:2212
+- C# PersistentIntItem at Shell Shard Fossil Large Uni (461 uses in game) -> scenes/Tut_01.objects.txt:2212
+- C# ShineAnimSequence at Shell Shard Fossil Large Uni (1098 uses in game) -> scenes/Tut_01.objects.txt:2212
+- C# ParticleSystemCollisionLagFix at Moss Vine Cluster (3)/Pt Spatter, Moss Vine Cluster (3)/Destroy Effects/Pt Drip, Moss Vine Cluster (2)/Pt Spatter ... (4044 uses in game) -> scenes/Tut_01.objects.txt:2240
+- C# SpriteFlash at MossBone Fly (1), MossBone Fly (1)/Corpse MossBone Fly(Clone), MossBone Fly (2) ... (5017 uses in game) -> scenes/Tut_01.objects.txt:2403
+- C# SetZ at MossBone Fly (1), MossBone Fly (2), Collectable Item Pickup/White Wave ... (6506 uses in game) -> scenes/Tut_01.objects.txt:2403
+- C# DamageHero at MossBone Fly (1), MossBone Fly (2), Black Thread States Thread Only Variant/Normal World/Bone Thumper ... (13288 uses in game) -> scenes/Tut_01.objects.txt:2403
+- C# LineOfSightDetector at MossBone Fly (1), MossBone Fly (2) (237 uses in game) -> scenes/Tut_01.objects.txt:2403
+- C# Recoil at MossBone Fly (1), MossBone Fly (2) (2505 uses in game) -> scenes/Tut_01.objects.txt:2403
+- C# HealthManager at MossBone Fly (1), MossBone Fly (2), Black Thread States Thread Only Variant/Normal World/Bone Thumper (2908 uses in game) -> scenes/Tut_01.objects.txt:2403
+- C# EnemyKillEventListener at MossBone Fly (1), MossBone Fly (2) (19 uses in game) -> scenes/Tut_01.objects.txt:2403
+- C# EnemyDeathEffectsRegular at MossBone Fly (1), MossBone Fly (2), Black Thread States Thread Only Variant/Normal World/Bone Thumper (2855 uses in game) -> scenes/Tut_01.objects.txt:2403
+- C# EnemyHitEffectsRegular at MossBone Fly (1), MossBone Fly (2), Black Thread States Thread Only Variant/Normal World/Bone Thumper (3017 uses in game) -> scenes/Tut_01.objects.txt:2403
+- C# BlackThreadState at MossBone Fly (1), MossBone Fly (2), Black Thread States Thread Only Variant/Normal World/Bone Thumper (1599 uses in game) -> scenes/Tut_01.objects.txt:2403
+- C# EnemySingDuration at MossBone Fly (1), MossBone Fly (2), Black Thread States Thread Only Variant/Normal World/Bone Thumper (2252 uses in game) -> scenes/Tut_01.objects.txt:2403
+- C# TagDamageTaker at MossBone Fly (1), MossBone Fly (2) (1796 uses in game) -> scenes/Tut_01.objects.txt:2403
+- C# AudioSourceGamePause at MossBone Fly (1)/Audio Loop Voice, MossBone Fly (2)/Audio Loop Voice, Weakness Scene/Audio Loop Footstep ... (6078 uses in game) -> scenes/Tut_01.objects.txt:2408
+- C# ActiveCorpse at MossBone Fly (1)/Corpse MossBone Fly(Clone), MossBone Fly (2)/Corpse MossBone Fly(Clone) (1034 uses in game) -> scenes/Tut_01.objects.txt:2409
+- C# CorpseLandTint at MossBone Fly (1)/Corpse MossBone Fly(Clone), MossBone Fly (2)/Corpse MossBone Fly(Clone) (963 uses in game) -> scenes/Tut_01.objects.txt:2409
+- C# ObjectBounce at Collectable Item Pickup (7792 uses in game) -> scenes/Tut_01.objects.txt:2417
+- C# CollectableItemPickup at Collectable Item Pickup (219 uses in game) -> scenes/Tut_01.objects.txt:2417
+- C# TimedEventCaller at Collectable Item Pickup (411 uses in game) -> scenes/Tut_01.objects.txt:2417
+- C# InteractEvents at Collectable Item Pickup (312 uses in game) -> scenes/Tut_01.objects.txt:2417
+- C# SurfaceWaterFloater at Collectable Item Pickup (236 uses in game) -> scenes/Tut_01.objects.txt:2417
+- C# BreakOnHazard at Collectable Item Pickup (208 uses in game) -> scenes/Tut_01.objects.txt:2417
+- C# AudioSourceVisibilityPause at Collectable Item Pickup (184 uses in game) -> scenes/Tut_01.objects.txt:2417
+- C# AutoRecycleSelf at Collectable Item Pickup (416 uses in game) -> scenes/Tut_01.objects.txt:2417
+- C# WaveEffectControl at Collectable Item Pickup/White Wave (246 uses in game) -> scenes/Tut_01.objects.txt:2419
+- C# KeepRelativeWorldDirection at Collectable Item Pickup/Prompt Marker (187 uses in game) -> scenes/Tut_01.objects.txt:2421
+- C# SendEventToRegisterOnEnable at Collectable Item Pickup/Reminder Remover (217 uses in game) -> scenes/Tut_01.objects.txt:2425
+- C# FollowTransform at Weakness Scene/Audio Loop Weak Hornet (442 uses in game) -> scenes/Tut_01.objects.txt:2519
+- C# HeroCorpseMarker at Hero Corpse Marker (4), Hero Corpse Marker (9), Hero Corpse Marker (2) ... (4591 uses in game) -> scenes/Tut_01.objects.txt:3217
+- C# SceneLintFixRotation at Black Thread States Thread Only Variant (213 uses in game) -> scenes/Tut_01.objects.txt:3276
+- C# KeepWorldScalePositive at Black Thread States Thread Only Variant/Normal World/Bone Thumper/Pt Roll, Black Thread States Thread Only Variant/Normal World/Bone Thumper/Pt Slam L, Black Thread States Thread Only Variant/Normal World/Bone Thumper/Pt Slam Roof (1751 uses in game) -> scenes/Tut_01.objects.txt:3286
+- C# AudioEffectTag at Black Thread States Thread Only Variant/Normal World/Bone Thumper/Snore Loop (80 uses in game) -> scenes/Tut_01.objects.txt:3291
+- C# BreakableBreaker at Black Thread States Thread Only Variant/Normal World/Bone Thumper/Breaker (1176 uses in game) -> scenes/Tut_01.objects.txt:3292
+- C# DamageEnemies at Black Thread States Thread Only Variant/Normal World/Bone Thumper/Breaker (5370 uses in game) -> scenes/Tut_01.objects.txt:3292
+- C# RandomAudioStartPosition at Black Thread States Thread Only Variant/Normal World/Bone Thumper/Audio Loop Voice (1455 uses in game) -> scenes/Tut_01.objects.txt:3294
+- C# BlackThreadStrandSimple at Black Thread States Thread Only Variant/Black Thread World/Black_Thread_strand_BG, Black Thread States Thread Only Variant/Black Thread World/Black_Thread_strand_BG (1) (811 uses in game) -> scenes/Tut_01.objects.txt:3391
+- C# BasicSpriteAnimator at Black Thread States Thread Only Variant/Black Thread World/Black_Thread_strand_BG/creatures/creature, Black Thread States Thread Only Variant/Black Thread World/Black_Thread_strand_BG/creatures/creature2, Black Thread States Thread Only Variant/Black Thread World/Black_Thread_strand_BG/creatures/creature3 ... (17122 uses in game) -> scenes/Tut_01.objects.txt:3393
+- C# ScaleActivation at Black Thread States Thread Only Variant/Black Thread World/Black_Thread_strand_BG/rage/rage, Black Thread States Thread Only Variant/Black Thread World/Black_Thread_strand_BG/rage/rage2, Black Thread States Thread Only Variant/Black Thread World/Black_Thread_strand_BG/rage/rage3 ... (4055 uses in game) -> scenes/Tut_01.objects.txt:3408
+- C# BlackThreadStrand at Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (5), Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (8), Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (6) ... (1128 uses in game) -> scenes/Tut_01.objects.txt:3414
+- C# CameraControlAnimationEvents at Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (5), Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (8), Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (6) ... (2617 uses in game) -> scenes/Tut_01.objects.txt:3414
+- C# SetWorldScale at Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (5)/rage_child, Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (8)/rage_child, Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (6)/rage_child ... (1185 uses in game) -> scenes/Tut_01.objects.txt:3415
+- C# ShaderPassObjectScale at Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (5)/black_thread_strand_texture, Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (8)/black_thread_strand_texture, Black Thread States Thread Only Variant/Black Thread World/black_thread_strand (6)/black_thread_strand_texture ... (1107 uses in game) -> scenes/Tut_01.objects.txt:3420
+- C# PersistentBoolItemResponder at Black Thread States Thread Only Variant/Black Thread World/BT Bone Thumper Corpse (86 uses in game) -> scenes/Tut_01.objects.txt:3449
+
+## Tut_01b
+- FSM [Control] id=628c6711db at Black Thread States Thread Only Variant/Black Thread World/Bone Roller (2), Black Thread States Thread Only Variant/Normal World/Bone Roller (1), Black Thread States Thread Only Variant/Normal World/Bone Roller (2) ... (11 uses in game) -> scenes/Tut_01b.fsm.txt:4
+- FSM [Noise Reaction] id=48741ea423 at Black Thread States Thread Only Variant/Normal World/MossBone Crawler (2), MossBone Crawler, MossBone Crawler (1) (23 uses in game) -> scenes/Tut_01b.fsm.txt:1438
+- FSM [Control] id=04827f284c at moss_berry_vine/moss_berry_fruit (4 uses in game) -> scenes/Tut_01b.fsm.txt:1811
+- FSM [Control] id=7b0871c609 at Song_Gate_set (13 uses in game) -> scenes/Tut_01b.fsm.txt:1994
+- C# SpikeSlashReaction at Spike Collider (833 uses in game) -> scenes/Tut_01b.objects.txt:90
+- C# HazardRespawnTrigger at Hazard Respawn Trigger v2 (2), Hazard Respawn Trigger v2 (1), Hazard Respawn Trigger v2 ... (2418 uses in game) -> scenes/Tut_01b.objects.txt:108
+- C# GradeMarker at GradeMarker (268 uses in game) -> scenes/Tut_01b.objects.txt:279
+- C# DebrisPiece at bone_spears_straight_break (3)/Top_chunk2, bone_spears_straight_break (3)/Top_chunk, bone_spears_straight_break (3)/Top_chunk2 (1) (2532 uses in game) -> scenes/Tut_01b.objects.txt:827
+- C# FinishingRigidBody at bone_spears_straight_break (3)/Top_chunk2, bone_spears_straight_break (3)/Top_chunk, bone_spears_straight_break (3)/Top_chunk2 (1) (2089 uses in game) -> scenes/Tut_01b.objects.txt:827
+- C# DustyPlatform at bone_plat_01 (1), bone_plat_01 (2), bone_plat_03 (2) ... (193 uses in game) -> scenes/Tut_01b.objects.txt:861
+- C# Crawler at MossBone Crawler, MossBone Crawler (1), Black Thread States Thread Only Variant/Normal World/MossBone Crawler (2) (205 uses in game) -> scenes/Tut_01b.objects.txt:961
+- C# PlayRandomAudioEvent at MossBone Crawler/Chirp Sounds, MossBone Crawler (1)/Chirp Sounds, Black Thread States Thread Only Variant/Normal World/MossBone Crawler (2)/Chirp Sounds (4083 uses in game) -> scenes/Tut_01b.objects.txt:964
+- C# ColorFader at Song_Gate_set/Mask Half Back/bg_glow, Song_Gate_set/Mask Half Front/front_glow, Song_Gate_set/song_gate_effects/loom_floor_large_glow ... (215 uses in game) -> scenes/Tut_01b.objects.txt:1144
+- C# SetParticleScale at Song_Gate_set/Mask Half Front/Pt Slide, Song_Gate_set/Pt Crack, Song_Gate_set/Pt Slam (2452 uses in game) -> scenes/Tut_01b.objects.txt:1166
+- C# SongGateStringControl at Song_Gate_set/Strings (26 uses in game) -> scenes/Tut_01b.objects.txt:1172
+- C# SongGateString at Song_Gate_set/Strings/song_gate_0004_5, Song_Gate_set/Strings/song_gate_0004_5 (2), Song_Gate_set/Strings/song_gate_0004_5 (4) ... (358 uses in game) -> scenes/Tut_01b.objects.txt:1173
+- C# SimpleFadeOut at Song_Gate_set/song_gate_effects/Crest_Shrine_light_spill, Song_Gate_set/song_gate_effects/mid_glow (2479 uses in game) -> scenes/Tut_01b.objects.txt:1201
+- C# ShardRegion at Shard Region (49 uses in game) -> scenes/Tut_01b.objects.txt:1307
+- C# SavedItemTrackerMarker at moss_berry_vine/moss_berry_fruit (40 uses in game) -> scenes/Tut_01b.objects.txt:1357
+
+## Tut_02
+- FSM [Music Control] id=ab102f0e5f at _SceneManager (1 uses in game) -> scenes/Tut_02.fsm.txt:4
+- FSM [FSM] id=cfbfb8706c at Black Thread States Thread Only Variant/Black Thread World/Mossbone Mother Scene/Mossbone Mother Ambient (1 uses in game) -> scenes/Tut_02.fsm.txt:172
+- FSM [Stun Control] id=ce4bbb712d at Black Thread States Thread Only Variant/Black Thread World/Mossbone Mother Scene/Mossbone Mother Ambient (36 uses in game) -> scenes/Tut_02.fsm.txt:181
+- FSM [Control] id=0600856232 at Black Thread States Thread Only Variant/Black Thread World/Mossbone Mother Scene/Mossbone Mother Ambient (1 uses in game) -> scenes/Tut_02.fsm.txt:274
+- FSM [Control] id=851df19bf5 at Black Thread States Thread Only Variant/Black Thread World/Mossbone Mother Scene/Stals/Mossbone Stalactite, Black Thread States Thread Only Variant/Black Thread World/Mossbone Mother Scene/Stals/Mossbone Stalactite (1), Black Thread States Thread Only Variant/Black Thread World/Mossbone Mother Scene/Stals/Mossbone Stalactite (2) ... (18 uses in game) -> scenes/Tut_02.fsm.txt:627
+- FSM [Control] id=c12b195f60 at Black Thread States Thread Only Variant/Normal World/Group/MossBone Cocoon (5), MossBone Cocoon (3), MossBone Cocoon (4) ... (31 uses in game) -> scenes/Tut_02.fsm.txt:1012
+- FSM [Control] id=cdf7fc7e9a at Black Thread States Thread Only Variant/Normal World/Tiny Dragonfly (7), Tiny Dragonfly, Tiny Dragonfly (1) ... (34 uses in game) -> scenes/Tut_02.fsm.txt:1516
+- FSM [Control] id=582c554562 at One Way VineWall (1 uses in game) -> scenes/Tut_02.fsm.txt:2402
+- FSM [Corpse Splash] id=4391eb51e3 at Surface Water Region/Splash Surface (169 uses in game) -> scenes/Tut_02.fsm.txt:2475
+- FSM [Cut Effect] id=f881b2dd1f at Surface Water Region/Splash Surface (168 uses in game) -> scenes/Tut_02.fsm.txt:2525
+- FSM [Volt Travel] id=792d8dcb89 at Surface Water Region/Splash Surface (169 uses in game) -> scenes/Tut_02.fsm.txt:2552
+- C# SurfaceWaterRegion at Surface Water Region (171 uses in game) -> scenes/Tut_02.objects.txt:36
+- C# MaggotRegion at Surface Water Region (169 uses in game) -> scenes/Tut_02.objects.txt:36
+- C# UnMaggotRegion at Surface Water Region (182 uses in game) -> scenes/Tut_02.objects.txt:36
+- C# AbyssWater at Surface Water Region (169 uses in game) -> scenes/Tut_02.objects.txt:36
+- C# SurfaceWaterFloat at Surface Water Region/Splash Surface (169 uses in game) -> scenes/Tut_02.objects.txt:37
+- C# MatchColliderSize at Surface Water Region/Splash Surface/Hard Water Surface (286 uses in game) -> scenes/Tut_02.objects.txt:38
+- C# SceneAppearanceRegion at Group/Scene Appearance Region(Clone) (372 uses in game) -> scenes/Tut_02.objects.txt:50
+- C# JitterSelfForTime at One Way VineWall/Wall/Clump 1, One Way VineWall/Wall/Clump BG, One Way VineWall/Wall/Clump 3 ... (3300 uses in game) -> scenes/Tut_02.objects.txt:762
+- C# ActivatePerLanguage at Tutorial_Credits (2 uses in game) -> scenes/Tut_02.objects.txt:787
+- C# OpeningGameplayCredits at Tutorial_Credits/tutorial_credits, Tutorial_Credits/tutorial_credits_blank (2 uses in game) -> scenes/Tut_02.objects.txt:788
+- C# SetTextMeshProGameText at Tutorial_Credits/tutorial_credits/pane1/game by, Tutorial_Credits/tutorial_credits/pane1/team cherry, Tutorial_Credits/tutorial_credits/Ari Gibson ... (995 uses in game) -> scenes/Tut_02.objects.txt:790
+- C# ChangeFontByLanguage at Tutorial_Credits/tutorial_credits/pane1/game by, Tutorial_Credits/tutorial_credits/pane1/team cherry, Tutorial_Credits/tutorial_credits/pane4/Sound and Score by (905 uses in game) -> scenes/Tut_02.objects.txt:790
+- C# EnemyDeathEffectsNoEffect at MossBone Cocoon (6), MossBone Cocoon (4), MossBone Cocoon (3) ... (31 uses in game) -> scenes/Tut_02.objects.txt:823
+- C# LilyPad at Pushable Lily Pad (2), Pushable Lily Pad, Pushable Lily Pad (9) ... (140 uses in game) -> scenes/Tut_02.objects.txt:1544
+- C# AmbientFloat at fg_lily_pads (9)/moss__0037_p8 (23), fg_lily_pads (9)/moss__0037_p8 (24), fg_lily_pads (9)/moss__0037_p8 (25) ... (1094 uses in game) -> scenes/Tut_02.objects.txt:1714
+- C# BoneSegment at bone_bridge_moss/Segment 5, bone_bridge_moss/Segment 6, bone_bridge_moss/Segment 4 ... (69 uses in game) -> scenes/Tut_02.objects.txt:1760
+- C# ConstrainPosition at Black Thread States Thread Only Variant/Black Thread World/Mossbone Mother Scene/Mossbone Mother Ambient (307 uses in game) -> scenes/Tut_02.objects.txt:2979
+
+## Tut_03
+- FSM [Control] id=2eba228902 at Audio Water Dripper (17 uses in game) -> scenes/Tut_03.fsm.txt:4
+- FSM [Re-Encounter] id=3219d3739f at Black Thread States/Normal World/Battle Scene (1 uses in game) -> scenes/Tut_03.fsm.txt:19
+- FSM [FSM] id=a3dc339c63 at Black Thread States/Normal World/Battle Scene/Active Before Battle/Audio BG Flies, Black Thread States/Normal World/Battle Scene/Active Before Battle/Audio BG Flies (1) (4 uses in game) -> scenes/Tut_03.fsm.txt:29
+- FSM [BG Control] id=ee6dad1bdd at Black Thread States/Normal World/Battle Scene/Gates/Battle Gate Mossbone, Black Thread States/Normal World/Battle Scene/Gates/Battle Gate Mossbone (1) (3 uses in game) -> scenes/Tut_03.fsm.txt:41
+- FSM [Summon Control] id=0243d7b166 at Black Thread States/Normal World/Battle Scene/MossBone Crawler Summon, Black Thread States/Normal World/Battle Scene/MossBone Crawler Summon (1) (6 uses in game) -> scenes/Tut_03.fsm.txt:145
+- FSM [Noise Reaction] id=ddb93c67ed at Black Thread States/Normal World/Battle Scene/MossBone Crawler Summon, Black Thread States/Normal World/Battle Scene/MossBone Crawler Summon (1) (6 uses in game) -> scenes/Tut_03.fsm.txt:265
+- FSM [Final Boom] id=6024a75fea at Black Thread States/Normal World/Battle Scene/Shake Drip, Black Thread States/Normal World/Battle Scene/Shake Rubble (4 uses in game) -> scenes/Tut_03.fsm.txt:535
+- FSM [Control] id=0104a32abd at Black Thread States/Normal World/Battle Scene/Wave 1/Mossbone Mother (3 uses in game) -> scenes/Tut_03.fsm.txt:1707
+- FSM [Remind] id=219e3d2d49 at Interact Reminder (1 uses in game) -> scenes/Tut_03.fsm.txt:2459
+- FSM [Control] id=89c2bb3725 at Mr Mushroom NPC (7 uses in game) -> scenes/Tut_03.fsm.txt:2486
+- FSM [Remove] id=6e0bfe5d62 at Prompt Remover (1 uses in game) -> scenes/Tut_03.fsm.txt:2941
+- FSM [Bench Control] id=8ea1309cd3 at RestBench (99 uses in game) -> scenes/Tut_03.fsm.txt:2948
+- FSM [Hero Turn Sfx] id=e746ba7a5d at RestBench (97 uses in game) -> scenes/Tut_03.fsm.txt:3617
+- FSM [Eva Heal] id=b4f83f472d at RestBench (97 uses in game) -> scenes/Tut_03.fsm.txt:3632
+- FSM [Detect Hero] id=531ccc23d2 at RestBench/Detect Range (85 uses in game) -> scenes/Tut_03.fsm.txt:3679
+- FSM [Light Pulse] id=5c0bc7dc84 at RestBench/Light, RestBench/Light Small (202 uses in game) -> scenes/Tut_03.fsm.txt:3740
+- FSM [Set] id=e36d48b1c2 at Set Tutorial Completed (1 uses in game) -> scenes/Tut_03.fsm.txt:3748
+- C# FollowCamera at default_particles, Audio Water Dripper (421 uses in game) -> scenes/Tut_03.objects.txt:92
+- C# ReduceParticleEffects at default_particles/Fungus_drips, default_particles/Fungus_drips (1), default_particles/Fungus_drips (2) ... (4884 uses in game) -> scenes/Tut_03.objects.txt:93
+- C# PlayMakerNPC at Mr Mushroom NPC (502 uses in game) -> scenes/Tut_03.objects.txt:107
+- C# ParticleSystemAutoDestroy at Mr Mushroom NPC/Dust, Mr Mushroom NPC/Pt Blastoff 1, Mr Mushroom NPC/Pt Blastoff 2 ... (91 uses in game) -> scenes/Tut_03.objects.txt:110
+- C# NeedolinAppearTimeline at Mr Mushroom NPC/Mr_Mushroom_Appear (7 uses in game) -> scenes/Tut_03.objects.txt:118
+- C# AudioEventAnimationEvents at Mr Mushroom NPC/Mr_Mushroom_Appear/Mr_Mushroom_Needolin_Appear (338 uses in game) -> scenes/Tut_03.objects.txt:119
+- C# RestBench at RestBench (100 uses in game) -> scenes/Tut_03.objects.txt:612
+- C# RestBenchHelper at RestBench (97 uses in game) -> scenes/Tut_03.objects.txt:612
+- C# ActivateObjectRandomDelay at bonelamp_01 (21)/Lamp_Bug, Black Thread States/Normal World/bonelamp_01 (25)/Lamp_Bug, Black Thread States/Normal World/bonelamp_01 (15)/Lamp_Bug (109 uses in game) -> scenes/Tut_03.objects.txt:759
+- C# AmbientSway at bonelamp_01 (21)/Lamp_Bug/shop_lamp_bug0000 (1), Black Thread States/Normal World/bonelamp_01 (25)/Lamp_Bug/shop_lamp_bug0000 (1), Black Thread States/Normal World/bonelamp_01 (15)/Lamp_Bug/shop_lamp_bug0000 (1) (1529 uses in game) -> scenes/Tut_03.objects.txt:760
+- C# SpriteFadePulse at bonelamp_01 (21)/Lamp_Bug/shop_lamp_bug0000 (1)/haze3, Black Thread States/Normal World/bonelamp_01 (25)/Lamp_Bug/shop_lamp_bug0000 (1)/haze3, Black Thread States/Normal World/bonelamp_01 (15)/Lamp_Bug/shop_lamp_bug0000 (1)/haze3 (768 uses in game) -> scenes/Tut_03.objects.txt:761
+- C# SpinSelf at church_break_jar_small_round/Chair Base (1), church_break_jar_small_round/Chair Chunk 3 (1), church_break_jar_small_round/Chair Chunk 2 (1) ... (2862 uses in game) -> scenes/Tut_03.objects.txt:984
+- C# AtmosSnapshotMarker at Atmos Snapshot Marker (66 uses in game) -> scenes/Tut_03.objects.txt:987
+- C# BasicNPC at Churchkeeper Basement (90 uses in game) -> scenes/Tut_03.objects.txt:1058
+- C# tk2dLookAnimNPC at Churchkeeper Basement (155 uses in game) -> scenes/Tut_03.objects.txt:1058
+- C# DeactivatePlayerDataTest at Churchkeeper Basement (26 uses in game) -> scenes/Tut_03.objects.txt:1058
+- C# NpcDialogueTitle at Churchkeeper Basement (210 uses in game) -> scenes/Tut_03.objects.txt:1058
+- C# HeroPerformanceSingReaction at Churchkeeper Basement (284 uses in game) -> scenes/Tut_03.objects.txt:1058
+- C# NPCSpeakingAudio at Churchkeeper Basement (301 uses in game) -> scenes/Tut_03.objects.txt:1058
+- C# NoiseResponder at Churchkeeper Basement (368 uses in game) -> scenes/Tut_03.objects.txt:1058
+- C# BattleScene at Black Thread States/Normal World/Battle Scene (59 uses in game) -> scenes/Tut_03.objects.txt:1112
+- C# BattleWave at Black Thread States/Normal World/Battle Scene/Wave 1 (274 uses in game) -> scenes/Tut_03.objects.txt:1124
+- C# TinyMossFly at Black Thread States/Normal World/Battle Scene/BG Flies (1)/Tiny Moss Fly BG (1), Black Thread States/Normal World/Battle Scene/BG Flies (1)/Tiny Moss Fly BG (2), Black Thread States/Normal World/Battle Scene/BG Flies (1)/Tiny Moss Fly BG (6) ... (18 uses in game) -> scenes/Tut_03.objects.txt:1210
+- C# PlayFromRandomFrame at Black Thread States/Normal World/Battle Scene/BG Flies (1)/Tiny Moss Fly BG (1), Black Thread States/Normal World/Battle Scene/BG Flies (1)/Tiny Moss Fly BG (2), Black Thread States/Normal World/Battle Scene/BG Flies (1)/Tiny Moss Fly BG (6) ... (41 uses in game) -> scenes/Tut_03.objects.txt:1210
+- C# BatchKillEvent at Black Thread States/Normal World/Battle Scene/Trap Cocoons (1 uses in game) -> scenes/Tut_03.objects.txt:1224
+- C# LowPassDistance at Black Thread States/Black Thread World/Snails Act 3 Whispers, Black Thread States/Black Thread World/Audio Player Collapse Area, Black Thread States/Black Thread World/Audio Player Collapse Area (1) ... (873 uses in game) -> scenes/Tut_03.objects.txt:1742
+
+## Tut_04
+- FSM [Wake Up] id=2abc3d5ad3 at door_memoryEnd (6 uses in game) -> scenes/Tut_04.fsm.txt:4
+- FSM [Dialogue] id=6ba3163a97 at States/Intro Scene/Snail Shamans Set (1 uses in game) -> scenes/Tut_04.fsm.txt:16
+- FSM [Shared Anims] id=edc572cce7 at States/Intro Scene/Snail Shamans Set (1 uses in game) -> scenes/Tut_04.fsm.txt:481
+- FSM [Control] id=5d595849a2 at States/Intro Scene/Snail Shamans Set/Audio Boss Tension (14 uses in game) -> scenes/Tut_04.fsm.txt:553
+- FSM [Control] id=dee8d18338 at States/Intro Scene/Snail Shamans Set/Crest Get Shrine (6 uses in game) -> scenes/Tut_04.fsm.txt:575
+- FSM [Fade Control] id=d1b1e6e7b7 at States/Intro Scene/Snail Shamans Set/Crest Get Shrine/Crest Rune (6 uses in game) -> scenes/Tut_04.fsm.txt:920
+- FSM [Notice Reaction] id=afa6db4d41 at States/Intro Scene/Snail Shamans Set/Shaman Mid (1 uses in game) -> scenes/Tut_04.fsm.txt:1760
+- FSM [Task Update] id=ed3bf0e9f1 at States/Outro Scene (1 uses in game) -> scenes/Tut_04.fsm.txt:1772
+- FSM [FSM] id=8bc53a3efd at States/Outro Scene/Snail_Shell_Large/terrain collider, States/Outro Scene/Snail_Shell_Mid/terrain collider, States/Outro Scene/Snail_Shell_Small/terrain collider (12 uses in game) -> scenes/Tut_04.fsm.txt:2643
+- C# NpcTinkReaction at States/Intro Scene/Snail Shamans Set/Shaman Small Sit/Tink Box, States/Intro Scene/Snail Shamans Set/Shaman Small Stand/Tink Box, States/Intro Scene/Snail Shamans Set/Shaman Mid/Tink Box ... (5 uses in game) -> scenes/Tut_04.objects.txt:330
+- C# tk2dAnimationTriggerResponder at States/Intro Scene/Snail Shamans Set/Shaman Small Stand, States/Intro Scene/Snail Shamans Set/Shaman Mid, States/Intro Scene/Snail Shamans Set/Shaman Big (11 uses in game) -> scenes/Tut_04.objects.txt:334
+- C# MatchHeroFacing at States/Intro Scene/Snail Shamans Set/Crest Get Shrine/FinalHit (11 uses in game) -> scenes/Tut_04.objects.txt:367
+- C# CaptureAnimationEvent at States/Intro Scene/Snail Shamans Set/Hornet_Ritual (2005 uses in game) -> scenes/Tut_04.objects.txt:446
+- C# StopAudioSourcesOnStart at States/Intro Scene/Snail Shamans Set/Hornet_Ritual (86 uses in game) -> scenes/Tut_04.objects.txt:446
+- C# FreezeMomentOnEnable at States/Intro Scene/Snail Shamans Set/Hornet_Ritual/Big Hit (16 uses in game) -> scenes/Tut_04.objects.txt:456
+- C# CameraShakeOnEnable at States/Intro Scene/Snail Shamans Set/Hornet_Ritual/Hornet/blood gouts/Memory_heart_blood_stream, States/Intro Scene/Snail Shamans Set/Hornet_Ritual/Hornet/blood gouts/Memory_heart_blood_stream (1), States/Intro Scene/Snail Shamans Set/Hornet_Ritual/Hornet/blood gouts/Memory_heart_blood_stream (2) (816 uses in game) -> scenes/Tut_04.objects.txt:482
+- C# OverMaskerRenderer at States/Intro Scene/Snail Shamans Set/Hornet_Ritual/red flash/over_blue_vignette, States/Intro Scene/Snail Shamans Set/Hornet_Ritual/red flash/glow, States/Intro Scene/Snail Shamans Set/Hornet_Ritual/red flash/ThreadedEnemy Hit Pt (3)/Burst ... (169 uses in game) -> scenes/Tut_04.objects.txt:501
+- C# OverrideNeedolinLoop at States/Intro Scene/Snail Shamans Set/Melody Needolin Override (9 uses in game) -> scenes/Tut_04.objects.txt:534
+- C# PlayRandomAudioClip at States/Intro Scene/Snail Shamans Set/Generic Sing Parent/Audio Loop Generic Sing (34 uses in game) -> scenes/Tut_04.objects.txt:538
+- C# FadeOutAudioSource at States/Intro Scene/Snail Shamans Set/Generic Sing Parent/Audio Loop Generic Sing (8 uses in game) -> scenes/Tut_04.objects.txt:538
+- C# AppearAnimator at States/Intro Scene/chapel_candle_control/chapel_candle_lit/chapel_candle_break_low_set/chapel_0015_1 (29)/candle_flame0000 (9), States/Intro Scene/chapel_candle_control/chapel_candle_lit/chapel_candle_break_low_set/chapel_0015_1 (29)/candle_flame0000 (10), States/Intro Scene/chapel_candle_control/chapel_candle_lit/chapel_candle_break_low_set/chapel_0015_1 (31)/candle_flame0000 (11) ... (284 uses in game) -> scenes/Tut_04.objects.txt:550
+- C# CameraShakeResponderMechanim at States/Intro Scene/chapel_candle_control/chapel_candle_lit/chapel_candle_break_low_set/chapel_0015_1 (29)/candle_flame0000 (9), States/Intro Scene/chapel_candle_control/chapel_candle_lit/chapel_candle_break_low_set/chapel_0015_1 (29)/candle_flame0000 (10), States/Intro Scene/chapel_candle_control/chapel_candle_lit/chapel_candle_break_low_set/chapel_0015_1 (31)/candle_flame0000 (11) ... (1157 uses in game) -> scenes/Tut_04.objects.txt:550
+- C# AudioSourcePriority at States/Intro Scene/chapel_candle_control/chapel_candle_lit/Audio Loop Candles (215 uses in game) -> scenes/Tut_04.objects.txt:679
+- C# CinematicPlayer at States/Intro Scene/Cinematic Player (18 uses in game) -> scenes/Tut_04.objects.txt:787
+- C# SteepSlope at Steep Slope, Steep Slope (1) (112 uses in game) -> scenes/Tut_04.objects.txt:1063
+- C# HeroTriggerFader at inspect plink (113 uses in game) -> scenes/Tut_04.objects.txt:1257
+
+## Tut_05
+- FSM [Control] id=3a6491778c at Crest Get Shrine/Active Before Crest Get/Needolin React Particles (1 uses in game) -> scenes/Tut_05.fsm.txt:364
+- FSM [Memory Control] id=acb0ed3ba9 at Memory Control (1 uses in game) -> scenes/Tut_05.fsm.txt:425
+- FSM [Face BG Scene] id=d032fc6263 at Memory Control/Bottom Interact (1 uses in game) -> scenes/Tut_05.fsm.txt:576
+- FSM [Control] id=6be7159de9 at Music Control (1 uses in game) -> scenes/Tut_05.fsm.txt:594
+- C# NestedFadeGroupGradeMarker at GradeMarker (1) (10 uses in game) -> scenes/Tut_05.objects.txt:462
+- C# BlackThreadEffectRendererGroup at Crest Get Shrine/Active Before Crest Get/snail_memory_0002_1 (66)/crack/Bone Hit Particles (32 uses in game) -> scenes/Tut_05.objects.txt:1300
+- C# PushableRubble at pushable_rock_set/Small_Bell_push, pushable_rock_set/Small_Bell_push (1), pushable_rock_set/Small_Bell_push (2) ... (768 uses in game) -> scenes/Tut_05.objects.txt:1351
+- C# NoSuperJumpCollider at No_super_jump_collider (121 uses in game) -> scenes/Tut_05.objects.txt:1373
+- C# MaskerBase at Snail_Collapse_wall/mask, Snail_Collapse_wall (2)/mask, Snail_Collapse_wall (1)/mask (32 uses in game) -> scenes/Tut_05.objects.txt:1644
+- C# ParticleSystemPool at Snail_Collapse_wall/Hit Pt, Snail_Collapse_wall (2)/Hit Pt, Snail_Collapse_wall (1)/Hit Pt (3309 uses in game) -> scenes/Tut_05.objects.txt:1684
+- C# IdleForceAnimator at shaman_hang_string_short, shaman_hang_string_short (1) (4096 uses in game) -> scenes/Tut_05.objects.txt:1703
+- C# ChainPushReaction at shaman_hang_string_short, shaman_hang_string_short (1) (796 uses in game) -> scenes/Tut_05.objects.txt:1703
+- C# VisibilityGroup at shaman_hang_string_short, shaman_hang_string_short (1) (3377 uses in game) -> scenes/Tut_05.objects.txt:1703
+- C# ChainLinkInteraction at shaman_hang_string_short/string/end point, shaman_hang_string_short (1)/string/end point (7701 uses in game) -> scenes/Tut_05.objects.txt:1707
+- C# HitRigidbody2D at shaman_hang_string_short/string/end point/Hit Response, shaman_hang_string_short/string/mid hang/Hit Response, shaman_hang_string_short (1)/string/end point/Hit Response ... (1449 uses in game) -> scenes/Tut_05.objects.txt:1712
+- C# PinTransformToSpline at shaman_hang_string_short/string/mid hang, shaman_hang_string_short (1)/string/mid hang (804 uses in game) -> scenes/Tut_05.objects.txt:1713

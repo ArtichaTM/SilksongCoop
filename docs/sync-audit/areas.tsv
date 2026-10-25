@@ -1,0 +1,36 @@
+area	name	scenes	new_fsm	new_comp
+Tut	Moss Grotto	6	68	187
+Bonetown	Bone Bottom	2	67	50
+Mosstown	Mosshome	4	38	30
+Bonegrave	Bonegrave (near Bone Bottom?)	1	14	5
+Bone	The Marrow	25	174	83
+Bellway	Bellways and Bell Shrines	23	62	21
+Dock	Deep Docks	19	70	26
+Bone_East	Far Fields	40	143	24
+Wisp	Wisp Thicket	8	13	3
+Greymoor	Greymoor (with Halfway Home)	26	96	19
+Ant	Hunter's March	16	48	7
+Crawl	The Wormways	11	19	5
+Shellwood	Shellwood	24	77	12
+Belltown	Bellhart	14	65	31
+Room	Rooms (caravan, crow court, diving bell, forge...)	12	49	5
+Peak	Mount Fay	17	29	15
+Coral	Sands of Karak	31	92	27
+Dust	Sinner's Road (Dust_Maze = the Mist)	25	84	14
+Shadow	Bilewater	28	53	4
+Weave	Weavenests	11	19	3
+Song	Choral Chambers / Citadel	33	126	21
+Cog	Cogwork Core	13	78	13
+Ward	Whiteward	10	33	0
+Under	Underworks	30	68	10
+Aqueduct	Putrified Ducts	11	53	7
+Slab	The Slab	26	62	5
+Library	Whispering Vaults	19	69	8
+Hang	High Halls	19	34	4
+Arborium	Memorium	12	17	1
+Cradle	The Cradle	9	38	5
+Clover	Verdania	15	54	6
+Optional	Optional and memory scenes (not on the main route)	15	129	7
+Abyss	The Abyss (Act 3, always last)	16	49	4
+Cinematic	Cinematics	7	5	3
+Meta	Menus, intro, endings, credits	12	12	28

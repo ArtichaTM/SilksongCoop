@@ -1,0 +1,3 @@
+# BattleScene (+ BattleWave) [note by agent 2.01]
+Arena controller: a trigger collider starts the battle when the LOCAL hero (tag Player, isHeroInPosition) enters; StartBattle closes gate FSMs ("BG CLOSE"), enables camLocks, starts waves; when enemies reach 0 it sets setPDBoolOnEnd in PlayerData, opens gates ("BG OPEN"), sends "BATTLE END" to endScene. Boss FSMs may also call StartBattle directly (Mossbone Mother).
+Coop: only the hero who touches the trigger is locked in; the other player is never seen by the trigger. The end PD bool is saved, but the other game's live gates and camera locks do not open. Share battle start and end.

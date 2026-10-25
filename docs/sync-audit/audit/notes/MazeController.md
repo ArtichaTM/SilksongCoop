@@ -1,0 +1,4 @@
+# MazeController (+ MazeCorpseSpawner, GetRandomChildSceneSeed) [note by agent 2.12]
+Dust Maze door shuffler: on Start it rewires each TransitionPoint's target scene/gate with UnityEngine.Random and Shuffle(), picks which door is "correct", and counts progress in PlayerData (CorrectMazeDoorsEntered, IncorrectMazeDoorsEntered, PreviousMazeScene/Door/TargetDoor, EnteredMazeRestScene, DidEnterPreviousMazeDoor). OnBeforeTransition updates those counters; too many wrong doors send the hero back to Dust_Maze_09_entrance. MazeCorpseSpawner puts a hero corpse in the maze scene if the death scene is part of it.
+Scene content (traps, wraiths, silkflies) is chosen with GameManager.SceneSeededRandom (seed = Random.Range per scene name, kept for 3 transitions), read by GetRandomChildSceneSeed.
+Coop: each game rolls its own door links and scene seed, and the counters are per-PlayerData, so two players diverge in layout and progress unless seed and counters are shared.

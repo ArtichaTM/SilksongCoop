@@ -1,0 +1,3 @@
+# Memory scenes (GameManager.IsMemoryScene) [note by agent 2.18]
+A scene whose MapZone is MEMORY or CLOVER is a memory scene. Entering one for the first time records HeroItemsState (health, silk, tools), sets PlayerData.HasStoredMemoryState, overrides tool amounts and sets max health; leaving restores them. Memory scenes also disable pickups fling from enemies and use a memory death prefab.
+Entry is a normal BeginSceneTransition (visualization ThreadMemory) from a thread-memory FSM or an ability shrine; most end with a scene transition back and a SaveGame. The memory cutscene or fight is a private instance of the scene for the hero that entered.

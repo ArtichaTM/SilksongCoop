@@ -1,0 +1,3 @@
+# BellBench (bell_bench prefab, UnlockablePropBase) [note by agent 2.02]
+Bench variant rung by a bell: frame rises when the local hero is near (TrackTriggerObjects / HeroInPosition), has an optional toll machine (FSM "Unlock Behaviour": pay rosaries, sets PD hasActivatedBellBench + PersistentBoolItem, then Open()) and a rosary_string_machine (pay currency, receive a collectable). Resting sets respawn/atBench through the normal bench FSM.
+Coop: all local to the interacting hero; the toll unlock lands in SceneData/PlayerData (shared) but the partner's machine only retracts on its next load; payment is taken from the payer's own currency (geo/rosaries are Shared fields, merged as deltas).

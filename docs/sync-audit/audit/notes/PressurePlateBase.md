@@ -1,0 +1,3 @@
+# PressurePlateBase / PersistentPressurePlate / TempPressurePlate [note by agent 2.03]
+C# plate: depresses when a collider tagged "Player" lands on it (OnCollisionEnter2D, or a dropOnTrigger); Activate() then opens connectedGates/fsmGates (Persistent: also persistent.SaveState() at once and PlayerData/scene bool; Temp: C# events Activated/PreActivated, raises again when left).
+Coop: the plate only reacts to the hero of its own game, so a plate pressed in one game moves only that game's gate or lift. The saved scene bool reaches the other game only on its next load of the room. Share the press; each game then runs its own Activate.

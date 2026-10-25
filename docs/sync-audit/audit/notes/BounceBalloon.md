@@ -1,0 +1,3 @@
+# BounceBalloon / BounceBalloonCrane / BounceBalloonCraneAnchor [note by agent 2.08]
+Balloon is an IHitResponder: a downward nail hit (pogo) starts a Bounce coroutine that lifts and steers the LOCAL hero (raiseVelocity, xMaxSpeed), side/up hits only recoil the hero. Only works while inflated. Crane (UnlockablePropBase) is opened by a Lever: the hang chain moves down and each Anchor swaps a fake balloon for a real inflating one (Opened() snaps to the end pose on load).
+Reads HeroController and InputHandler (cancels on Attack press); no PlayerData. Only the crane state is persistent (via the lever).
