@@ -462,3 +462,278 @@ id	row	element	scene	load	door	path	x	y
 05.35	Crawl_08.1	Blue Scientist Sit	Crawl_08	Crawl_08	bot1	Area_States/Infected/Infected States/Sitting/Blue Scientist Sit	49.9	9.3
 05.35	Crawl_08.2	Blue Scientist	Crawl_08	Crawl_08	bot1	Area_States/Uninfected/Scientist_set/Blue Scientist	52.9	10.2
 05.36	Crawl_10.1	Blue Assistant	Crawl_10	Crawl_10	right1	Area_States/Infected/Blue Assistant	16.8	8.0
+06.01	Dock_01.1	Mines Lift ×2 (Mines Lift, Mines Lift (1))	Dock_01	Dock_01	right2	Mines Lift	18.0	6.0
+06.01	Dock_01.1	Mines Lift ×2 (Mines Lift, Mines Lift (1))	Dock_01	Dock_01	right2	Mines Lift (1)	6.0	35.0
+06.02	Dock_01.2	Head Checker ×2	Dock_01	Dock_01	right2	Mines Lift (1)/Head Checker	6.0	35.0
+06.02	Dock_01.2	Head Checker ×2	Dock_01	Dock_01	right2	Mines Lift/Head Checker	18.0	6.0
+06.03	Dock_02.2	Lift Dropper L	Dock_02	Dock_02	left2	Bridge Group/Lift Dropper L	0.0	0.0
+06.04	Dock_02.3	Coal Bucket Plat (7) ×N	Dock_02	Dock_02	left2	Bridge Group/Lift Dropper L/Coal Bucket Plat (7)	70.3	9.3
+06.05	Dock_02.5	Tar Slug ×19	Dock_02	Dock_02	left2	Bridge Group/Lift Dropper L/Coal Bucket Plat_multi (1)/Plat (3)/Tar Slug (2)	71.1	77.3
+06.05	Dock_02.5	Tar Slug ×19	Dock_02	Dock_02	left2	Bridge Group/Lift Dropper L/Coal Bucket Plat_multi (2)/Plat (8)/Tar Slug (2)	69.5	39.2
+06.05	Dock_02.5	Tar Slug ×19	Dock_02	Dock_02	left2	Bridge Group/Lift Dropper L/Coal Bucket Plat_multi/Plat/Tar Slug (1)	62.4	52.6
+06.05	Dock_02.5	Tar Slug ×19	Dock_02	Dock_02	left2	Tar Slug	27.9	72.0
+06.05	Dock_02.5	Tar Slug ×19	Dock_02	Dock_02	left2	Tar Slug (5)	90.6	85.0
+06.06	Dock_02.9	Dock Bomber ×11	Dock_02	Dock_02	left2	Dock Bomber	103.9	52.0
+06.07	Dock_02.11	lava_crumble_plat ×N (82 uses in game)	Dock_02	Dock_02	left2	lava_crumble_plat	51.1	0.9
+06.07	Dock_02.11	lava_crumble_plat ×N (82 uses in game)	Dock_02	Dock_02	left2	lava_crumble_plat (1)	71.9	0.9
+06.07	Dock_02.11	lava_crumble_plat ×N (82 uses in game)	Dock_02	Dock_02	left2	lava_crumble_plat (2)	81.4	0.9
+06.07	Dock_02.11	lava_crumble_plat ×N (82 uses in game)	Dock_02	Dock_02	left2	lava_crumble_plat (3)	106.4	0.9
+06.08	Dock_02.12	Lift Dropper R	Dock_02	Dock_02	left2	Lift Dropper R	0.0	0.0
+06.09	Dock_02.13	Shield Dockworker ×2	Dock_02	Dock_02	left2	Shield Dockworker (1)	87.0	51.2
+06.09	Dock_02.13	Shield Dockworker ×2	Dock_02	Dock_02	left2	Shield Dockworker Spawn/Shield Dockworker (2)	109.3	79.2
+06.10	Dock_02.14	Innerworks Trap Bridge Large Long	Dock_02	Dock_02	left2	Bridge Group/Innerworks Trap Bridge Large Long	78.6	32.7
+06.11	Dock_02b.1	Dock Charger ×3	Dock_02b	Dock_02b	right1	Dock Charger	36.0	80.1
+06.12	Dock_02b.3	Dock Guard Thrower Enc1	Dock_02b	Dock_02b	right1	Dock Guard Control/Dock Guard Scene/Dock Guard Thrower Enc1	53.4	10.7
+06.13	Dock_02b.4	Lift Dropper R	Dock_02b	Dock_02b	right1	Lift Dropper R	-121.0	0.0
+06.14	Dock_02b.5	Song Golem Floor ×2	Dock_02b	Dock_02b	right1	Song Golem Floor	28.6	1.6
+06.14	Dock_02b.5	Song Golem Floor ×2	Dock_02b	Dock_02b	right1	Song Golem Floor (1)	19.8	1.6
+06.15	Dock_02b.6	thread_memory	Dock_02b	Dock_02b	right1	thread_memory	27.5	103.6
+06.16	Dock_02b.7	Enemy Bool Setter Control ×3	Dock_02b	Dock_02b	right1	Enemy Bool Setter Control (2)	76.3	85.7
+06.17	Dock_02b.8	Shell Shard 02/03 Persistent	Dock_02b	Dock_02b	right1	Shell Shard 03 Persistent	36.8	31.4
+06.18	Dock_02b.9	docks_giant_gate	Dock_02b	Dock_02b	right1	docks_giant_gate	59.4	61.1
+06.19	Dock_03.1	Dock Bomber Ambush	Dock_03	Dock_03	left1	Dock Bomber Ambush	0.0	0.0
+06.20	Dock_03.3	Harpoon Ring Citadel (130 uses in game)	Dock_03	Dock_03	left1	Harpoon Ring Chain/Hang/Harpoon Ring Citadel	104.3	85.0
+06.21	Dock_03.4	Harpoon Ring Pull Switch ×3	Dock_03	Dock_03	left1	Harpoon Ring Pull Switch	104.3	85.0
+06.22	Dock_03.5	dock_pipe_trapdoor (2) (107 uses in game)	Dock_03	Dock_03	left1	dock_pipe_trapdoor (2)	123.6	77.3
+06.23	Dock_03b.1	Fields Goomba ×N	Dock_03b	Dock_03b	left1	Fields Goomba	156.9	91.4
+06.24	Dock_03c.1	Docks Alarm	Dock_03c	Dock_03c	top2	Battle Scene/Docks Alarm	50.5	47.4
+06.25	Dock_03c.3	explode_wall (5)	Dock_03c	Dock_03c	top2	explode_wall (5)	152.9	47.0
+06.25	Dock_03c.3	explode_wall (5)	Dock_03c	Dock_03c	top2	explode_wall (5)/explode rock	154.0	45.6
+06.26	Dock_03d.1	Dock Bomber Ambush	Dock_03d	Dock_03d	bot1	Dock Bomber Ambush	0.0	0.0
+06.27	Dock_03d.2	Fields Flyer ×18	Dock_03d	Dock_03d	bot1	Fields Flyer	92.3	70.1
+06.28	Dock_03d.3	Flea Rescue Sleeping ×9	Dock_03d	Dock_03d	bot1	Flea Rescue Sleeping	101.5	68.1
+06.29	Dock_04.2	left1	Dock_04	Dock_04	left1	left1	0.5	24.0
+06.30	Dock_04.3	dock_steam_door ×5	Dock_04	Dock_04	left1	dock_steam_door	26.0	10.2
+06.31	Dock_06_Church.1	RestBench (1)	Dock_06_Church	Dock_06_Church	right1	Group/RestBench (1)	22.2	3.9
+06.32	Dock_08.1	Pilgrim 02 ×10	Dock_08	Dock_08	left1	Battle Scene/Wave 3/Pilgrim 02	18.9	21.5
+06.32	Dock_08.1	Pilgrim 02 ×10	Dock_08	Dock_08	left1	Battle Scene/Wave 3/Pilgrim 02/Spin Loop Audio/Ground Loop	18.9	21.5
+06.33	Dock_08.2	Heart Piece	Dock_08	Dock_08	left1	Heart Piece Sound Control/Heart Piece	50.2	22.0
+06.34	Dock_08.3	Heart Container UI(Clone) ×12	Dock_08	Dock_08	left1	Heart Container UI(Clone)	0.0	1.7
+06.34	Dock_08.3	Heart Container UI(Clone) ×12	Dock_08	Dock_08	left1	Heart Container UI(Clone)/Get Glow	0.0	2.6
+06.34	Dock_08.3	Heart Container UI(Clone) ×12	Dock_08	Dock_08	left1	Heart Piece Sound Control/Heart Piece/Get Anim/Get Glow	50.2	22.0
+06.35	Dock_09.1	Boss Scene	Dock_09	Dock_09	right1	Boss Scene	0.0	0.0
+06.36	Dock_09.4	Dock Guard Slasher	Dock_09	Dock_09	right1	Boss Scene/Dock Guard Slasher	22.6	8.9
+06.36	Dock_09.4	Dock Guard Slasher	Dock_09	Dock_09	right1	Boss Scene/Dock Guard Slasher/Projectile	24.5	7.7
+06.37	Dock_09.5	Dock Guard Thrower	Dock_09	Dock_09	right1	Boss Scene/Dock Guard Thrower	38.4	19.6
+06.38	Dock_09.6	Intro Minions: Dock Flyer (1), Dock Worker (2)	Dock_09	Dock_09	right1	Boss Scene/Intro Minions/Dock Flyer (1)	32.1	10.3
+06.38	Dock_09.6	Intro Minions: Dock Flyer (1), Dock Worker (2)	Dock_09	Dock_09	right1	Boss Scene/Intro Minions/Dock Worker (2)	29.6	7.8
+06.39	Dock_09.7	Lava_Waterfall L/R, M	Dock_09	Dock_09	right1	Boss Scene/Lava_Waterfall L	17.9	38.9
+06.39	Dock_09.7	Lava_Waterfall L/R, M	Dock_09	Dock_09	right1	Boss Scene/Lava_Waterfall R	45.7	38.9
+06.39	Dock_09.7	Lava_Waterfall L/R, M	Dock_09	Dock_09	right1	Boss Scene/Lava_Waterfall M	32.0	28.0
+06.39	Dock_09.7	Lava_Waterfall L/R, M	Dock_09	Dock_09	right1	Boss Scene/Lava_Waterfall L/Lava_waterfall_hazard 1	18.1	4.6
+06.40	Dock_09.9	Dock Slide Floor ×2	Dock_09	Dock_09	right1	Boss Scene/Slide Floors/Dock Slide Floor	46.1	5.4
+06.40	Dock_09.9	Dock Slide Floor ×2	Dock_09	Dock_09	right1	Boss Scene/Slide Floors/Dock Slide Floor (1)	18.0	5.4
+06.41	Dock_11.1	Memory Orb Challenge	Dock_11	Dock_11	right1	Memory Orb Challenge	0.0	0.0
+06.42	Dock_11.2	Needolin Memory	Dock_11	Dock_11	right1	Memory Orb Challenge/Needolin Memory	27.2	63.8
+06.43	Dock_11.3	Silkfly Cloud and Memory Orb ×N	Dock_11	Dock_11	right1	Memory Orb Challenge/Silkfly Cloud	53.0	76.5
+06.43	Dock_11.3	Silkfly Cloud and Memory Orb ×N	Dock_11	Dock_11	right1	Memory Orb Challenge/Sets/Set 1/Memory Orb (1)	61.0	75.4
+06.44	Dock_11.4	Tar Slug Huge ×8	Dock_11	Dock_11	right1	Tar Slug Huge	27.4	71.3
+06.44	Dock_11.4	Tar Slug Huge ×8	Dock_11	Dock_11	right1	Tar Slug Huge (1)	25.3	35.5
+06.44	Dock_11.4	Tar Slug Huge ×8	Dock_11	Dock_11	right1	Tar Slug Huge (4)	93.6	14.4
+06.44	Dock_11.4	Tar Slug Huge ×8	Dock_11	Dock_11	right1	Tar Slug Huge (6)	92.4	29.8
+06.44	Dock_11.4	Tar Slug Huge ×8	Dock_11	Dock_11	right1	Tar Slug Huge (7)	90.5	50.2
+06.44	Dock_11.4	Tar Slug Huge ×8	Dock_11	Dock_11	right1	Tar Slug QuestOnly/Tar Slug Huge (2)	17.4	26.4
+06.44	Dock_11.4	Tar Slug Huge ×8	Dock_11	Dock_11	right1	Tar Slug QuestOnly/Tar Slug Huge (5)	50.4	23.2
+06.44	Dock_11.4	Tar Slug Huge ×8	Dock_11	Dock_11	right1	Tar Slug QuestOnly/Tar Slug Huge (7)	85.5	39.8
+06.45	Dock_12.1	Inspect Region	Dock_12	Dock_12	door1	Controls inspect/Inspect Region	25.1	55.3
+06.46	Dock_12.3	Ballow Diving Bell NPC ×2	Dock_12	Dock_12	door1	Diving Bell/States/Repair/Upgraded/Ballow Diving Bell NPC	25.4	54.8
+06.46	Dock_12.3	Ballow Diving Bell NPC ×2	Dock_12	Dock_12	door1	Diving Bell/States/Standard/Ballow Diving Bell NPC	25.4	54.8
+06.47	Dock_12.4	lock (Diving Bell Door)	Dock_12	Dock_12	door1	Diving Bell/States/Standard/Diving Bell Door/lock	30.4	29.4
+06.48	Dock_14.1	Silk Grub Large/Small Cocoon ×34	Dock_14	Dock_14	left1	Silk Grub Large Cocoon	23.3	9.4
+06.49	Dock_16.1	Flea Rescue BlackSilk ×2	Dock_16	Dock_16	right1	Flea Rescue BlackSilk	52.4	22.7
+06.50	Dock_16.2	Lava_Waterfall Set, Set (2)	Dock_16	Dock_16	right1	Lava_Waterfall Set	42.5	40.5
+06.50	Dock_16.2	Lava_Waterfall Set, Set (2)	Dock_16	Dock_16	right1	Lava_Waterfall Set (2)	23.3	41.5
+06.51	Dock_16.3	Lava_Waterfall Set (1)	Dock_16	Dock_16	right1	Lava_Waterfall Set (1)	32.7	40.5
+07.001	Bone_East_01.1	Barrel Plat Lift ×2	Bone_East_01	Bone_East_01	left2	Barrel Plat Lift	33.0	19.3
+07.001	Bone_East_01.1	Barrel Plat Lift ×2	Bone_East_01	Bone_East_01	left2	Barrel Plat Lift (2)	12.5	54.6
+07.002	Bone_East_02.1	Trapper Barb Trap Landmine ×2	Bone_East_02	Bone_East_02	top1	Ant Trapper Quest Scene/Tracking Scene/Trapper Barb Trap Landmine	82.4	14.1
+07.002	Bone_East_02.1	Trapper Barb Trap Landmine ×2	Bone_East_02	Bone_East_02	top1	Ant Trapper Quest Scene/Tracking Scene/Trapper Barb Trap Landmine (1)	140.0	21.1
+07.003	Bone_East_02.2	Bone Hunter, Bone Hunter Child ×2	Bone_East_02	Bone_East_02	top1	Black Thread States Thread Only Variant/Black Thread World/Garmond Fight Scene/Bone Hunter	142.8	10.5
+07.003	Bone_East_02.2	Bone Hunter, Bone Hunter Child ×2	Bone_East_02	Bone_East_02	top1	Black Thread States Thread Only Variant/Black Thread World/Garmond Fight Scene/Bone Hunter Child	137.4	9.7
+07.003	Bone_East_02.2	Bone Hunter, Bone Hunter Child ×2	Bone_East_02	Bone_East_02	top1	Black Thread States Thread Only Variant/Black Thread World/Garmond Fight Scene/Bone Hunter Child (1)	100.5	15.7
+07.004	Bone_East_02.3	Garmond Fighter	Bone_East_02	Bone_East_02	top1	Black Thread States Thread Only Variant/Black Thread World/Garmond Fight Scene/Garmond Fighter	101.8	16.9
+07.005	Bone_East_02b.1	Rhino	Bone_East_02b	Bone_East_02b	right1	Enemy States/Black Thread World/Rhino	240.2	13.8
+07.005	Bone_East_02b.1	Rhino	Bone_East_02b	Bone_East_02b	right1	Enemy States/Black Thread World/Rhino/Alert Range	246.2	13.8
+07.006	Bone_East_03.1	Bone Hopper Simple ×10	Bone_East_03	Bone_East_03	top1	Black Thread States Thread Only Variant/Normal World/Bone Hopper Simple	61.7	7.7
+07.006	Bone_East_03.1	Bone Hopper Simple ×10	Bone_East_03	Bone_East_03	top1	Black Thread States Thread Only Variant/Normal World/Hunting PreScene/Bone Hopper Simple	198.2	19.1
+07.006	Bone_East_03.1	Bone Hopper Simple ×10	Bone_East_03	Bone_East_03	top1	Bone Hopper Simple (1)	93.6	13.8
+07.006	Bone_East_03.1	Bone Hopper Simple ×10	Bone_East_03	Bone_East_03	top1	Bone Hopper Simple (2)	171.0	11.6
+07.007	Bone_East_03.3	Bone Hunter Child Alerter	Bone_East_03	Bone_East_03	top1	Black Thread States Thread Only Variant/Normal World/Hunting PreScene/Bone Hunter Child Alerter	147.3	22.6
+07.008	Bone_East_03.4	explode_wall_norck, explode rock	Bone_East_03	Bone_East_03	top1	explode_wall_norck	211.1	41.9
+07.008	Bone_East_03.4	explode_wall_norck, explode rock	Bone_East_03	Bone_East_03	top1	explode_wall_norck/explode rock	210.3	40.5
+07.009	Bone_East_04.1	Bone Hunter Buzzer ×3	Bone_East_04	Bone_East_04	top2	Black Thread States Thread Only Variant/Black Thread World/Bone Hunter Buzzer (2)	63.1	61.1
+07.009	Bone_East_04.1	Bone Hunter Buzzer ×3	Bone_East_04	Bone_East_04	top2	Black Thread States Thread Only Variant/Normal World/Bone Hunter Buzzer (1)	55.5	57.8
+07.009	Bone_East_04.1	Bone Hunter Buzzer ×3	Bone_East_04	Bone_East_04	top2	Black Thread States Thread Only Variant/Normal World/Bone Hunter Buzzer (3)	43.3	92.2
+07.010	Bone_East_04.2	Bone Hunter Tiny ×2	Bone_East_04	Bone_East_04	top2	Bone Hunter Tiny	59.2	92.7
+07.010	Bone_East_04.2	Bone Hunter Tiny ×2	Bone_East_04	Bone_East_04	top2	Bone Hunter Tiny (2)	77.4	73.0
+07.011	Bone_East_04c.1	Gilly	Bone_East_04c	Bone_East_04c	left1	Scene Control/Bone Hunters Scene/Gilly	57.4	5.4
+07.012	Bone_East_04c.3	Slab Fly Large Cage	Bone_East_04c	Bone_East_04c	left1	Scene Control/Slab Jailer Scene/Slab Fly Large Cage	45.4	6.7
+07.013	Bone_East_04c.4	Slab Fly Large Cage	Bone_East_04c	Bone_East_04c	left1	Scene Control/Slab Jailer Scene/Slab Fly Large Cage	45.4	6.7
+07.014	Bone_East_04c.5	Slab Fly Large Cage	Bone_East_04c	Bone_East_04c	left1	Scene Control/Slab Jailer Scene/Slab Fly Large Cage	45.4	6.7
+07.015	Bone_East_04c.6	fly corpse	Bone_East_04c	Bone_East_04c	left1	Scene Control/cage_fly_curse_death_set (1)/fly corpse	39.4	4.4
+07.016	Bone_East_05.1	Flea Rescue Barrel ×4	Bone_East_05	Bone_East_05	left1	Flea Rescue Barrel	31.4	38.6
+07.017	Bone_East_07.1	Explode Wall Group	Bone_East_07	Bone_East_07	left2	Explode Wall Group	6.1	99.7
+07.018	Bone_East_07.2	Updraft After	Bone_East_07	Bone_East_07	left2	Explode Wall Group/explode_wall (5)/Updraft After	7.3	99.7
+07.019	Bone_East_07.3	Shard Flinger ×3	Bone_East_07	Bone_East_07	left2	explode_wall (2)/Pt Explode/Shard Flinger	35.0	23.6
+07.019	Bone_East_07.3	Shard Flinger ×3	Bone_East_07	Bone_East_07	left2	explode_wall (3)/Pt Explode/Shard Flinger	37.0	10.4
+07.020	Bone_East_07.4	Song Trapdoor ×3	Bone_East_07	Bone_East_07	left2	trapdoor/closed/Song Trapdoor	22.7	186.5
+07.021	Bone_East_08.1	Boss Scene	Bone_East_08	Bone_East_08	left1	Boss Scene	0.0	0.0
+07.022	Bone_East_08.2	Boss Scene	Bone_East_08	Bone_East_08	left1	Boss Scene	0.0	0.0
+07.023	Bone_East_08.3	DropBomb Rock SG ×3	Bone_East_08	Bone_East_08	left1	Boss Scene/Big Drop Bomb Return/DropBomb Rock SG	82.0	26.1
+07.023	Bone_East_08.3	DropBomb Rock SG ×3	Bone_East_08	Bone_East_08	left1	Boss Scene/Big Drop Bomb/DropBomb Rock SG	82.0	26.1
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks L	0.0	0.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks M	0.0	0.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks R	0.0	0.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks L/Rock Pool/Dummy	0.0	0.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks L/Rock Pool/Dummy (1)	0.0	0.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks M/Rock Pool/Dummy	0.0	0.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks M/Rock Pool/Dummy (1)	0.0	0.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks R/Rock Pool/Dummy	0.0	0.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks R/Rock Pool/Dummy (1)	0.0	0.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks L/Rock Pool/SG Lava Rock	83.8	22.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks L/Rock Pool/SG Lava Rock (1)	83.8	22.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks L/Rock Pool/SG Lava Rock (2)	83.8	22.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks L/Rock Pool/SG Lava Rock (3)	83.8	22.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks M/Rock Pool/SG Lava Rock	83.8	22.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks M/Rock Pool/SG Lava Rock (1)	83.8	22.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks M/Rock Pool/SG Lava Rock (2)	83.8	22.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks M/Rock Pool/SG Lava Rock (3)	83.8	22.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks R/Rock Pool/SG Lava Rock	83.8	22.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks R/Rock Pool/SG Lava Rock (1)	83.8	22.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks R/Rock Pool/SG Lava Rock (2)	83.8	22.0
+07.024	Bone_East_08.5	Rocks L, Rocks M, Rocks R; Dummy ×6; SG Lava Rock ×12	Bone_East_08	Bone_East_08	left1	Boss Scene/Lava Rocks/Rocks R/Rock Pool/SG Lava Rock (3)	83.8	22.0
+07.025	Bone_East_08.8	Silkcatcher Plant ×48	Bone_East_08	Bone_East_08	left1	Silkcatcher Plant (1)	123.2	38.5
+07.026	Bone_East_08_boss_beastfly.1	Bone Flyer Giant	Bone_East_08_boss_beastfly	Bone_East_08	left1	Boss Scene Beastfly/Beastfly States/Active/Bone Flyer Giant	81.0	0.5
+07.027	Bone_East_08_boss_beastfly.2	Bone Flyer Giant	Bone_East_08_boss_beastfly	Bone_East_08	left1	Boss Scene Beastfly/Beastfly States/Active/Bone Flyer Giant	81.0	0.5
+07.028	Bone_East_08_boss_beastfly.3	Bone Flyer Giant	Bone_East_08_boss_beastfly	Bone_East_08	left1	Boss Scene Beastfly/Beastfly States/Active/Bone Flyer Giant	81.0	0.5
+07.029	Bone_East_08_boss_beastfly.4	Bone Flyer Giant	Bone_East_08_boss_beastfly	Bone_East_08	left1	Boss Scene Beastfly/Beastfly States/Active/Bone Flyer Giant	81.0	0.5
+07.030	Bone_East_08_boss_beastfly.5	Bone Flyer Giant	Bone_East_08_boss_beastfly	Bone_East_08	left1	Boss Scene Beastfly/Beastfly States/Active/Bone Flyer Giant	81.0	0.5
+07.031	Bone_East_08_boss_beastfly.6	Summon Enemies, Bone Spitter ×13	Bone_East_08_boss_beastfly	Bone_East_08	left1	Boss Scene Beastfly/Summon Enemies	0.0	0.0
+07.031	Bone_East_08_boss_beastfly.6	Summon Enemies, Bone Spitter ×13	Bone_East_08_boss_beastfly	Bone_East_08	left1	Boss Scene Beastfly/Summon Enemies/Bone Spitter	87.5	14.1
+07.031	Bone_East_08_boss_beastfly.6	Summon Enemies, Bone Spitter ×13	Bone_East_08_boss_beastfly	Bone_East_08	left1	Boss Scene Beastfly/Summon Enemies/Bone Spitter (1)	73.9	14.1
+07.032	Bone_East_08_boss_beastfly.7	Item Chunk After (Defeated)	Bone_East_08_boss_beastfly	Bone_East_08	left1	Boss Scene Beastfly/Beastfly States/Defeated/Item Chunk/Item Chunk After	80.9	6.5
+07.033	Bone_East_08_boss_golem.2	song_golem	Bone_East_08_boss_golem	Bone_East_08	left1	Boss Scene/song_golem	80.9	7.5
+07.034	Bone_East_08_boss_golem.3	SG_head	Bone_East_08_boss_golem	Bone_East_08	left1	Boss Scene/song_golem/Song_Butt/SG_waist/Torso/SG_head	81.3	12.3
+07.035	Bone_East_08_boss_golem.4	SG_head	Bone_East_08_boss_golem	Bone_East_08	left1	Boss Scene/song_golem/Song_Butt/SG_waist/Torso/SG_head	81.3	12.3
+07.036	Bone_East_08_boss_golem_rest.1	Golem_rest	Bone_East_08_boss_golem_rest	Bone_East_08	left1	Boss Scene/Golem_rest	82.3	13.2
+07.037	Bone_East_09.1	Wind Rock Double	Bone_East_09	Bone_East_09	top1	Wind Rock Double	28.4	87.6
+07.038	Bone_East_10.2	Pilgrim NPC Scene	Bone_East_10	Bone_East_10	right1	Black Thread States Thread Only Variant/Normal World/Pilgrim NPC Scene	22.3	-32.0
+07.039	Bone_East_10.3	Sherma Docks NPC	Bone_East_10	Bone_East_10	right1	Black Thread States Thread Only Variant/Normal World/Pilgrim NPC Scene/2 Brolly Revisit/Sherma Docks NPC	59.4	4.2
+07.040	Bone_East_10.5	toll door interactible	Bone_East_10	Bone_East_10	right1	Black Thread States Thread Only Variant/Normal World/toll door interactible	77.7	6.3
+07.041	Bone_East_10.6	Gate Smashing (Rhino Scene)	Bone_East_10	Bone_East_10	right1	Rhino Scene/Gate Smashing	0.0	0.0
+07.042	Bone_East_10.8	Rosary Thief Group	Bone_East_10	Bone_East_10	right1	Rosary Thief Group	0.0	0.0
+07.043	Bone_East_10_Church.1	Rhino Gate Notify	Bone_East_10_Church	Bone_East_10_Church	bot1	Rhino Scene/Rhino Gate Notify	0.0	0.0
+07.044	Bone_East_10_Church.2	Rhino Unalerter	Bone_East_10_Church	Bone_East_10_Church	bot1	Rhino Scene/Rhino Unalerter	188.9	23.1
+07.045	Bone_East_10_Room.1	Bonetown Resident PilgrimsRest Variant	Bone_East_10_Room	Bone_East_10_Room	right1	Black Thread States/Normal World/Bonetown Resident PilgrimsRest Variant	62.0	13.0
+07.046	Bone_East_10_Room.2	Generic Pilgrim Control	Bone_East_10_Room	Bone_East_10_Room	right1	Black Thread States/Normal World/Generic Pilgrim Control	58.3	19.0
+07.047	Bone_East_10_Room.4	Pilgrims Rest Shop	Bone_East_10_Room	Bone_East_10_Room	right1	Black Thread States/Normal World/Pilgrims Rest Shop	44.1	13.9
+07.048	Bone_East_10_Room.5	Pilgrims Rest Shop, RestBench	Bone_East_10_Room	Bone_East_10_Room	right1	Black Thread States/Normal World/Pilgrims Rest Shop	44.1	13.9
+07.048	Bone_East_10_Room.5	Pilgrims Rest Shop, RestBench	Bone_East_10_Room	Bone_East_10_Room	right1	RestBench	53.4	12.5
+07.049	Bone_East_10_Room.6	Rhino	Bone_East_10_Room	Bone_East_10_Room	right1	Black Thread States/Normal World/Rhino	46.9	13.9
+07.050	Bone_East_11.2	DropBomb Rock ×6	Bone_East_11	Bone_East_11	top1	DropBomb Rock	30.0	68.0
+07.051	Bone_East_11.3	Greymoor Entry/crashExit	Bone_East_11	Bone_East_11	top1	Greymoor Entry/crashExit	19.0	278.5
+07.052	Bone_East_11.4	Multihit Updraft	Bone_East_11	Bone_East_11	top1	Multihit Updraft	0.0	0.0
+07.053	Bone_East_12.1	Battle Gate Left DEMO	Bone_East_12	Bone_East_12	left1	Boss Scene/Battle Gates/Battle Gate Left DEMO	77.4	9.3
+07.054	Bone_East_12.2	Battle Scene	Bone_East_12	Bone_East_12	left1	Boss Scene/Battle Scene	0.0	0.0
+07.055	Bone_East_12.3	Lace Boss1	Bone_East_12	Bone_East_12	left1	Boss Scene/Lace Boss1	97.4	7.6
+07.056	Bone_East_12.4	Lace Boss1	Bone_East_12	Bone_East_12	left1	Boss Scene/Lace Boss1	97.4	7.6
+07.057	Bone_East_12.5	Lace Boss1	Bone_East_12	Bone_East_12	left1	Boss Scene/Lace Boss1	97.4	7.6
+07.058	Bone_East_12.6	Lace Boss1	Bone_East_12	Bone_East_12	left1	Boss Scene/Lace Boss1	97.4	7.6
+07.059	Bone_East_12.7	Corpse Lace1(Clone)	Bone_East_12	Bone_East_12	left1	Boss Scene/Lace Boss1/Corpse Lace1(Clone)	97.4	7.6
+07.060	Bone_East_12.8	Cross Slash, hero damager, MultiHit	Bone_East_12	Bone_East_12	left1	Boss Scene/Lace Boss1/Cross Slash	105.5	11.1
+07.060	Bone_East_12.8	Cross Slash, hero damager, MultiHit	Bone_East_12	Bone_East_12	left1	Boss Scene/Lace Boss1/Cross Slash/hero damager	105.5	11.1
+07.060	Bone_East_12.8	Cross Slash, hero damager, MultiHit	Bone_East_12	Bone_East_12	left1	Boss Scene/Lace Boss1/MultiHit	97.4	7.6
+07.061	Bone_East_12.10	Battle Range, Battle Range2, NoThwhip Range ×9	Bone_East_12	Bone_East_12	left1	Boss Scene/Lace Boss1/Battle Range	97.4	7.6
+07.062	Bone_East_12.11	Silkflies w/o Sprint	Bone_East_12	Bone_East_12	left1	Boss Scene/Silkflies w/o Sprint	-8.4	-0.2
+07.063	Bone_East_13.1	Dock Flyer Spawner	Bone_East_13	Bone_East_13	left1	Dock Flyer Spawner	74.8	19.1
+07.064	Bone_East_13.2	DF Lava Rock ×3	Bone_East_13	Bone_East_13	left1	Shell Shard Fossil Dock (1)/DF Lava Rock	91.0	5.0
+07.064	Bone_East_13.2	DF Lava Rock ×3	Bone_East_13	Bone_East_13	left1	Shell Shard Fossil Dock (2)/DF Lava Rock	74.2	5.0
+07.064	Bone_East_13.2	DF Lava Rock ×3	Bone_East_13	Bone_East_13	left1	Shell Shard Fossil Dock (3)/DF Lava Rock	76.4	4.8
+07.065	Bone_East_14.1	Spine Floater ×9	Bone_East_14	Bone_East_14	right1	Black Thread States/Normal World/Spine Floater (10)	98.4	13.4
+07.065	Bone_East_14.1	Spine Floater ×9	Bone_East_14	Bone_East_14	right1	Spine Floater - dynamic	62.8	21.9
+07.065	Bone_East_14.1	Spine Floater ×9	Bone_East_14	Bone_East_14	right1	Spine Floater - static	62.8	21.9
+07.065	Bone_East_14.1	Spine Floater ×9	Bone_East_14	Bone_East_14	right1	Spine Floater - visitedCitadel	103.5	13.9
+07.065	Bone_East_14.1	Spine Floater ×9	Bone_East_14	Bone_East_14	right1	Spine Floater (9)	115.1	42.5
+07.066	Bone_East_14.2	Explode Floor	Bone_East_14	Bone_East_14	right1	Explode Floor Scene/bone_bridge_dust (1)/Explode Floor	111.3	57.6
+07.067	Bone_East_14.3	Vassal_Rest_Spot ×6	Bone_East_14	Bone_East_14	right1	Vassal_Rest_Spot	111.4	67.8
+07.068	Bone_East_14b.1	Spine Floater Spine P ×2	Bone_East_14b	Bone_East_14b	left2	Spine Floater Spine P (2)	251.0	53.4
+07.068	Bone_East_14b.1	Spine Floater Spine P ×2	Bone_East_14b	Bone_East_14b	left2	Spine Floater Spine P (4)	249.5	52.3
+07.069	Bone_East_15.1	Enemy Break Cage ×3	Bone_East_15	Bone_East_15	left1	Enemy Break Cage	130.8	99.0
+07.069	Bone_East_15.1	Enemy Break Cage ×3	Bone_East_15	Bone_East_15	left1	Enemy Break Cage (1)	112.8	99.8
+07.069	Bone_East_15.1	Enemy Break Cage ×3	Bone_East_15	Bone_East_15	left1	Enemy Break Cage (2)	144.4	99.1
+07.069	Bone_East_15.1	Enemy Break Cage ×3	Bone_East_15	Bone_East_15	left1	Enemy Break Cage (1)/Sprite Parent/Sprite	112.8	103.3
+07.069	Bone_East_15.1	Enemy Break Cage ×3	Bone_East_15	Bone_East_15	left1	Enemy Break Cage (2)/Sprite Parent/Sprite	144.4	102.5
+07.069	Bone_East_15.1	Enemy Break Cage ×3	Bone_East_15	Bone_East_15	left1	Enemy Break Cage/Sprite Parent/Sprite	130.8	102.4
+07.070	Bone_East_17b.2	Bone Hunter Child	Bone_East_17b	Bone_East_17b	left1	Flea Scene/Bone Hunter Child	68.1	29.5
+07.071	Bone_East_17b.3	Flea Rescue Cage ×2	Bone_East_17b	Bone_East_17b	left1	Flea Scene/Flea Rescue Cage	86.1	30.2
+07.072	Bone_East_17b.4	Hunter Trap Cage ×6	Bone_East_17b	Bone_East_17b	left1	Flea Scene/Hunter Trap Cage	77.7	30.2
+07.073	Bone_East_17b.5	Hunter Trap Plate ×13	Bone_East_17b	Bone_East_17b	left1	Flea Scene/Hunter Trap Plate	77.7	28.1
+07.074	Bone_East_18.1	Bone Hopper Giant ×3	Bone_East_18	Bone_East_18	top1	Bone Hopper Group/Bone Hopper Giant	107.5	4.9
+07.075	Bone_East_18b.1	Boss Scene	Bone_East_18b	Bone_East_18b	door1	Boss Scene	172.2	11.4
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Intro Barb LA	164.7	7.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Intro Barb LB	164.7	10.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Intro Barb LC	167.2	13.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Intro Barb RA	179.7	7.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Intro Barb RB	179.7	10.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Intro Barb RC	177.2	13.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Trapper Barb Trap	159.7	7.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Trapper Barb Trap (13)	182.2	13.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Trapper Barb Trap (14)	184.7	7.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Trapper Barb Trap (15)	184.7	10.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Trapper Barb Trap (2)	159.7	10.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Trapper Barb Trap (4)	162.2	13.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Trapper Barb Trap (5)	169.7	7.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Trapper Barb Trap (6)	169.7	10.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Trapper Barb Trap (7)	172.2	13.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Trapper Barb Trap (8)	174.7	7.9
+07.076	Bone_East_18b.2	Intro Barb LA ×17	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Barb Traps/Trapper Barb Trap (9)	174.7	10.9
+07.077	Bone_East_18b.3	Bone Hunter Trapper	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Bone Hunter Trapper	172.2	8.9
+07.078	Bone_East_18b.4	Bone Hunter Trapper ×3	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Bone Hunter Trapper	172.2	8.9
+07.079	Bone_East_18b.5	Corpse Bone Hunter Trapper(Clone)	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Bone Hunter Trapper/Corpse Bone Hunter Trapper(Clone)	172.2	8.7
+07.080	Bone_East_18b.6	Battle Gate Ant Straight ×4	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Gates/Battle Gate Ant Straight	174.4	20.3
+07.080	Bone_East_18b.6	Battle Gate Ant Straight ×4	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Gates/Battle Gate Ant Straight (1)	170.1	20.3
+07.080	Bone_East_18b.6	Battle Gate Ant Straight ×4	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Gates/Battle Gate Ant Straight (2)	156.6	6.1
+07.081	Bone_East_18b.7	Trapper Boss Spike ×3	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Spike Traps/Trapper Boss Spike	162.9	6.3
+07.081	Bone_East_18b.7	Trapper Boss Spike ×3	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Spike Traps/Trapper Boss Spike (1)	171.9	6.3
+07.081	Bone_East_18b.7	Trapper Boss Spike ×3	Bone_East_18b	Bone_East_18b	door1	Boss Scene/Spike Traps/Trapper Boss Spike (2)	180.9	6.3
+07.082	Bone_East_18b.8	TrapBench, TrapBench (Group 4)	Bone_East_18b	Bone_East_18b	door1	Boss Scene/TrapBench	172.2	78.8
+07.082	Bone_East_18b.8	TrapBench, TrapBench (Group 4)	Bone_East_18b	Bone_East_18b	door1	Group(Split)/Group (4)/TrapBench	172.2	78.8
+07.083	Bone_East_18b.9	TrapBench Cage ×3	Bone_East_18b	Bone_East_18b	door1	Boss Scene/TrapBench/Cage	172.2	80.3
+07.083	Bone_East_18b.9	TrapBench Cage ×3	Bone_East_18b	Bone_East_18b	door1	Group(Split)/Group (4)/TrapBench/Cage	172.2	80.3
+07.084	Bone_East_18b.12	Hunter Sickle Trap (3) ×8	Bone_East_18b	Bone_East_18b	door1	Group(Split)/Group (4)/Hunter Sickle Trap (3)	114.2	22.7
+07.085	Bone_East_22.1	Hit Reaction (rope/target)	Bone_East_22	Bone_East_22	left1	rope/target/Hit React	36.1	7.9
+07.086	Bone_East_22.2	Target Sequence	Bone_East_22	Bone_East_22	left1	Target States/Targets/Target Sequence	0.0	0.0
+07.087	Bone_East_22.3	Mottled Ant Child NPC ×2	Bone_East_22	Bone_East_22	left1	Target States/Targets/Mottled Ant Child NPC	46.7	5.5
+07.087	Bone_East_22.3	Mottled Ant Child NPC ×2	Bone_East_22	Bone_East_22	left1	Target States/Targets/Mottled Ant Child NPC Hiding	38.6	6.1
+07.088	Bone_East_25.1	ant_gate_animated	Bone_East_25	Bone_East_25	left1	Battle Scene/Gates/ant_gate_animated	143.8	8.1
+07.089	Bone_East_25.2	Bone Hunter Throw ×6	Bone_East_25	Bone_East_25	left1	Battle Scene/Wave 1/Bone Hunter Throw	137.7	9.8
+07.090	Bone_East_LavaChallenge.1	Battle Scene	Bone_East_LavaChallenge	Bone_East_LavaChallenge	left1	Battle Scene	0.0	0.0
+07.091	Bone_East_LavaChallenge.2	Battle Scene	Bone_East_LavaChallenge	Bone_East_LavaChallenge	left1	Battle Scene	0.0	0.0
+07.092	Bone_East_LavaChallenge.3	Rising Lava	Bone_East_LavaChallenge	Bone_East_LavaChallenge	left1	Battle Scene/Rising Lava	15.4	2.7
+07.093	Bone_East_LavaChallenge.4	Cam Controller	Bone_East_LavaChallenge	Bone_East_LavaChallenge	left1	Battle Scene/Rising Lava/Cam Controller	15.4	8.2
+07.094	Bone_East_LavaChallenge.5	Ceiling	Bone_East_LavaChallenge	Bone_East_LavaChallenge	left1	Battle Scene/Ceiling	0.0	-6.0
+07.095	Bone_East_LavaChallenge.6	lava_crumble_plat respawn	Bone_East_LavaChallenge	Bone_East_LavaChallenge	left1	Battle Scene/lava_crumble_plat respawn	15.0	1.1
+07.096	Bone_East_LavaChallenge.7	entrance_door	Bone_East_LavaChallenge	Bone_East_LavaChallenge	left1	entrance_door	2.2	244.7
+07.097	Bone_East_LavaChallenge.8	explode_floor_battle	Bone_East_LavaChallenge	Bone_East_LavaChallenge	left1	explode_floor_battle	12.8	1.5
+07.098	Bone_East_LavaChallenge.9	lava_challenge_big_crumble_wall ×4	Bone_East_LavaChallenge	Bone_East_LavaChallenge	left1	lava_challenge_big_crumble_wall	23.9	127.8
+07.098	Bone_East_LavaChallenge.9	lava_challenge_big_crumble_wall ×4	Bone_East_LavaChallenge	Bone_East_LavaChallenge	left1	lava_challenge_big_crumble_wall (1)	2.9	96.8
+07.098	Bone_East_LavaChallenge.9	lava_challenge_big_crumble_wall ×4	Bone_East_LavaChallenge	Bone_East_LavaChallenge	left1	lava_challenge_big_crumble_wall (2)	1.9	77.1
+07.098	Bone_East_LavaChallenge.9	lava_challenge_big_crumble_wall ×4	Bone_East_LavaChallenge	Bone_East_LavaChallenge	left1	lava_challenge_big_crumble_wall (3)	27.3	64.1
+07.099	Bone_East_Umbrella.1	Seamstress	Bone_East_Umbrella	Bone_East_Umbrella	left1	_NPCs/Seamstress	27.6	8.4
+07.100	Bone_East_Weavehome.5	Weaver Servitor ×2	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Servitor (2)	40.9	104.0
+07.100	Bone_East_Weavehome.5	Weaver Servitor ×2	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Servitor (3)	101.6	97.5
+07.100	Bone_East_Weavehome.5	Weaver Servitor ×2	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Servitor (2)/Head Swiveller/Head	40.9	103.5
+07.100	Bone_East_Weavehome.5	Weaver Servitor ×2	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Servitor (3)/Head Swiveller/Head	101.6	97.0
+07.101	Bone_East_Weavehome.6	Weaver Speed Challenge	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Speed Challenge	0.0	0.0
+07.102	Bone_East_Weavehome.7	weaver_speed_panel ×11	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Speed Challenge/Speed_Panels/weaver_speed_panel	64.7	92.3
+07.102	Bone_East_Weavehome.7	weaver_speed_panel ×11	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Speed Challenge/Speed_Panels/weaver_speed_panel	70.2	92.3
+07.102	Bone_East_Weavehome.7	weaver_speed_panel ×11	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Speed Challenge/Speed_Panels/weaver_speed_panel	75.2	92.3
+07.102	Bone_East_Weavehome.7	weaver_speed_panel ×11	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Speed Challenge/Speed_Panels/weaver_speed_panel	80.2	92.3
+07.102	Bone_East_Weavehome.7	weaver_speed_panel ×11	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Speed Challenge/Speed_Panels/weaver_speed_panel	85.6	92.3
+07.102	Bone_East_Weavehome.7	weaver_speed_panel ×11	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Speed Challenge/Speed_Panels/weaver_speed_panel	91.1	92.3
+07.102	Bone_East_Weavehome.7	weaver_speed_panel ×11	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Speed Challenge/Speed_Panels/weaver_speed_panel	96.5	92.3
+07.102	Bone_East_Weavehome.7	weaver_speed_panel ×11	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Speed Challenge/Speed_Panels/weaver_speed_panel	102.0	92.3
+07.102	Bone_East_Weavehome.7	weaver_speed_panel ×11	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Speed Challenge/Speed_Panels/weaver_speed_panel	107.4	92.3
+07.102	Bone_East_Weavehome.7	weaver_speed_panel ×11	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Speed Challenge/Speed_Panels/weaver_speed_panel	112.8	92.3
+07.102	Bone_East_Weavehome.7	weaver_speed_panel ×11	Bone_East_Weavehome	Bone_East_Weavehome	left1	Weaver Speed Challenge/Speed_Panels/weaver_speed_panel	118.1	92.3
+07.103	Bone_East_Weavehome.8	weaver_lift_power_chamber (1) ×3	Bone_East_Weavehome	Bone_East_Weavehome	left1	weaver_lift_power_chamber (1)	102.5	65.9

@@ -12,6 +12,8 @@ causes and links to the rows each one covers.
 - `verdicts/<NN>.md`: how to patch each audited element and whether it is needed (rules: "Verdict files" below).
 - `catalog/<Area>.md`: each element listed once, in the first scene it appears in (`scene_order.txt` order).
 - `areas.tsv`: in-game area name for each scene prefix (Blasted Steps and Grand Gate are not mapped yet).
+  By prefix only, so border rooms can be wrong: the in-game map puts `Bone_East_12` (Lace 1) in Deep Docks, not
+  Far Fields (each scene's map zone is in `CustomSceneManager`, not dumped). Left as is.
 - `scene_order.txt`: scene walk order used by the catalog.
 - `tools/merge.py`: rebuilds `catalog/`, `areas.tsv` and the dump's `index.tsv`.
 - `teleports.tsv`: the dev teleport menu's table (F5 in dev mode), built by `tools/teleports.py` on `make`.
