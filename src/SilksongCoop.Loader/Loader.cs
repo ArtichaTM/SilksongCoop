@@ -12,7 +12,7 @@ using UnityEngine.Networking;
 namespace SilksongCoop.Loader;
 
 /// <summary>
-/// Downloads SilksongCoop when the site has a newer copy, then starts it from memory, as ScriptEngine does.
+/// Downloads SilksongCoop when the nightly build is newer, then starts it from memory, as ScriptEngine does.
 /// The copy is stored as <c>.payload</c>, which the Chainloader never picks up on its own.
 /// </summary>
 [BepInPlugin(Guid, Name, Version)]
@@ -24,7 +24,8 @@ public sealed class Loader : BaseUnityPlugin
 
     private const string Folder = "SilksongCoop";
     private const string DllName = "SilksongCoop.dll";
-    private const string DefaultUrl = "https://articha.ru/static/shared/" + DllName;
+    private const string Releases = "https://github.com/ArtichaTM/SilksongCoop/releases/download";
+    private const string DefaultUrl = Releases + "/nightly/" + DllName;
     private const int TimeoutSeconds = 10;
     private const float OfflineNoticeSeconds = 10f;
 
@@ -37,7 +38,7 @@ public sealed class Loader : BaseUnityPlugin
 
     private string PayloadPath => Path.Combine(Path.GetDirectoryName(Info.Location), "SilksongCoop.payload");
 
-    /// <summary>The site's ETag of the payload on disk; sent back so an unchanged file costs a 304.</summary>
+    /// <summary>The host's ETag of the payload on disk; sent back so an unchanged file costs a 304.</summary>
     private string EtagPath => PayloadPath + ".etag";
 
     private static string DevInstall => Path.Combine(Paths.BepInExRootPath, "scripts", Folder, DllName);

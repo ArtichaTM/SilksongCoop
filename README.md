@@ -2,6 +2,16 @@
 
 Two-player coop mod for Hollow Knight: Silksong (BepInEx plugin, `src/SilksongCoop`).
 
+## Building
+
+`make verify` runs every check. To install into a game, copy `local.mk.example` to `local.mk` and list the game
+root folders in it. `make install` builds the plugin into each game's `BepInEx/scripts` (ScriptEngine
+hot-reloads it), and `make install-dev` also installs the dev tools (FsmDump). Players use the loader
+(`make loader`), which downloads the nightly release built from `main`.
+
+Needs the .NET SDK from `global.json`, `uv` and GNU make. On Windows run make from Git Bash (make itself:
+`winget install ezwinports.make`).
+
 ## Sync ledger: the source of truth for what gets synced
 
 Every scene element of the game was dumped and audited for coop. The ledger records what each element needs, what

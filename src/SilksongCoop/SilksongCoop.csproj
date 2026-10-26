@@ -24,12 +24,4 @@
     <InternalsVisibleTo Include="SilksongCoop.Tests" />
   </ItemGroup>
 
-  <!-- `make install` passes PluginDir; the game paths live in the Makefile. -->
-  <Target Name="InstallPlugin">
-    <Error Condition="'$(PluginDir)' == ''" Text="PluginDir is not set; install through make" />
-    <!-- ScriptEngine aborts the whole reload when a DLL has no symbols next to it. -->
-    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(PluginDir)" />
-    <Message Importance="high" Text="installed into $(PluginDir)" />
-  </Target>
-
 </Project>

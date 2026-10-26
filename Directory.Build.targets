@@ -64,4 +64,17 @@
                       MaxWidth="$(MaxLineWidth)" />
   </Target>
 
+  <!-- `make install` exports SILKSONG_GAMES: game root folders separated by `;`, from local.mk. -->
+  <Target Name="InstallPlugin">
+    <Error Condition="'$(SILKSONG_GAMES)' == ''" Text="SILKSONG_GAMES is not set; see local.mk.example" />
+    <ItemGroup>
+      <_Game Include="$(SILKSONG_GAMES)" />
+    </ItemGroup>
+    <Error Condition="!Exists('%(_Game.Identity)/BepInEx')" Text="no BepInEx in %(_Game.Identity)" />
+    <!-- ScriptEngine aborts the whole reload when a DLL has no symbols next to it. -->
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb"
+          DestinationFolder="%(_Game.Identity)/BepInEx/scripts/$(TargetName)" />
+    <Message Importance="high" Text="installed into %(_Game.Identity)/BepInEx/scripts/$(TargetName)" />
+  </Target>
+
 </Project>

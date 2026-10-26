@@ -1,0 +1,4 @@
+# Copy to local.mk (untracked). Game root folders, separated by `;`; spaces are fine.
+SILKSONG_GAMES ?= $(HOME)/.local/share/Steam/steamapps/common/Hollow Knight Silksong
+# Windows: a Windows path with forward slashes, not a Git Bash /c/... one.
+# SILKSONG_GAMES ?= C:/Program Files (x86)/Steam/steamapps/common/Hollow Knight Silksong

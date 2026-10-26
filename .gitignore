@@ -9,3 +9,6 @@ obj/
 *.user
 *.suo
 *.DotSettings.user
+
+# Machine-local make settings
+local.mk

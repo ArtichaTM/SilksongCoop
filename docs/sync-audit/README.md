@@ -69,7 +69,7 @@ Every `Ref` cell (`scenes/<Scene>.fsm.txt:<line>`) points into the dump, so refs
 | Dump tool | `spikes/FsmDump`, commit `97b70b0` |
 | Dumped | 2026-10-24, GOG copy |
 
-- `scenes/`: FSM and object dump of every scene (245 MB). Regenerate: install FsmDump (`make install`), press F8 in game.
+- `scenes/`: FSM and object dump of every scene (245 MB). Regenerate: install FsmDump (`make install-dev`), press F8 in game.
 - `decomp/`: decompiled Assembly-CSharp (28 MB). Not shared: it is the game's code. Regenerate with any C# decompiler.
 - `index.tsv`: every use of every element (52 MB). Regenerate: `uv run docs/sync-audit/tools/merge.py`.
 

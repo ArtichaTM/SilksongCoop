@@ -1,31 +1,30 @@
-.PHONY: verify test install install-local loader teleports merge-main
+.PHONY: verify test install install-dev loader teleports merge-main
 
-# Where builds go: both games' hot-reloaded ScriptEngine folders.
-SCRIPTS := $(HOME)/.local/share/Steam/steamapps/common/Hollow Knight Silksong/BepInEx/scripts
-GOG_SCRIPTS := /mnt/nvme1/Temp/Games/Hollow Knight Silksong/BepInEx/scripts
+# Game root folders to install into, separated by `;`; set in the untracked local.mk (see local.mk.example).
+-include local.mk
+export SILKSONG_GAMES
 
-# Runs every check locally (the steps live in scripts/Verify.cs), then installs into both games.
+# Runs every check locally (the steps live in scripts/Verify.cs), then installs when a game is set.
 verify:
 	@dotnet run scripts/Verify.cs
-	@$(MAKE) --no-print-directory install-local
+	@if [ -n "$$SILKSONG_GAMES" ]; then $(MAKE) --no-print-directory install-dev; \
+	else echo "SILKSONG_GAMES is not set, install skipped"; fi
 
 # Runs the pure-logic tests.
 test:
 	dotnet test --project tests/SilksongCoop.Tests -c Release
 
-# Installs into both games; the post-commit hook publishes the plugin for the loader.
-install: install-local
-
 # Rebuilds the dev teleport table from the verdicts, audit and dump; keeps it when the dump is missing.
 teleports:
 	uv run docs/sync-audit/tools/teleports.py
 
-# Builds the plugin and the FSM dump spike into both games' BepInEx/scripts.
-install-local: teleports
-	dotnet build src/SilksongCoop -c Release -t:Build,InstallPlugin "-p:PluginDir=$(SCRIPTS)/SilksongCoop"
-	dotnet build src/SilksongCoop -c Release -t:InstallPlugin "-p:PluginDir=$(GOG_SCRIPTS)/SilksongCoop"
-	dotnet build spikes/FsmDump -c Release -t:Build,InstallPlugin "-p:PluginDir=$(SCRIPTS)/FsmDump"
-	dotnet build spikes/FsmDump -c Release -t:InstallPlugin "-p:PluginDir=$(GOG_SCRIPTS)/FsmDump"
+# Builds the plugin into every game's hot-reloaded BepInEx/scripts.
+install: teleports
+	dotnet build src/SilksongCoop -c Release -t:Build,InstallPlugin
+
+# Also installs the dev tools: the FSM dump spike.
+install-dev: install
+	dotnet build spikes/FsmDump -c Release -t:Build,InstallPlugin
 
 # Builds the auto-updating loader that players put in BepInEx/plugins/SilksongCoop instead of the plugin.
 loader:
