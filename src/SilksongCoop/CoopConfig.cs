@@ -10,7 +10,8 @@ internal sealed class CoopConfig
     public CoopConfig(ConfigFile file)
     {
         PlayerName = file.Bind("General", "PlayerName", Environment.UserName, "Name shown above your Hornet");
-        Password = file.Bind("General", "Password", "", "Shared password; host and friend must match (D34)");
+        const string PasswordHelp = "Shared password, required to host; host and friend must match (D34)";
+        Password = file.Bind("General", "Password", "", PasswordHelp);
 
         HostKey = file.Bind("Host", "HostKey", KeyCode.F8, "Start or stop hosting while in game");
         HostOnStart = file.Bind("Host", "HostOnStart", false, "Host automatically once a save is loaded");

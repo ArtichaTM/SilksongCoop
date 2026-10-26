@@ -4,6 +4,7 @@ Two-player coop mod for Hollow Knight: Silksong (BepInEx plugin, `src/SilksongCo
 
 The host must be reachable on its UDP port (`[Host] Port`, 26950 by default): forward that port on the router,
 or play over a LAN or a virtual LAN (ZeroTier, Tailscale, Radmin VPN). There is no NAT traversal or relay.
+Hosting needs a password (`[General] Password`), since a forwarded port is reachable by anyone.
 
 ## Building
 

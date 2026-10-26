@@ -186,6 +186,11 @@ internal sealed class Coop : IDisposable
 
     public void StartHosting()
     {
+        if (Config.Password.Value.Length == 0)
+        {
+            Hints.Show("Set [General] Password in the config first", 6f);
+            return;
+        }
         try
         {
             Session = Session.Host(Config.HostPort.Value, Credentials, Config.PlayerName.Value);
