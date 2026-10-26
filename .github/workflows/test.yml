@@ -26,4 +26,4 @@ jobs:
       - name: Test
         run: >-
           dotnet test --project tests/SilksongCoop.Tests --no-restore -c Release
-          -p:RunAnalyzers=false -p:TreatWarningsAsErrors=false -p:CheckLines=false
+          -p:RunAnalyzers=false -p:TreatWarningsAsErrors=false -p:CheckLineWidth=false

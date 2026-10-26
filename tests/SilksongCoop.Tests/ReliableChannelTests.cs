@@ -17,6 +17,21 @@ public class ReliableChannelTests
     }
 
     [Fact]
+    public void ResendWaitDoublesUpToTheCap()
+    {
+        // Binary fractions, so the waits add up exactly.
+        ReliableChannel channel = new(resendAfter: 0.125);
+        channel.Send(Message(1));
+        Assert.Single(channel.Due(0));
+        double[] resends = [0.125, 0.375, 0.875, 1.875, 2.875];
+        foreach (double at in resends)
+        {
+            Assert.Empty(channel.Due(at - 0.01));
+            Assert.Single(channel.Due(at));
+        }
+    }
+
+    [Fact]
     public void AckedMessagesStopResending()
     {
         ReliableChannel channel = new(resendAfter: 0.1);

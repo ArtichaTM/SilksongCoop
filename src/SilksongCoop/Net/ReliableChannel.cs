@@ -1,14 +1,16 @@
+using System;
 using System.Collections.Generic;
 
 namespace SilksongCoop.Net;
 
 /// <summary>
-/// Ordered, acknowledged delivery over plain datagrams: resends until acked, delivers in sequence order.
-/// Time is passed in so the logic stays testable.
+/// Ordered, acknowledged delivery over plain datagrams: resends until acked, each wait twice the last up to
+/// <see cref="MaxResendAfter"/> so a lossy link isn't flooded; delivers in sequence order. Time is passed in.
 /// </summary>
 internal sealed class ReliableChannel
 {
     public const int Window = 128;
+    public const double MaxResendAfter = 1;
 
     private readonly double _resendAfter;
     private readonly SortedDictionary<uint, Pending> _inFlight = [];
@@ -34,8 +36,10 @@ internal sealed class ReliableChannel
         foreach (KeyValuePair<uint, Pending> entry in _inFlight)
         {
             Pending pending = entry.Value;
-            if (pending.LastSent < 0 || now - pending.LastSent >= _resendAfter)
+            if (pending.LastSent < 0 || now - pending.LastSent >= pending.Wait)
             {
+                double doubled = Math.Min(pending.Wait * 2, MaxResendAfter);
+                pending.Wait = pending.LastSent < 0 ? _resendAfter : doubled;
                 pending.LastSent = now;
                 due.Add((entry.Key, pending.Message));
             }
@@ -68,5 +72,7 @@ internal sealed class ReliableChannel
         public byte[] Message { get; } = message;
 
         public double LastSent { get; set; } = -1;
+
+        public double Wait { get; set; }
     }
 }

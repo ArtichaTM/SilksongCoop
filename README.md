@@ -2,6 +2,9 @@
 
 Two-player coop mod for Hollow Knight: Silksong (BepInEx plugin, `src/SilksongCoop`).
 
+The host must be reachable on its UDP port (`[Host] Port`, 26950 by default): forward that port on the router,
+or play over a LAN or a virtual LAN (ZeroTier, Tailscale, Radmin VPN). There is no NAT traversal or relay.
+
 ## Building
 
 `make verify` runs every check. To install into a game, copy `local.mk.example` to `local.mk` and list the game
@@ -30,7 +33,6 @@ our code does about it, and what has been tested. It lives in `docs/sync-audit/`
 
 Work slice by slice through four stages: **Dump** (`data/FsmDump/`) -> **Audit** (what each element does,
 `audit/<NN>_<Area>.md`) -> **Verdicts** (how to patch it and whether it is needed, `verdicts/<NN>.md`) -> **Code**.
-State: 2.01-2.05 are at Verdicts (`verdicts/01.md` .. `05.md`); 2.06-2.19 have audits only.
 Verdict file rules and column values: `docs/sync-audit/README.md`, "Verdict files".
 
 ### Refer to places by verdict number

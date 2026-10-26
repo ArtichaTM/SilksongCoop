@@ -26,6 +26,20 @@ public class HandshakeTests
     }
 
     [Fact]
+    public void ProtocolVersionTakesTheShortCommit()
+    {
+        string version = Handshake.WithCommit("0.1.0", "1.0.0+31ee7d60b2b5cc2254ccd6422a90200a221a7ebd");
+        Assert.Equal("0.1.0+31ee7d6", version);
+    }
+
+    [Fact]
+    public void ProtocolVersionWithoutCommitIsTheBareVersion()
+    {
+        Assert.Equal("0.1.0", Handshake.WithCommit("0.1.0", "1.0.0"));
+        Assert.Equal("0.1.0", Handshake.WithCommit("0.1.0", null));
+    }
+
+    [Fact]
     public void WrongPasswordIsRejected()
     {
         string? reason = Handshake.Reject(Host, Host with { Password = "wrong" });

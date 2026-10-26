@@ -31,6 +31,7 @@ public sealed class Loader : BaseUnityPlugin
 
     private ConfigEntry<bool> _autoUpdate = null!;
     private ConfigEntry<string> _url = null!;
+    private ConfigEntry<bool> _symbols = null!;
     private string? _status;
     private float _statusUntil = float.PositiveInfinity;
     private bool _failed;
@@ -41,12 +42,16 @@ public sealed class Loader : BaseUnityPlugin
     /// <summary>The host's ETag of the payload on disk; sent back so an unchanged file costs a 304.</summary>
     private string EtagPath => PayloadPath + ".etag";
 
+    /// <summary>The payload's pdb; deleted whenever a new payload lands, so it never mismatches.</summary>
+    private string SymbolsPath => PayloadPath + ".pdb";
+
     private static string DevInstall => Path.Combine(Paths.BepInExRootPath, "scripts", Folder, DllName);
 
     private void Awake()
     {
         _autoUpdate = Config.Bind("Update", "Enabled", true, "Download a newer SilksongCoop on game start");
         _url = Config.Bind("Update", "Url", DefaultUrl, "Where the newest SilksongCoop.dll is served");
+        _symbols = Config.Bind("Update", "Symbols", false, "Also download the .pdb: errors get line numbers");
     }
 
     private IEnumerator Start()
@@ -59,8 +64,32 @@ public sealed class Loader : BaseUnityPlugin
         if (_autoUpdate.Value)
         {
             yield return Download();
+            if (_symbols.Value && File.Exists(PayloadPath) && !File.Exists(SymbolsPath))
+            {
+                yield return DownloadSymbols();
+            }
         }
         Run();
+    }
+
+    /// <summary>Best effort: without the pdb SilksongCoop still runs, its errors just lack lines.</summary>
+    private IEnumerator DownloadSymbols()
+    {
+        string url = _url.Value;
+        if (!url.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+        {
+            Logger.LogWarning($"no pdb next to {url}: the url doesn't end in .dll");
+            yield break;
+        }
+        using UnityWebRequest request = UnityWebRequest.Get(url.Substring(0, url.Length - 4) + ".pdb");
+        request.timeout = TimeoutSeconds;
+        yield return request.SendWebRequest();
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Logger.LogWarning($"SilksongCoop pdb not downloaded: {request.error}");
+            yield break;
+        }
+        File.WriteAllBytes(SymbolsPath, request.downloadHandler.data);
     }
 
     private void OnGUI()
@@ -136,6 +165,7 @@ public sealed class Loader : BaseUnityPlugin
         File.WriteAllBytes(fresh, payload);
         File.Delete(PayloadPath);
         File.Move(fresh, PayloadPath);
+        File.Delete(SymbolsPath);
         if (etag is null)
         {
             File.Delete(EtagPath);
@@ -155,7 +185,9 @@ public sealed class Loader : BaseUnityPlugin
         }
         try
         {
-            Assembly assembly = Assembly.Load(File.ReadAllBytes(PayloadPath));
+            bool symbols = _symbols.Value && File.Exists(SymbolsPath);
+            byte[]? pdb = symbols ? File.ReadAllBytes(SymbolsPath) : null;
+            Assembly assembly = Assembly.Load(File.ReadAllBytes(PayloadPath), pdb);
             Type type = assembly.GetTypes().First(typeof(BaseUnityPlugin).IsAssignableFrom);
             string guid = MetadataHelper.GetMetadata(type).GUID;
             if (Chainloader.PluginInfos.TryGetValue(guid, out PluginInfo loaded))
