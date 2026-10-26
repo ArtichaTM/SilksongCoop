@@ -56,7 +56,9 @@ internal sealed class CoopConfig
             "Seconds after which a downed player gets up alone once no enemy is left in the room; 0 disables"
         );
 
-        PauseFreezesBoth = file.Bind("Pause", "PauseFreezesBoth", false, "Pausing freezes both games (D29)");
+        const string PauseHelp = "Off: the world keeps running; Freeze: a pause stops both games; "
+            + "Menu: Esc opens and closes the pause menu for both (D29)";
+        PauseMode = file.Bind("Pause", "Mode", Game.PauseMode.Menu, PauseHelp);
 
         SyncPlatforms = file.Bind(
             "World",
@@ -118,7 +120,7 @@ internal sealed class CoopConfig
 
     public ConfigEntry<float> SelfReviveDelay { get; }
 
-    public ConfigEntry<bool> PauseFreezesBoth { get; }
+    public ConfigEntry<Game.PauseMode> PauseMode { get; }
 
     public ConfigEntry<bool> SyncPlatforms { get; }
 

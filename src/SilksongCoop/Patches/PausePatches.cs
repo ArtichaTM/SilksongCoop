@@ -1,8 +1,10 @@
+using System.Collections;
+using System.Linq;
 using HarmonyLib;
 
 namespace SilksongCoop.Patches;
 
-/// <summary>D29: lets the pause sync react after the game froze or resumed time.</summary>
+/// <summary>D29: the pause sync reacts after the game froze or resumed time, and can hold back Esc.</summary>
 [HarmonyPatch(typeof(GameManager), nameof(GameManager.SetPausedState))]
 internal static class PausePatches
 {
@@ -17,6 +19,21 @@ internal static class PausePatches
         if (!_inventory)
         {
             Coop.Current?.Pause.OnLocalPause(value);
+        }
+    }
+
+    /// <summary>Every pause and unpause, from Esc or the menu's Continue, passes here.</summary>
+    [HarmonyPatch(typeof(GameManager), nameof(GameManager.PauseGameToggle))]
+    private static class Toggle
+    {
+        private static bool Prefix(GameManager __instance, ref IEnumerator __result)
+        {
+            if (Coop.Current?.Pause.AllowToggle(__instance) ?? true)
+            {
+                return true;
+            }
+            __result = Enumerable.Empty<object>().GetEnumerator();
+            return false;
         }
     }
 
