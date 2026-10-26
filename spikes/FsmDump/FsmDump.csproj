@@ -4,6 +4,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>FsmDump</RootNamespace>
+    <!-- Marks the assembly SkipVerification, so Mono allows the publicized private members at runtime. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,9 +3,12 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -24,13 +27,18 @@ public sealed class Loader : BaseUnityPlugin
 
     private const string Folder = "SilksongCoop";
     private const string DllName = "SilksongCoop.dll";
-    private const string Releases = "https://github.com/ArtichaTM/SilksongCoop/releases/download";
-    private const string DefaultUrl = Releases + "/nightly/" + DllName;
+    private const string Repo = "ArtichaTM/SilksongCoop";
+    private const string Nightly = "https://github.com/" + Repo + "/releases/download/nightly/";
+    private const string DllUrl = Nightly + DllName;
+    private const string SymbolsUrl = Nightly + "SilksongCoop.pdb";
+
+    /// <summary>Lists each asset's SHA-256, which GitHub computes on upload.</summary>
+    private const string ReleaseApiUrl = "https://api.github.com/repos/" + Repo + "/releases/tags/nightly";
+    private const string DigestPrefix = "sha256:";
     private const int TimeoutSeconds = 10;
     private const float OfflineNoticeSeconds = 10f;
 
     private ConfigEntry<bool> _autoUpdate = null!;
-    private ConfigEntry<string> _url = null!;
     private ConfigEntry<bool> _symbols = null!;
     private string? _status;
     private float _statusUntil = float.PositiveInfinity;
@@ -50,7 +58,6 @@ public sealed class Loader : BaseUnityPlugin
     private void Awake()
     {
         _autoUpdate = Config.Bind("Update", "Enabled", true, "Download a newer SilksongCoop on game start");
-        _url = Config.Bind("Update", "Url", DefaultUrl, "Where the newest SilksongCoop.dll is served");
         _symbols = Config.Bind("Update", "Symbols", false, "Also download the .pdb: errors get line numbers");
     }
 
@@ -75,13 +82,7 @@ public sealed class Loader : BaseUnityPlugin
     /// <summary>Best effort: without the pdb SilksongCoop still runs, its errors just lack lines.</summary>
     private IEnumerator DownloadSymbols()
     {
-        string url = _url.Value;
-        if (!url.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
-        {
-            Logger.LogWarning($"no pdb next to {url}: the url doesn't end in .dll");
-            yield break;
-        }
-        using UnityWebRequest request = UnityWebRequest.Get(url.Substring(0, url.Length - 4) + ".pdb");
+        using UnityWebRequest request = UnityWebRequest.Get(SymbolsUrl);
         request.timeout = TimeoutSeconds;
         yield return request.SendWebRequest();
         if (request.result != UnityWebRequest.Result.Success)
@@ -97,13 +98,13 @@ public sealed class Loader : BaseUnityPlugin
         if (_status is not null && Time.realtimeSinceStartup < _statusUntil)
         {
             _rightAligned ??= new GUIStyle(GUI.skin.label) { alignment = TextAnchor.UpperRight };
-            GUI.Label(new Rect(Screen.width - 810, 10, 800, 30), _status, _rightAligned);
+            GUI.Label(new Rect(Screen.width - 810, 10, 800, 60), _status, _rightAligned);
         }
     }
 
     private IEnumerator Download()
     {
-        using UnityWebRequest request = UnityWebRequest.Get(_url.Value);
+        using UnityWebRequest request = UnityWebRequest.Get(DllUrl);
         request.timeout = TimeoutSeconds;
         if (File.Exists(PayloadPath) && File.Exists(EtagPath))
         {
@@ -134,10 +135,77 @@ public sealed class Loader : BaseUnityPlugin
             Fail($"SilksongCoop update rejected: {problem}");
             yield break;
         }
-        Save(payload, request.GetResponseHeader("ETag"));
+        _status = "SilksongCoop: verifying the download";
+        string? digest = null;
+        yield return FetchDigest(found => digest = found);
+        if (digest is null)
+        {
+            Refuse("GitHub did not report the build's checksum");
+            yield break;
+        }
+        string hash = Sha256(payload);
+        if (!string.Equals(hash, digest, StringComparison.OrdinalIgnoreCase))
+        {
+            Logger.LogWarning($"downloaded sha256 {hash}, release lists {digest}");
+            Refuse("the checksum does not match, the release may be mid-upload");
+            yield break;
+        }
+        string etag = request.GetResponseHeader("ETag");
+        string? current = File.Exists(PayloadPath) ? Sha256(File.ReadAllBytes(PayloadPath)) : null;
+        if (string.Equals(current, hash, StringComparison.OrdinalIgnoreCase))
+        {
+            Logger.LogInfo("SilksongCoop is up to date, the release was re-uploaded");
+            SaveEtag(etag);
+            yield break;
+        }
+        Save(payload, etag);
         string built = request.GetResponseHeader("Last-Modified");
         Logger.LogMessage($"SilksongCoop updated to the build of {built}");
         _status = "SilksongCoop: starting";
+    }
+
+    /// <summary>Old payload and etag stay, so the next start downloads and checks again.</summary>
+    private void Refuse(string reason) =>
+        Fail($"SilksongCoop update refused: {reason}; retrying next start", OfflineNoticeSeconds);
+
+    /// <summary>Passes the hex SHA-256 the release lists for the DLL, or null on any failure.</summary>
+    private IEnumerator FetchDigest(Action<string?> found)
+    {
+        using UnityWebRequest request = UnityWebRequest.Get(ReleaseApiUrl);
+        request.timeout = TimeoutSeconds;
+        request.SetRequestHeader("User-Agent", $"{Name}/{Version}");
+        request.SetRequestHeader("Accept", "application/vnd.github+json");
+        yield return request.SendWebRequest();
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Logger.LogWarning($"release info not fetched: {request.error}");
+            found(null);
+            yield break;
+        }
+        JToken? release = null;
+        try
+        {
+            release = JToken.Parse(request.downloadHandler.text);
+        }
+        catch (JsonException exception)
+        {
+            Logger.LogWarning($"release info unreadable: {exception.Message}");
+        }
+        string? digest = (release?["assets"] as JArray)?.OfType<JObject>()
+            .FirstOrDefault(asset => (string?)asset["name"] == DllName)?["digest"]?.Value<string>();
+        if (digest is null || !digest.StartsWith(DigestPrefix, StringComparison.Ordinal))
+        {
+            Logger.LogWarning($"release info has no {DigestPrefix} digest for {DllName}");
+            found(null);
+            yield break;
+        }
+        found(digest.Substring(DigestPrefix.Length));
+    }
+
+    private static string Sha256(byte[] data)
+    {
+        using SHA256 sha = SHA256.Create();
+        return BitConverter.ToString(sha.ComputeHash(data)).Replace("-", "");
     }
 
     private static string Progress(UnityWebRequest request)
@@ -166,6 +234,11 @@ public sealed class Loader : BaseUnityPlugin
         File.Delete(PayloadPath);
         File.Move(fresh, PayloadPath);
         File.Delete(SymbolsPath);
+        SaveEtag(etag);
+    }
+
+    private void SaveEtag(string? etag)
+    {
         if (etag is null)
         {
             File.Delete(EtagPath);
@@ -180,7 +253,8 @@ public sealed class Loader : BaseUnityPlugin
     {
         if (!File.Exists(PayloadPath))
         {
-            Fail($"SilksongCoop is not downloaded yet; expected at {PayloadPath}");
+            string why = _failed ? "\n" + _status : "";
+            Fail($"SilksongCoop is not downloaded yet; expected at {PayloadPath}{why}");
             return;
         }
         try

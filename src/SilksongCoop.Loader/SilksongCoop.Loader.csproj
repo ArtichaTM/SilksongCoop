@@ -9,6 +9,7 @@
   <!-- Compile-time only: the game and BepInEx provide these at runtime. -->
   <ItemGroup>
     <PackageReference Include="BepInEx.Core" PrivateAssets="all" IncludeAssets="compile" />
+    <PackageReference Include="Newtonsoft.Json" PrivateAssets="all" IncludeAssets="compile" />
     <PackageReference Include="UnityEngine.Modules" PrivateAssets="all" IncludeAssets="compile" />
   </ItemGroup>
 

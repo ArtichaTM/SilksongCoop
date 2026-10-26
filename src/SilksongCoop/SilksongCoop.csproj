@@ -4,6 +4,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>SilksongCoop</RootNamespace>
+    <!-- Marks the assembly SkipVerification, so Mono allows the publicized private members at runtime. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <!-- Compile-time only: the game and BepInEx provide these at runtime. GameLibs is already publicized. -->
