@@ -6,27 +6,12 @@
     <RootNamespace>SilksongCoop</RootNamespace>
   </PropertyGroup>
 
-  <!-- Publicized game assemblies let patches touch private members without reflection. -->
+  <!-- Compile-time only: the game and BepInEx provide these at runtime. GameLibs is already publicized. -->
   <ItemGroup>
-    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" PrivateAssets="all" />
-  </ItemGroup>
-
-  <!-- Compile-time only: the game and BepInEx provide these at runtime. -->
-  <ItemGroup>
-    <Reference Include="$(BepInExCore)/BepInEx.dll" Private="false" />
-    <Reference Include="$(BepInExCore)/0Harmony.dll" Private="false" />
-    <Reference Include="$(GameManaged)/Assembly-CSharp.dll" Private="false" Publicize="true" />
-    <Reference Include="$(GameManaged)/PlayMaker.dll" Private="false" Publicize="true" />
-    <Reference Include="$(GameManaged)/TeamCherry.TK2D.dll" Private="false" Publicize="true" />
-    <Reference Include="$(GameManaged)/TeamCherry.SharedUtils.dll" Private="false" />
-    <Reference Include="$(GameManaged)/Newtonsoft.Json.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.CoreModule.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.Physics2DModule.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.AudioModule.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.InputLegacyModule.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.IMGUIModule.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.TextRenderingModule.dll" Private="false" />
+    <PackageReference Include="BepInEx.Core" PrivateAssets="all" IncludeAssets="compile" />
+    <PackageReference Include="HarmonyX" PrivateAssets="all" IncludeAssets="compile" />
+    <PackageReference Include="Silksong.GameLibs" PrivateAssets="all" IncludeAssets="compile" />
+    <PackageReference Include="UnityEngine.Modules" PrivateAssets="all" IncludeAssets="compile" />
   </ItemGroup>
 
   <!-- The dev teleport menu's table, built by `make teleports` from the sync ledger. -->

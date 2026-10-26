@@ -8,12 +8,8 @@
 
   <!-- Compile-time only: the game and BepInEx provide these at runtime. -->
   <ItemGroup>
-    <Reference Include="$(BepInExCore)/BepInEx.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.CoreModule.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.IMGUIModule.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.TextRenderingModule.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.UnityWebRequestModule.dll" Private="false" />
+    <PackageReference Include="BepInEx.Core" PrivateAssets="all" IncludeAssets="compile" />
+    <PackageReference Include="UnityEngine.Modules" PrivateAssets="all" IncludeAssets="compile" />
   </ItemGroup>
 
   <!-- `make install` passes PluginDir; the game paths live in the Makefile. -->

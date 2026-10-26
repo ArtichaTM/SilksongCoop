@@ -1,0 +1,52 @@
+# Builds every push to main and republishes it as the rolling `nightly` prerelease.
+# Latest DLL: https://github.com/ArtichaTM/SilksongCoop/releases/download/nightly/SilksongCoop.dll
+name: nightly
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# A newer push supersedes a running build, so two runs never race on the release.
+concurrency:
+  group: nightly
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      OUT: src/SilksongCoop/bin/Release/netstandard2.1
+      LOADER_OUT: src/SilksongCoop.Loader/bin/Release/netstandard2.1
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
+
+      - name: Build
+        run: |
+          dotnet build src/SilksongCoop -c Release
+          dotnet build src/SilksongCoop.Loader -c Release
+
+      - name: Test
+        run: dotnet test --project tests/SilksongCoop.Tests -c Release
+
+      # Moves the tag and replaces assets in place; each file 404s for the second its upload takes.
+      - name: Publish nightly
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git tag -f nightly
+          git push -f origin nightly
+          gh release view nightly >/dev/null 2>&1 \
+            || gh release create nightly --prerelease --title "Nightly" --notes "Latest build of main."
+          gh release upload nightly --clobber \
+            "$OUT/SilksongCoop.dll" "$OUT/SilksongCoop.pdb" "$LOADER_OUT/SilksongCoop.Loader.dll"
+          gh release edit nightly --notes "Latest build of main: ${GITHUB_SHA::7}."

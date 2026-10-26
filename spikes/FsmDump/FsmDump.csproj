@@ -7,17 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="$(BepInExCore)/BepInEx.dll" Private="false" />
-    <Reference Include="$(BepInExCore)/0Harmony.dll" Private="false" />
-    <Reference Include="$(GameManaged)/Assembly-CSharp.dll" Private="false" />
-    <Reference Include="$(GameManaged)/PlayMaker.dll" Private="false" />
-    <Reference Include="$(GameManaged)/Unity.Addressables.dll" Private="false" />
-    <Reference Include="$(GameManaged)/Unity.ResourceManager.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.CoreModule.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.InputLegacyModule.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.IMGUIModule.dll" Private="false" />
-    <Reference Include="$(GameManaged)/UnityEngine.TextRenderingModule.dll" Private="false" />
+    <PackageReference Include="BepInEx.Core" PrivateAssets="all" IncludeAssets="compile" />
+    <PackageReference Include="HarmonyX" PrivateAssets="all" IncludeAssets="compile" />
+    <PackageReference Include="Silksong.GameLibs" PrivateAssets="all" IncludeAssets="compile" />
+    <PackageReference Include="UnityEngine.Modules" PrivateAssets="all" IncludeAssets="compile" />
   </ItemGroup>
 
   <!-- `make install` passes PluginDir; the game paths live in the Makefile. -->

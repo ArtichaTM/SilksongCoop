@@ -13,9 +13,9 @@
     <PackageReference Include="xunit.v3" />
   </ItemGroup>
 
-  <!-- The save-merge logic works on the game's own Json.NET; copy it next to the tests. -->
+  <!-- The save-merge logic works on Json.NET; this is the version the game ships. -->
   <ItemGroup>
-    <Reference Include="$(GameManaged)/Newtonsoft.Json.dll" />
+    <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
   <ItemGroup>

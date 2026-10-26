@@ -6,10 +6,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" />
+    <PackageVersion Include="BepInEx.Core" Version="5.4.21" />
+    <PackageVersion Include="HarmonyX" Version="2.9.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageVersion Include="Roslynator.Analyzers" Version="5.0.0" />
     <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="5.0.0" />
     <PackageVersion Include="xunit.v3" Version="4.0.1" />
+  </ItemGroup>
+
+  <!-- Stripped game references, so CI builds without the game. Bump both on a game or Unity update. -->
+  <ItemGroup>
+    <PackageVersion Include="Silksong.GameLibs" Version="1.2.0-silksong1.0.30000" />
+    <PackageVersion Include="UnityEngine.Modules" Version="6000.0.50" />
   </ItemGroup>
 
 </Project>
