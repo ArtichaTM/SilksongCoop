@@ -1,4 +1,4 @@
-.PHONY: verify test install install-local loader teleports
+.PHONY: verify test install install-local loader teleports merge-main
 
 # Where builds go: both games' hot-reloaded ScriptEngine folders.
 SCRIPTS := $(HOME)/.local/share/Steam/steamapps/common/Hollow Knight Silksong/BepInEx/scripts
@@ -30,3 +30,7 @@ install-local: teleports
 # Builds the auto-updating loader that players put in BepInEx/plugins/SilksongCoop instead of the plugin.
 loader:
 	dotnet build src/SilksongCoop.Loader -c Release
+
+# Fast-forwards main to dev, runs `make verify` on it and pushes; rolls back on failure.
+merge-main:
+	bash scripts/merge-main.sh
