@@ -14,6 +14,10 @@ namespace SilksongCoop.Game;
 /// and health cocoons (2.22, 2.44) take hits the same way: each game flings its own loot, and each player
 /// collects their own copy. A thread spinner shrinks in both games, but its silk goes to the hitter only.
 /// Geo rocks (3.12) take hits in their FSM, so the hit state is replayed instead, loot per player too.
+/// Swinging bodies (hanging sacks, chains) get the same push, so a pogo target hangs where both see it.
+/// An extracted lifeblood pustule (5.32) withers its vines in both games; its lifeblood stays the taker's.
+/// A bounce pod's bounce or side hit plays its animation and recoil on the partner's copy, but not its short
+/// inert time, which would stop the partner's own pogo.
 /// </summary>
 internal sealed class HitResponseSync : Module
 {
@@ -27,7 +31,10 @@ internal sealed class HitResponseSync : Module
 
     /// <summary>The hit responders replayed here; the index is the kind byte on the wire.</summary>
     private static readonly Type[] Kinds =
-        [typeof(HitResponse), typeof(RosaryCache), typeof(HealthCocoon), typeof(ThreadSpinner)];
+    [
+        typeof(HitResponse), typeof(RosaryCache), typeof(HealthCocoon), typeof(ThreadSpinner),
+        typeof(HitRigidbody2D),
+    ];
 
     private readonly Dictionary<(int Id, byte Kind), MonoBehaviour> _targets = [];
     private float _lastIndex = -ReindexCooldown;
@@ -42,6 +49,8 @@ internal sealed class HitResponseSync : Module
     {
         session.On(MessageType.ObjectHit, OnPartnerHit);
         session.On(MessageType.GeoRockHit, OnPartnerGeoRockHit);
+        session.On(MessageType.PustuleExtracted, OnPartnerExtract);
+        session.On(MessageType.BouncePodHit, OnPartnerPodHit);
     }
 
     public override void Dispose() => Coop.Rooms.Entered -= OnEntered;
@@ -82,12 +91,41 @@ internal sealed class HitResponseSync : Module
         Session?.Send(MessageType.GeoRockHit, w => w.Int(room).Int(id).String(toState.Name).Float(direction));
     }
 
+    /// <summary>The local hero extracted this pustule: it broke for good.</summary>
+    public void OnLocalExtract(LifebloodPustule pustule)
+    {
+        if (Applying || !Coop.Rooms.PartnerHere || !Coop.Rooms.Holds(pustule.gameObject.scene))
+        {
+            return;
+        }
+        int room = Coop.Rooms.CurrentHash;
+        int id = EnemySync.IdOf(pustule.gameObject);
+        Session?.Send(MessageType.PustuleExtracted, w => w.Int(room).Int(id));
+    }
+
+    /// <param name="bounce">A pogo off it, else a side hit.</param>
+    /// <param name="push">Sign of the pod's recoil on X.</param>
+    public void OnLocalPodHit(BouncePod pod, bool bounce, float push)
+    {
+        if (!Coop.Rooms.PartnerHere || !Coop.Rooms.Holds(pod.gameObject.scene))
+        {
+            return;
+        }
+        int room = Coop.Rooms.CurrentHash;
+        int id = EnemySync.IdOf(pod.gameObject);
+        Session?.Send(MessageType.BouncePodHit, w => w.Int(room).Int(id).Bool(bounce).Float(push));
+    }
+
     private bool Synced(MonoBehaviour target)
     {
         GameObject go = target.gameObject;
         if (!Coop.Rooms.Holds(go.scene))
         {
             return false;
+        }
+        if (target is HitRigidbody2D)
+        {
+            return !go.GetComponentInParent<HealthManager>(true);
         }
         if (target is not HitResponse response)
         {
@@ -165,6 +203,53 @@ internal sealed class HitResponseSync : Module
         finally
         {
             Applying = false;
+        }
+    }
+
+    /// <summary>Breaks the copy as an extract does, without the hero pin and the lifeblood.</summary>
+    private void OnPartnerExtract(PacketReader reader)
+    {
+        int room = reader.Int();
+        int id = reader.Int();
+        LifebloodPustule? pustule = UnityEngine.Object
+            .FindObjectsByType<LifebloodPustule>(FindObjectsSortMode.None)
+            .FirstOrDefault(found => !found.isExtracted && EnemySync.IdOf(found.gameObject) == id);
+        if (room != Coop.Rooms.CurrentHash || pustule is null)
+        {
+            return;
+        }
+        Applying = true;
+        try
+        {
+            pustule.isExtracting = false;
+            pustule.isExtracted = true;
+            pustule.Break(pustule.EffectSpawnTransform, isExtracted: true);
+        }
+        finally
+        {
+            Applying = false;
+        }
+    }
+
+    private void OnPartnerPodHit(PacketReader reader)
+    {
+        int room = reader.Int();
+        int id = reader.Int();
+        bool bounce = reader.Bool();
+        float push = reader.Float();
+        BouncePod? pod = UnityEngine.Object.FindObjectsByType<BouncePod>(FindObjectsSortMode.None)
+            .FirstOrDefault(found => !found.isBroken && EnemySync.IdOf(found.gameObject) == id);
+        if (room != Coop.Rooms.CurrentHash || pod is null)
+        {
+            return;
+        }
+        pod.PlayAnim(bounce ? pod.bounceAnim : pod.hitAnim);
+        pod.SpawnHitEffects();
+        if (pod.bounceReactBody)
+        {
+            Vector2 velocity = bounce ? pod.bounceReactVelocity : pod.hitReactVelocity;
+            velocity.x *= push;
+            pod.bounceReactBody.linearVelocity = velocity;
         }
     }
 

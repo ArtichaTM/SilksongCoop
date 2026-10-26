@@ -18,6 +18,16 @@ internal static class SyncedObjects
         ("Mossbone Stalactite", "Control"),
         ("Bone_Boulder", "Control"),
         ("Corpse Shellwood Goomba Flyer", "Custom Corpse"),
+        ("Bone Worm Nest", "FSM"),
+    ];
+
+    /// <summary>
+    /// Owner-run objects whose blocked events stay in the mirror: their own timers (a nest's spawn pause)
+    /// would otherwise reach the owner and double its rate (5.29).
+    /// </summary>
+    private static readonly (string Prefix, string Fsm)[] Unrelayed =
+    [
+        ("Bone Worm Nest", "FSM"),
     ];
 
     /// <summary>Owner-run objects that go once per room visit, and the FSM bool set as they go.</summary>
@@ -37,6 +47,8 @@ internal static class SyncedObjects
     [
         new("explode_wall", "Control", "Strike"),
         new("Pilgrim Trap Wire", "Control", "Snap"),
+        new("Bell Centipede Bellway Scene", "Control", "Appear 1"),
+        new("Mite Trap", "Control", "Antic"),
     ];
 
     /// <summary>FSM pickups (name prefix) and the state a take enters: one take per world (7.3).</summary>
@@ -47,8 +59,28 @@ internal static class SyncedObjects
         new("Ladybug Craft Pickup", "FSM", "Wait"),
     ];
 
+    /// <summary>
+    /// Enemy parts that wound the hero touching them (FSM name): each game runs its own, or a bite on the
+    /// owner's hero replays on the mirror and wounds the hero there too (5.30).
+    /// </summary>
+    private static readonly HashSet<string> HeroWounders = ["hornet_multi_wounder"];
+
+    public static bool IsHeroWounder(string fsm) => HeroWounders.Contains(fsm);
+
+    /// <summary>
+    /// Pooled enemies that come and go each second (name prefix): an arrival snapshot of them is stale on
+    /// arrival and leaves the copy stuck, so they only follow live state switches (5.29).
+    /// </summary>
+    private static readonly string[] ShortLived = ["Bone Worm"];
+
+    public static bool IsShortLived(string objectName) =>
+        ShortLived.Any(objectName.StartsWith);
+
     public static bool IsOwnerRun(string objectName, string fsm) =>
         OwnerRun.Any(entry => entry.Fsm == fsm && objectName.StartsWith(entry.Prefix));
+
+    public static bool IsUnrelayed(string objectName, string fsm) =>
+        Unrelayed.Any(entry => entry.Fsm == fsm && objectName.StartsWith(entry.Prefix));
 
     /// <summary>The FSM bool that is true once this object went, else null.</summary>
     public static string? SpentFlag(string objectName, string fsm) =>

@@ -20,6 +20,10 @@ internal static class WaitPoints
         ("Shrine Weaver Ability", "Inspection", "Idle", "INTERACT"),
         ("Caravan", "Quest End Sequence", "Wait", "QUEST END TRAVEL"),
         ("Snail Shamans Set", "Dialogue", "Wait For Enter", "ENTER"),
+        ("Bell Beast DefeatedCentipede NPC", "Control", "Idle L", "INTERACT"),
+        ("Bell Beast DefeatedCentipede NPC", "Control", "Idle R", "INTERACT"),
+        ("Bell Beast DefeatedCentipede NPC", "Control", "Turn L", "INTERACT"),
+        ("Bell Beast DefeatedCentipede NPC", "Control", "Turn R", "INTERACT"),
     ];
 
     public static bool Waits(string objectName, string fsm, string state, string fsmEvent) =>

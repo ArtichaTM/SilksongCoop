@@ -61,6 +61,9 @@ internal enum MessageType : byte
     GeoRockHit,
     CrankCompleted,
     HazardsSpent,
+    BeastSing,
+    PustuleExtracted,
+    BouncePodHit,
 }
 
 /// <summary>First byte after the magic: how the rest of the datagram is framed.</summary>

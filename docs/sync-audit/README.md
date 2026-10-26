@@ -52,9 +52,10 @@ Fill Runs and Status from facts, not guesses:
   again. Hazards without a HealthManager get no positions, so their random X or velocity can differ.
 
 Gap families seen so far: unsynced IHitResponder types (`BreakableHolder`, `RosaryCache*`, `HealthCocoon`,
-`ThreadSpinner`, `LifebloodPustule`, `GeoRock`) and `VinePlatform`; `Control` FSMs that write PlayerData without a
-persistent item; FSM pickups with a hero cutscene (granted twice); memories without `memory_orb`; allies without a
-HealthManager (double damage); random rolls run again by mirrors; per-game spawners.
+`ThreadSpinner`, `LifebloodPustule`, `GeoRock`, `HitRigidbody2D`) and `VinePlatform`; `Control` FSMs that
+write PlayerData without a persistent item; FSM pickups with a hero cutscene (granted twice); memories without
+`memory_orb`; allies without a HealthManager (double damage); random rolls run again by mirrors; per-game
+spawners.
 
 After a verdict file, list the gaps as numbered groups and pick which to implement before writing code.
 

@@ -24,7 +24,7 @@ internal static class HitResponsePatches
     }
 }
 
-/// <summary>Rosary caches, cocoons, thread spinners (2.22, 2.44, 4.23): hits go to the partner.</summary>
+/// <summary>Caches, cocoons, spinners, swinging bodies (2.22, 2.44, 4.23): hits go to the partner.</summary>
 [HarmonyPatch]
 internal static class ResponderHitPatches
 {
@@ -33,6 +33,7 @@ internal static class ResponderHitPatches
         yield return AccessTools.Method(typeof(RosaryCache), nameof(RosaryCache.Hit));
         yield return AccessTools.Method(typeof(HealthCocoon), nameof(HealthCocoon.Hit));
         yield return AccessTools.Method(typeof(ThreadSpinner), nameof(ThreadSpinner.Hit));
+        yield return AccessTools.Method(typeof(HitRigidbody2D), nameof(HitRigidbody2D.Hit));
     }
 
     private static void Postfix(
@@ -43,6 +44,45 @@ internal static class ResponderHitPatches
         if (__result.response != IHitResponder.Response.None && Coop.Current is { InCoop: true } coop)
         {
             coop.HitResponses.OnLocalHit(__instance, damageInstance);
+        }
+    }
+}
+
+/// <summary>An extracted pustule (5.32) withers the partner's vines too.</summary>
+[HarmonyPatch(typeof(LifebloodPustule), nameof(LifebloodPustule.Break))]
+internal static class PustuleBreakPatches
+{
+    private static void Postfix(LifebloodPustule __instance, bool isExtracted)
+    {
+        if (isExtracted && Coop.Current is { InCoop: true } coop)
+        {
+            coop.HitResponses.OnLocalExtract(__instance);
+        }
+    }
+}
+
+/// <summary>A pogo off a bounce pod: the partner's pod plays it too.</summary>
+[HarmonyPatch(typeof(BouncePod), nameof(BouncePod.DoBounce))]
+internal static class PodBouncePatches
+{
+    private static void Postfix(BouncePod __instance)
+    {
+        if (Coop.Current is { InCoop: true } coop && GameRefs.Hero is { } hero)
+        {
+            coop.HitResponses.OnLocalPodHit(__instance, true, hero.cState.facingRight ? -1f : 1f);
+        }
+    }
+}
+
+/// <summary>A side hit on a bounce pod: the partner's pod plays it too.</summary>
+[HarmonyPatch(typeof(BouncePod), nameof(BouncePod.SendInertHit))]
+internal static class PodInertHitPatches
+{
+    private static void Postfix(BouncePod __instance, float hitSign)
+    {
+        if (Coop.Current is { InCoop: true } coop)
+        {
+            coop.HitResponses.OnLocalPodHit(__instance, false, hitSign);
         }
     }
 }

@@ -6,6 +6,7 @@ using SilksongCoop.Net;
 using SilksongCoop.Patches;
 using SilksongCoop.Rules;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace SilksongCoop.Game;
 
@@ -69,9 +70,15 @@ internal sealed class EnemySync : Module
     private float _enteredAt;
     private GameObject? _hitSource;
     private int _reports;
+    // The FSM whose owner state is being entered here: what its actions send is the owner's call too.
+    private Fsm? _applyingTo;
 
     public EnemySync(Coop coop)
-        : base(coop) => coop.Rooms.Entered += OnEntered;
+        : base(coop)
+    {
+        coop.Rooms.Entered += OnEntered;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
 
     /// <summary>Applying a state the partner sent; patches must not echo it back.</summary>
     public static bool Applying { get; private set; }
@@ -154,6 +161,7 @@ internal sealed class EnemySync : Module
     {
         OnLeft();
         Coop.Rooms.Entered -= OnEntered;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
         if (_hitSource)
         {
             Object.Destroy(_hitSource);
@@ -278,7 +286,8 @@ internal sealed class EnemySync : Module
             return;
         }
         bool death = DeathEvents.Contains(fsmEvent.Name);
-        bool ownersCall = fsmEvent == FsmEvent.Finished || fsm == BodyCheck || death;
+        bool ownersCall = fsmEvent == FsmEvent.Finished || fsm == BodyCheck || death
+            || IsUnrelayed(fsm) || (_applyingTo is { } sender && IsUnrelayed(sender));
         if (fsm.ActiveState is not { } state || ownersCall || !Leads(fsm, state, fsmEvent))
         {
             return;
@@ -301,6 +310,9 @@ internal sealed class EnemySync : Module
             .String(fsmEvent.Name));
         Report($"relay out {fsm.GameObject.name} [{fsm.Name}] {state.Name} -{fsmEvent.Name}-> {Where(fsm)}");
     }
+
+    private static bool IsUnrelayed(Fsm fsm) =>
+        fsm.GameObject && SyncedObjects.IsUnrelayed(fsm.GameObject.name, fsm.Name);
 
     private static bool Leads(Fsm fsm, FsmState state, FsmEvent fsmEvent)
     {
@@ -386,7 +398,9 @@ internal sealed class EnemySync : Module
             return;
         }
         int room = Coop.Rooms.CurrentHash;
-        List<Tracked> alive = _enemies.Values.Where(enemy => enemy.Health).ToList();
+        List<Tracked> alive = _enemies.Values
+            .Where(enemy => enemy.Health && !SyncedObjects.IsShortLived(enemy.Health.name))
+            .ToList();
         for (int start = 0; start < alive.Count; start += SnapshotChunk)
         {
             List<Tracked> chunk = alive.Skip(start).Take(SnapshotChunk).ToList();
@@ -456,6 +470,23 @@ internal sealed class EnemySync : Module
     /// <summary>Keeps its current id before the game moves it to the scene root (a corpse, 2.37).</summary>
     public static void KeepId(GameObject go) => SpawnedIds[go] = IdOf(go);
 
+    /// <summary>
+    /// Enemies take their id as the scene loads: a pool's sibling order changes as each game returns its
+    /// worms in its own order (5.29), and the path holds sibling indexes.
+    /// </summary>
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        IEnumerable<HealthManager> enemies = scene.GetRootGameObjects()
+            .SelectMany(root => root.GetComponentsInChildren<HealthManager>(true));
+        foreach (HealthManager health in enemies)
+        {
+            if (!SpawnedIds.ContainsKey(health.gameObject))
+            {
+                KeepId(health.gameObject);
+            }
+        }
+    }
+
     /// <summary>A pre-instantiated object takes its maker's id, which both games agree on (2.37).</summary>
     public void OnPreInstantiated(PreInstantiateGameObject maker)
     {
@@ -515,6 +546,11 @@ internal sealed class EnemySync : Module
         if (go.GetComponentInParent<NPCControlBase>(true))
         {
             // D30: talk stays local; a synced conversation drags the partner into it.
+            return FsmMode.None;
+        }
+        if (SyncedObjects.IsHeroWounder(fsm.Name))
+        {
+            // Wounds only the hero it touches here; the bite it starts goes to the owner as a relay.
             return FsmMode.None;
         }
         if (Coop.Platforms.Handles(fsm))
@@ -853,6 +889,7 @@ internal sealed class EnemySync : Module
         _relayed.Remove(component.Fsm);
         FsmState? left = component.Fsm.ActiveState;
         Applying = true;
+        _applyingTo = component.Fsm;
         try
         {
             foreach (string step in StartChain(component.Fsm, state))
@@ -864,6 +901,7 @@ internal sealed class EnemySync : Module
         finally
         {
             Applying = false;
+            _applyingTo = null;
         }
         if (left is not null && left.Name != state && (left.Actions ?? []).OfType<RunFSM>().Any())
         {
