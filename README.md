@@ -23,6 +23,13 @@ Work slice by slice through four stages: **Dump** (`data/FsmDump/`) -> **Audit**
 State: 2.01-2.05 are at Verdicts (`verdicts/01.md` .. `05.md`); 2.06-2.19 have audits only.
 Verdict file rules and column values: `docs/sync-audit/README.md`, "Verdict files".
 
+### Refer to places by verdict number
+
+In test steps, reports, notes and summaries, name a place by its verdict item (`4.23`), not by scene or row
+(`Bone_15`, `Bone_15.7`). The dev teleport menu (F5 in dev mode) jumps straight to every verdict item (listed as
+`04.23`, table in `docs/sync-audit/teleports.tsv`), so any claim can be checked in game. Add the scene name only
+next to the number, never instead of it.
+
 ### When a coop problem is reported
 
 1. Find the element(s) in the dump and their catalog/audit rows.
