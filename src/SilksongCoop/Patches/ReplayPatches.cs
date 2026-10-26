@@ -14,3 +14,16 @@ internal static class ReplayPatches
         }
     }
 }
+
+/// <summary>A crank platform's climb reached its end (not a save load): the partner's copy too.</summary>
+[HarmonyPatch(typeof(CrankPlat), nameof(CrankPlat.SetComplete))]
+internal static class CrankPatches
+{
+    private static void Postfix(CrankPlat __instance)
+    {
+        if (__instance.hitRoutine != null && Coop.Current is { InCoop: true } coop)
+        {
+            coop.Replays.OnLocalCrank(__instance);
+        }
+    }
+}

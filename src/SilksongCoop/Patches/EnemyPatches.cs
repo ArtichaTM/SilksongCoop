@@ -46,6 +46,7 @@ internal static class EnemyPatches
             coop.BellBeast.OnSwitch(__instance, toState);
             coop.Tolls.OnSwitch(__instance, toState);
             coop.Replays.OnSwitch(__instance, toState);
+            coop.HitResponses.OnSwitch(__instance, toState);
             coop.Pickups.OnSwitch(__instance, toState);
         }
     }
@@ -142,6 +143,20 @@ internal static class EnemyPatches
             {
                 EnemySync.KeepId(corpse);
             }
+        }
+    }
+
+    /// <summary>An FSM object moved out of its parent (a falling bell, 3.30) keeps its first id.</summary>
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(SetParent), nameof(SetParent.OnEnter))]
+    private static void SetParentEnter(SetParent __instance)
+    {
+        GameObject? target = __instance.gameObject is null
+            ? null
+            : __instance.Fsm.GetOwnerDefaultTarget(__instance.gameObject);
+        if (target && target!.GetComponent<PlayMakerFSM>())
+        {
+            EnemySync.KeepId(target);
         }
     }
 

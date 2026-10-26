@@ -1,3 +1,4 @@
+using System.Linq;
 using HutongGames.PlayMaker;
 using SilksongCoop.Net;
 using UnityEngine;
@@ -7,13 +8,14 @@ namespace SilksongCoop.Game;
 /// <summary>
 /// Memories with two players (3.1 a): touching the orb starts its sequence in both games, and each game
 /// leaves by its own ending instead of a pull, so both run the whole reward. Both games grant the same Silk
-/// Heart, so meanwhile the friend takes the host's growing numbers instead of adding its own.
+/// Heart, so meanwhile the friend takes the host's growing numbers instead of adding its own. A Silk Heart
+/// (3.24) starts the same way and leads into its memory; one in a boss arena already follows its owner.
 /// </summary>
 internal sealed class MemorySync : Module
 {
     private const string OrbPrefix = "memory_orb";
+    private const string HeartName = "Silk Heart";
     private const string OrbFsm = "Control";
-    private const string IdleState = "Idle";
     private const string TakeState = "Take Control";
     private const string TouchEvent = "TOUCH";
     private const float GrantGrace = 3f;
@@ -35,12 +37,12 @@ internal sealed class MemorySync : Module
     /// <summary>Called before any FSM switches state.</summary>
     public void OnSwitch(Fsm fsm, FsmState toState)
     {
-        if (!IsOrb(fsm) || fsm.ActiveStateName != IdleState || toState.Name != TakeState)
+        if (!IsOrb(fsm) || !Touchable(fsm) || toState.Name != TakeState)
         {
             return;
         }
         _orbScene = Coop.Rooms.Current;
-        if (!_applying && Coop.Rooms.PartnerHere)
+        if (!_applying && Coop.Rooms.PartnerHere && Coop.Enemies.ModeOf(fsm) == FsmMode.None)
         {
             Session?.Send(MessageType.MemoryOrbTaken, w => w.String(fsm.GameObject.name));
         }
@@ -69,7 +71,7 @@ internal sealed class MemorySync : Module
         }
         foreach (PlayMakerFSM component in Object.FindObjectsByType<PlayMakerFSM>(FindObjectsSortMode.None))
         {
-            bool waiting = IsOrb(component.Fsm) && component.ActiveStateName == IdleState;
+            bool waiting = IsOrb(component.Fsm) && Touchable(component.Fsm);
             if (waiting && component.gameObject.name == name)
             {
                 Touch(component);
@@ -91,9 +93,19 @@ internal sealed class MemorySync : Module
         }
     }
 
+    /// <summary>A memory orb takes a touch in Idle, a Silk Heart in all its float and bob states.</summary>
+    private static bool Touchable(Fsm fsm) => fsm.ActiveState?.Transitions.Any(IsTouch) == true;
+
+    private static bool IsTouch(FsmTransition transition) =>
+        transition.EventName == TouchEvent && transition.ToState == TakeState;
+
     private bool IsOrb(Fsm fsm)
     {
         GameObject go = fsm.GameObject;
-        return fsm.Name == OrbFsm && go && go.name.StartsWith(OrbPrefix) && Coop.Rooms.Holds(go.scene);
+        if (fsm.Name != OrbFsm || !go)
+        {
+            return false;
+        }
+        return (go.name.StartsWith(OrbPrefix) || go.name == HeartName) && Coop.Rooms.Holds(go.scene);
     }
 }

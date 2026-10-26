@@ -58,6 +58,9 @@ internal enum MessageType : byte
     StateReplayed,
     PlatformCut,
     PersistentSnapshot,
+    GeoRockHit,
+    CrankCompleted,
+    HazardsSpent,
 }
 
 /// <summary>First byte after the magic: how the rest of the datagram is framed.</summary>

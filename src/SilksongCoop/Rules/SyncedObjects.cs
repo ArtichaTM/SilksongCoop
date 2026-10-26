@@ -9,13 +9,21 @@ namespace SilksongCoop.Rules;
 internal static class SyncedObjects
 {
     /// <summary>
-    /// Owner-run objects without HP (name prefix): a boss's hazards (the owner's random X falls) and
-    /// corpses that release a creature (it comes out where the owner's corpse landed, 2.37).
+    /// Owner-run objects without HP (name prefix): a boss's hazards (the owner's random X falls), boulders
+    /// either hero walks under (3.32) and corpses that release a creature (it comes out where the owner's
+    /// corpse landed, 2.37).
     /// </summary>
     private static readonly (string Prefix, string Fsm)[] OwnerRun =
     [
         ("Mossbone Stalactite", "Control"),
+        ("Bone_Boulder", "Control"),
         ("Corpse Shellwood Goomba Flyer", "Custom Corpse"),
+    ];
+
+    /// <summary>Owner-run objects that go once per room visit, and the FSM bool set as they go.</summary>
+    private static readonly (string Prefix, string Fsm, string Flag)[] OnceOnly =
+    [
+        ("Bone_Boulder", "Control", "Activated"),
     ];
 
     /// <summary>Either player sets them off: impacts from both count, the break writes PlayerData.</summary>
@@ -41,6 +49,10 @@ internal static class SyncedObjects
 
     public static bool IsOwnerRun(string objectName, string fsm) =>
         OwnerRun.Any(entry => entry.Fsm == fsm && objectName.StartsWith(entry.Prefix));
+
+    /// <summary>The FSM bool that is true once this object went, else null.</summary>
+    public static string? SpentFlag(string objectName, string fsm) =>
+        OnceOnly.FirstOrDefault(entry => entry.Fsm == fsm && objectName.StartsWith(entry.Prefix)).Flag;
 
     public static bool IsEitherTriggers(string objectName, string fsm) =>
         EitherTriggers.Contains((objectName, fsm));

@@ -281,6 +281,12 @@ id	row	element	scene	load	door	path	x	y
 03.30	Bone_05_boss.7	BoneBeast DropBell L, L2, M ... ×13	Bone_05_boss	Bone_05	bot1	Boss Scene/BoneBeast DropBell R	94.3	13.7
 03.30	Bone_05_boss.7	BoneBeast DropBell L, L2, M ... ×13	Bone_05_boss	Bone_05	bot1	Boss Scene/BoneBeast DropBell R2	94.3	13.7
 03.31	Bone_05_boss.9	Return Battle	Bone_05_boss	Bone_05	bot1	Boss Scene/Return Battle	91.8	7.3
+03.32	Bone_01c.6	Bone_Boulder ×N	Bone_01c	Bone_01c	left2	Bone_Boulder	155.9	63.8
+03.32	Bone_01c.6	Bone_Boulder ×N	Bone_01c	Bone_01c	left2	Bone_Boulder (1)	171.1	69.1
+03.32	Bone_01c.6	Bone_Boulder ×N	Bone_01c	Bone_01c	left2	Bone_Boulder (2)	180.4	66.4
+03.32	Bone_01c.6	Bone_Boulder ×N	Bone_01c	Bone_01c	left2	Bone_Boulder (5)	148.0	63.7
+03.32	Bone_01c.6	Bone_Boulder ×N	Bone_01c	Bone_01c	left2	Bone_Boulder (6)	139.3	61.1
+03.32	Bone_01c.6	Bone_Boulder ×N	Bone_01c	Bone_01c	left2	Bone_Boulder (6)/Splash Effects/Splash In	139.7	62.8
 04.01	Bone_06.1	Flea Rescue Branches	Bone_06	Bone_06	bot1	Flea Rescue Branches	101.3	24.4
 04.01	Bone_06.2	Flea Rescue Activation	Bone_06	Bone_06	bot1	Flea Rescue Branches/Flea Rescue Activation	100.2	24.5
 04.02	Bone_06.4	Shell Fossil Mimic AppearVariant	Bone_06	Bone_06	bot1	Shell Fossil Mimic AppearVariant	30.2	36.0

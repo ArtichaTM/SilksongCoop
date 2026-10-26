@@ -98,6 +98,7 @@ internal sealed class EnemySync : Module
         session.On(MessageType.EnemyHit, OnHit);
         session.On(MessageType.EnemyDied, OnDied);
         session.On(MessageType.RoomSnapshot, OnSnapshot);
+        session.On(MessageType.HazardsSpent, OnHazardsSpent);
         session.On(MessageType.BattleStart, OnBattleStart);
     }
 
@@ -397,6 +398,45 @@ internal sealed class EnemySync : Module
                     WriteSnapshot(w, enemy);
                 }
             });
+        }
+        SendSpentHazards(room);
+    }
+
+    /// <summary>Hazards without HP that went already (a fallen boulder) are gone for the partner.</summary>
+    private void SendSpentHazards(int room)
+    {
+        List<PlayMakerFSM> spent = Object
+            .FindObjectsByType<PlayMakerFSM>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+            .Where(fsm => Coop.Rooms.Holds(fsm.gameObject.scene) && Spent(fsm))
+            .ToList();
+        if (spent.Count == 0)
+        {
+            return;
+        }
+        Session?.Send(MessageType.HazardsSpent, w =>
+        {
+            w.Int(room).Int(spent.Count);
+            spent.ForEach(fsm => w.Int(IdOf(fsm.gameObject)).String(fsm.FsmName));
+        });
+    }
+
+    private static bool Spent(PlayMakerFSM fsm)
+    {
+        string? flag = SyncedObjects.SpentFlag(fsm.gameObject.name, fsm.FsmName);
+        return flag is not null && fsm.FsmVariables.FindFsmBool(flag)?.Value == true;
+    }
+
+    private void OnHazardsSpent(PacketReader reader)
+    {
+        bool forThisRoom = reader.Int() == Coop.Rooms.CurrentHash;
+        int count = reader.Int();
+        for (int i = 0; i < count; i++)
+        {
+            PlayMakerFSM? component = FindFsm(reader.Int(), reader.String());
+            if (forThisRoom && Mirroring && component is not null && !Spent(component))
+            {
+                component.gameObject.SetActive(false);
+            }
         }
     }
 

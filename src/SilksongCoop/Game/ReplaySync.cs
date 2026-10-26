@@ -11,11 +11,13 @@ namespace SilksongCoop.Game;
 /// Room objects each game runs itself (explode walls, trap wires), 7.6: the state a hit or touch leads to
 /// is replayed on the partner's copy, which plays the rest on its own. Their triggers need a hero nearby
 /// or a camera check, so the partner's copy jumps past them. Each state plays once per room visit. A cut
-/// platform's final cut (Vine Platform, 7.1) is replayed the same way.
+/// platform's final cut (Vine Platform, 7.1) is replayed the same way. A crank platform that reaches its
+/// end in one game is driven there in the other: each game runs its own climb, so a borderline hit differs.
 /// </summary>
 internal sealed class ReplaySync : Module
 {
     private readonly HashSet<(int Id, string Fsm, string State)> _entered = [];
+    private readonly HashSet<CrankPlat> _forced = [];
     private bool _applying;
 
     public ReplaySync(Coop coop)
@@ -25,6 +27,7 @@ internal sealed class ReplaySync : Module
     {
         session.On(MessageType.StateReplayed, OnReplayed);
         session.On(MessageType.PlatformCut, OnPartnerCut);
+        session.On(MessageType.CrankCompleted, OnPartnerCrank);
     }
 
     public override void Dispose() => Coop.Rooms.Entered -= OnEntered;
@@ -57,7 +60,23 @@ internal sealed class ReplaySync : Module
         Session?.Send(MessageType.PlatformCut, w => w.Int(room).Int(id));
     }
 
-    private void OnEntered(string scene) => _entered.Clear();
+    /// <summary>A crank platform reached its end here, by a hit or the partner's completion.</summary>
+    public void OnLocalCrank(CrankPlat plat)
+    {
+        if (_forced.Remove(plat) || !Coop.Rooms.PartnerHere || !Coop.Rooms.Holds(plat.gameObject.scene))
+        {
+            return;
+        }
+        int room = Coop.Rooms.CurrentHash;
+        int id = EnemySync.IdOf(plat.gameObject);
+        Session?.Send(MessageType.CrankCompleted, w => w.Int(room).Int(id));
+    }
+
+    private void OnEntered(string scene)
+    {
+        _entered.Clear();
+        _forced.Clear();
+    }
 
     private void OnPartnerCut(PacketReader reader)
     {
@@ -78,6 +97,23 @@ internal sealed class ReplaySync : Module
         {
             _applying = false;
         }
+    }
+
+    private void OnPartnerCrank(PacketReader reader)
+    {
+        int room = reader.Int();
+        int id = reader.Int();
+        CrankPlat? plat = Object.FindObjectsByType<CrankPlat>(FindObjectsSortMode.None)
+            .FirstOrDefault(found => !found.isComplete && EnemySync.IdOf(found.gameObject) == id);
+        if (room != Coop.Rooms.CurrentHash || plat is null)
+        {
+            return;
+        }
+        // Its own climb finishes at the end point on the next frame: end audio, completion, re-arm below.
+        _forced.Add(plat);
+        plat.posT = 1f;
+        plat.speed = Mathf.Max(plat.speed, plat.hitForce);
+        plat.hitRoutine ??= plat.StartCoroutine(plat.HitRoutine());
     }
 
     private void OnReplayed(PacketReader reader)
