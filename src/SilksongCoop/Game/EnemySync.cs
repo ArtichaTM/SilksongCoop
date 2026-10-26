@@ -63,7 +63,7 @@ internal sealed class EnemySync : Module
     private readonly Dictionary<Fsm, (string State, HashSet<string> Events)> _relayed = [];
     private readonly HashSet<Fsm> _localGates = [];
     private readonly HashSet<Fsm> _caughtUp = [];
-    private readonly Dictionary<RandomFloat, float> _rolls = [];
+    private readonly Dictionary<FsmStateAction, float> _rolls = [];
     private float _nextFrame;
     private float _lastIndex = -ReindexCooldown;
     private float _enteredAt;
@@ -194,7 +194,7 @@ internal sealed class EnemySync : Module
     }
 
     /// <summary>A roll the owner made before entering the state (owner) or sent with it (mirror).</summary>
-    public bool TakeRoll(RandomFloat action, out float value)
+    public bool TakeRoll(FsmStateAction action, out float value)
     {
         if (!_rolls.TryGetValue(action, out value))
         {
@@ -205,15 +205,20 @@ internal sealed class EnemySync : Module
     }
 
     /// <summary>Rolled before the state's actions run, so the mirror gets the value with the state.</summary>
-    private float PreRoll(RandomFloat action)
+    private float PreRoll(FsmStateAction action)
     {
-        float value = Random.Range(action.min.Value, action.max.Value);
+        float value = action switch
+        {
+            RandomFloatEither either => Random.Range(0, 100) < 50 ? either.value1.Value : either.value2.Value,
+            RandomFloat range => Random.Range(range.min.Value, range.max.Value),
+            _ => 0f,
+        };
         _rolls[action] = value;
         return value;
     }
 
-    private static IEnumerable<RandomFloat> RollsOf(FsmState state) =>
-        (state.Actions ?? []).OfType<RandomFloat>().Where(action => action.Enabled);
+    private static IEnumerable<FsmStateAction> RollsOf(FsmState state) =>
+        (state.Actions ?? []).Where(action => action is RandomFloat or RandomFloatEither && action.Enabled);
 
     /// <param name="at">Owner-run objects without HP get no frames; their position rides along.</param>
     private void SendState(int id, string fsmName, string state, List<float> rolls, Vector2? at = null)
@@ -618,7 +623,7 @@ internal sealed class EnemySync : Module
         {
             return;
         }
-        List<RandomFloat> actions = RollsOf(state).ToList();
+        List<FsmStateAction> actions = RollsOf(state).ToList();
         for (int i = 0; i < actions.Count && i < rolls.Count; i++)
         {
             _rolls[actions[i]] = rolls[i];

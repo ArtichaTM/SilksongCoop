@@ -11,14 +11,15 @@ namespace SilksongCoop.Game;
 /// the game took is replayed on the partner's copy, so its events and effects run there too. Enemies,
 /// breakables and FSMs that <see cref="EnemySync"/> already syncs are left to their own sync. Rosary caches
 /// and health cocoons (2.22, 2.44) take hits the same way: each game flings its own loot, and each player
-/// collects their own copy.
+/// collects their own copy. A thread spinner shrinks in both games, but its silk goes to the hitter only.
 /// </summary>
 internal sealed class HitResponseSync : Module
 {
     private const float ReindexCooldown = 1f;
 
     /// <summary>The hit responders replayed here; the index is the kind byte on the wire.</summary>
-    private static readonly Type[] Kinds = [typeof(HitResponse), typeof(RosaryCache), typeof(HealthCocoon)];
+    private static readonly Type[] Kinds =
+        [typeof(HitResponse), typeof(RosaryCache), typeof(HealthCocoon), typeof(ThreadSpinner)];
 
     private readonly Dictionary<(int Id, byte Kind), MonoBehaviour> _targets = [];
     private float _lastIndex = -ReindexCooldown;

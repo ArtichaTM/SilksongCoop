@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using HutongGames.PlayMaker;
 using SilksongCoop.Net;
@@ -12,9 +13,15 @@ namespace SilksongCoop.Game;
 /// distance, not by exact position. Dropped rosaries and shards are not matched: they land differently in
 /// each game, so each player collects their own (doubled loot, accepted). Placed ones (saved) stay one-take.
 /// </summary>
-internal sealed class PickupSync(Coop coop) : Module(coop)
+internal sealed class PickupSync : Module
 {
     private const float MatchRadius = 8f;
+
+    /// <summary>FSM pickups the local hero took: a partner's claim must not cut the cutscene.</summary>
+    private readonly HashSet<Fsm> _taken = [];
+
+    public PickupSync(Coop coop)
+        : base(coop) => coop.Rooms.Entered += OnEntered;
 
     private enum Kind : byte
     {
@@ -24,6 +31,8 @@ internal sealed class PickupSync(Coop coop) : Module(coop)
     }
 
     public override void Register(Session session) => session.On(MessageType.PickupTaken, OnTaken);
+
+    public override void Dispose() => Coop.Rooms.Entered -= OnEntered;
 
     public void OnLocalItem(CollectableItemPickup pickup) =>
         Report(Kind.Item, ItemKey(pickup), pickup.transform.position);
@@ -36,15 +45,18 @@ internal sealed class PickupSync(Coop coop) : Module(coop)
         }
     }
 
-    /// <summary>An FSM pickup (a Mossberry) was taken here; the shared inventory gives it to both.</summary>
+    /// <summary>An FSM pickup (Mossberry, silk spool) was taken here; the shared save gives both.</summary>
     public void OnSwitch(Fsm fsm, FsmState toState)
     {
         GameObject go = fsm.GameObject;
         if (go && SyncedObjects.FsmPickupTaken(go.name, fsm.Name, toState.Name) is { } key)
         {
+            _taken.Add(fsm);
             Report(Kind.Fsm, key, go.transform.position);
         }
     }
+
+    private void OnEntered(string scene) => _taken.Clear();
 
     private void Report(Kind kind, string key, Vector2 at)
     {
@@ -82,8 +94,13 @@ internal sealed class PickupSync(Coop coop) : Module(coop)
                 ?.Disable(0f);
         }
         else if (kind == Kind.Fsm
-            && Nearest<PlayMakerFSM>(at, f => SyncedObjects.IsFsmPickup(f.name, f.FsmName, key)) is { } fsm)
+            && Nearest<PlayMakerFSM>(at, f => SyncedObjects.IsFsmPickup(f.name, f.FsmName, key)) is { } fsm
+            && !_taken.Contains(fsm.Fsm))
         {
+            if (fsm.GetComponent<PersistentBoolItem>() is { } saved)
+            {
+                PersistentSync.Set(saved, true);
+            }
             fsm.gameObject.SetActive(false);
             Coop.Log.LogInfo($"partner took {key}; removed our copy");
         }

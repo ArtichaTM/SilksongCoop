@@ -64,6 +64,20 @@ internal static class EnemyPatches
         return false;
     }
 
+    /// <summary>A synced FSM's either-or float (a volley's side): the owner's pick, as above.</summary>
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(RandomFloatEither), nameof(RandomFloatEither.OnEnter))]
+    private static bool RandomFloatEitherEnter(RandomFloatEither __instance)
+    {
+        if (InCoop is not { } coop || !coop.Enemies.TakeRoll(__instance, out float value))
+        {
+            return true;
+        }
+        __instance.storeResult.Value = value;
+        __instance.Finish();
+        return false;
+    }
+
     /// <summary>A mirror takes only its hero's hits; allies and hazards hit the owner's (7.4 a).</summary>
     [HarmonyPrefix]
     [HarmonyPatch(typeof(HealthManager), nameof(HealthManager.Hit))]

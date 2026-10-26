@@ -85,6 +85,9 @@ internal sealed class PersistentSync(Coop coop) : Module(coop)
         }
     }
 
+    /// <summary>Sets a saved bool now, so leaving the room saves it too.</summary>
+    public static void Set(PersistentBoolItem item, bool value) => Load(item, value, BoolLoaded(item));
+
     /// <summary>What <c>PersistentItem.Start</c> does with a saved value.</summary>
     private static void Load<T>(PersistentItem<T> item, T value, PersistentItem<T>.SetValueEvent? loaded)
         where T : System.IEquatable<T>

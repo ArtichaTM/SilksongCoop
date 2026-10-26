@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using SilksongCoop.Game;
@@ -22,7 +24,7 @@ internal static class HitResponsePatches
     }
 }
 
-/// <summary>Rosary caches and health cocoons (2.22, 2.44): their hits go to the partner's copy.</summary>
+/// <summary>Rosary caches, cocoons, thread spinners (2.22, 2.44, 4.23): hits go to the partner.</summary>
 [HarmonyPatch]
 internal static class ResponderHitPatches
 {
@@ -30,6 +32,7 @@ internal static class ResponderHitPatches
     {
         yield return AccessTools.Method(typeof(RosaryCache), nameof(RosaryCache.Hit));
         yield return AccessTools.Method(typeof(HealthCocoon), nameof(HealthCocoon.Hit));
+        yield return AccessTools.Method(typeof(ThreadSpinner), nameof(ThreadSpinner.Hit));
     }
 
     private static void Postfix(
@@ -41,6 +44,21 @@ internal static class ResponderHitPatches
         {
             coop.HitResponses.OnLocalHit(__instance, damageInstance);
         }
+    }
+}
+
+/// <summary>A replayed spinner hit gives no silk: one shared spool, silk to the hitter (4.23 a).</summary>
+[HarmonyPatch(typeof(ThreadSpinner), nameof(ThreadSpinner.AddSilkDelayed))]
+internal static class SpinnerSilkPatches
+{
+    private static bool Prefix(ref IEnumerator __result)
+    {
+        if (!HitResponseSync.Applying)
+        {
+            return true;
+        }
+        __result = Enumerable.Empty<object>().GetEnumerator();
+        return false;
     }
 }
 

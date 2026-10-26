@@ -35,6 +35,8 @@ internal static class SyncedObjects
     private static readonly StateEntry[] FsmPickups =
     [
         new("Mossberry Pickup", "Control", "PD Bool"),
+        new("Silk Spool", "Control", "Set PD"),
+        new("Ladybug Craft Pickup", "FSM", "Wait"),
     ];
 
     public static bool IsOwnerRun(string objectName, string fsm) =>
